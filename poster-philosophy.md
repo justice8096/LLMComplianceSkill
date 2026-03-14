@@ -1,0 +1,17 @@
+# Cartographic Taxonomy
+
+A philosophy of invisible borders made visible through systematic mark-making.
+
+---
+
+Every jurisdiction is a territory, every obligation a specimen. This movement treats the unseen architecture of regulatory compliance the way a naturalist treats a newly discovered continent — with reverence, precision, and the quiet obsession of someone who believes that mapping the invisible is the highest form of art. The canvas becomes a field guide to forces that shape behavior without ever being seen.
+
+Form manifests as a dense, rhythmic grid — not the cold grid of spreadsheets, but the hand-calibrated grid of early cartographers who measured the world one careful mark at a time. Circles, dots, and minimal glyphs repeat across the surface in clusters that suggest both geographic distribution and taxonomic classification. Each mark is placed with the painstaking attention of an engraver working on copper plate, where a single misplaced point would ruin months of labor. The accumulation of marks builds meaning the way contour lines build mountains — individually modest, collectively monumental.
+
+Color operates within a deliberately constrained palette: deep navy as the void of unregulated space, warm amber as the heat of enforcement, cool grey as the neutral territory of voluntary frameworks, and precise white as the clarity of documented compliance. These four tones create every variation needed. The restraint is the point — a master colorist proves mastery not through abundance but through the exhaustive exploration of four carefully chosen values. Every gradient, every tonal shift represents countless hours of calibration until each hue sits in perfect harmonic tension with its neighbors.
+
+Typography exists only as specimen labels — thin, clinical, spaced with the precision of museum placards. Letters never explain; they anchor. A two-letter code here, a date there, a jurisdiction name rendered so small it rewards only the attentive viewer. The typeface must feel as though it was selected after reviewing hundreds of alternatives, the product of deep expertise in how letterforms interact with dense visual fields. Text floats in carefully measured clearings within the mark-field, each clearing as deliberately shaped as the marks themselves.
+
+Composition follows the logic of the periodic table crossed with a nautical chart: systematic, inevitable, yet beautiful in its completeness. The eye moves across the surface the way it moves across a map — discovering regions, noticing density patterns, feeling the weight of concentrated obligation versus the lightness of voluntary space. White space is not empty; it is the ocean between continents of regulation. Every margin, every breathing room between elements reflects the meticulously crafted spatial judgment of someone at the absolute top of their field, who understands that the distance between two marks carries as much meaning as the marks themselves.
+
+The final work should feel like an artifact retrieved from an imaginary institute — a wall chart from the Bureau of Algorithmic Cartography, produced by master craftspeople who spent countless hours ensuring every element achieved perfect registration. It is simultaneously beautiful and useful, abstract and precise, art and instrument. The viewer should sense that this object required the labor of someone who treats visual communication as a discipline worthy of a lifetime's devotion.
