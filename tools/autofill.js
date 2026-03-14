@@ -194,14 +194,108 @@ function fillTemplate(templatePath, config, matrix, deadlines) {
   // --- F. Cross-references from interactive tool results ---
   const itr = config.interactiveToolResults || {};
 
+  // Template 17: Risk Classification
   if (itr.riskClassification && tplNum === '17') {
     const rc = itr.riskClassification;
     if (rc.euAiAct) md = fillTableField(md, 'EU AI Act', `[x] ${rc.euAiAct}`);
     if (rc.coloradoSB24205) md = fillTableField(md, 'Colorado SB 24-205', `[x] ${rc.coloradoSB24205}`);
+    if (rc.overallRisk) md = fillTableField(md, 'Assigned risk level', rc.overallRisk);
+    if (rc.justification) md = fillTableField(md, 'Classification justification', rc.justification);
   }
 
+  // Template 01: Transparency — from humanOversight and transparencyDocumentation
   if (itr.humanOversight && tplNum === '01') {
     md = fillTableField(md, 'Oversight model', itr.humanOversight.model || '');
+  }
+  if (itr.transparencyDocumentation && tplNum === '01') {
+    const td = itr.transparencyDocumentation;
+    if (td.explainabilityMethod) md = fillTableField(md, 'Explainability method', td.explainabilityMethod);
+    if (td.notificationMethod) md = fillTableField(md, 'AI notification method', td.notificationMethod);
+  }
+
+  // Template 06: Impact/Risk — from impactRiskScoring
+  if (itr.impactRiskScoring && tplNum === '06') {
+    const irs = itr.impactRiskScoring;
+    if (irs.overallRiskLevel) md = fillTableField(md, 'Overall risk level', irs.overallRiskLevel);
+    if (irs.riskClassification) md = fillTableField(md, 'Risk classification', irs.riskClassification);
+  }
+
+  // Template 07: PIA — from piaAssessment
+  if (itr.piaAssessment && tplNum === '07') {
+    const pia = itr.piaAssessment;
+    if (pia.overallRiskLevel) md = fillTableField(md, 'Overall risk level after mitigation', pia.overallRiskLevel);
+    if (pia.decision) md = fillTableField(md, 'Decision', pia.decision);
+  }
+
+  // Template 08: Bias — from biasTesting
+  if (itr.biasTesting && tplNum === '08') {
+    const bt = itr.biasTesting;
+    if (bt.testingMethodology) md = fillTableField(md, 'Testing methodology', bt.testingMethodology);
+    if (bt.testDate) md = fillTableField(md, 'Last test date', bt.testDate);
+  }
+
+  // Template 09: Human Oversight — from humanOversight
+  if (itr.humanOversight && tplNum === '09') {
+    const ho = itr.humanOversight;
+    if (ho.model) md = fillTableField(md, 'Oversight model', ho.model);
+    if (ho.overrideMethod) md = fillTableField(md, 'Override mechanism', ho.overrideMethod);
+    if (ho.escalationPath) md = fillTableField(md, 'Escalation path', ho.escalationPath);
+  }
+
+  // Template 10: Consent — from consentDesign
+  if (itr.consentDesign && tplNum === '10') {
+    const cd = itr.consentDesign;
+    if (cd.consentLanguage) md = fillTableField(md, 'Consent language', cd.consentLanguage);
+    if (cd.granularity) md = fillTableField(md, 'Granularity', cd.granularity);
+    if (cd.withdrawalMethod) md = fillTableField(md, 'Withdrawal method(s)', cd.withdrawalMethod);
+  }
+
+  // Template 11: DSR — from dsrRightsImplementation
+  if (itr.dsrRightsImplementation && tplNum === '11') {
+    const dsr = itr.dsrRightsImplementation;
+    if (dsr.responseTime) md = fillTableField(md, 'Standard response time', dsr.responseTime);
+    if (dsr.requestMethod) md = fillTableField(md, 'Request submission method', dsr.requestMethod);
+  }
+
+  // Template 15: Security — from securityAssessment
+  if (itr.securityAssessment && tplNum === '15') {
+    const sa = itr.securityAssessment;
+    if (sa.lastAssessmentDate) md = fillTableField(md, 'Last assessment date', sa.lastAssessmentDate);
+    if (sa.overallSecurityLevel) md = fillTableField(md, 'Security posture', sa.overallSecurityLevel);
+  }
+
+  // Template 02: Disclosure — from disclosureToolkit
+  if (itr.disclosureToolkit && tplNum === '02') {
+    const dt = itr.disclosureToolkit;
+    if (dt.disclosureLanguage) md = fillTableField(md, 'Disclosure language', dt.disclosureLanguage);
+    if (dt.disclosurePlacement) md = fillTableField(md, 'Disclosure placement', dt.disclosurePlacement);
+  }
+
+  // Template 03: Content Labeling — from contentLabeling
+  if (itr.contentLabeling && tplNum === '03') {
+    const cl = itr.contentLabeling;
+    if (cl.labelingMethod) md = fillTableField(md, 'Labeling method', cl.labelingMethod);
+    if (cl.watermarkMethod) md = fillTableField(md, 'Watermark method', cl.watermarkMethod);
+  }
+
+  // Template 05: Training Data — from trainingDataDisclosure
+  if (itr.trainingDataDisclosure && tplNum === '05') {
+    const tdd = itr.trainingDataDisclosure;
+    if (tdd.dataGovernanceMethod) md = fillTableField(md, 'Data governance method', tdd.dataGovernanceMethod);
+  }
+
+  // Template 12: Governance — from governanceFramework
+  if (itr.governanceFramework && tplNum === '12') {
+    const gf = itr.governanceFramework;
+    if (gf.governanceStructure) md = fillTableField(md, 'Governance structure', gf.governanceStructure);
+    if (gf.reviewCycle) md = fillTableField(md, 'Review cycle', gf.reviewCycle);
+  }
+
+  // Template 13: Incident Management — from incidentManagement
+  if (itr.incidentManagement && tplNum === '13') {
+    const im = itr.incidentManagement;
+    if (im.escalationContact) md = fillTableField(md, 'Primary escalation contact', im.escalationContact);
+    if (im.responseTimeTarget) md = fillTableField(md, 'Response time target', im.responseTimeTarget);
   }
 
   // --- G. Evidence checklist cross-references ---
