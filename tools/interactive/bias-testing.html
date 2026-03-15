@@ -43,8 +43,6 @@
   document.head.appendChild(style);
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 7;
 
   var state = {
     domain: 'general',
@@ -106,50 +104,6 @@
     state.characteristics[c.id] = { enabled: false, groups: [], metricValue: '', result: '' };
   });
 
-  var root = document.body;
-
-  // Title
-  root.appendChild(el('h1', {}, ['Bias Testing Evidence Gatherer']));
-  root.appendChild(el('p', { className: 'subtitle' }, ['Structured entry for Template 08 - AI Bias Testing and Fairness Assessment']));
-
-  // Toolbar
-  var toolbar = el('div', { className: 'toolbar' });
-  toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-    loadConfigFromFile(function(c) {
-      config = c;
-      if (config.jurisdictions) {
-        state.jurisdictions = config.jurisdictions.slice();
-      }
-      if (config.interactiveToolResults && config.interactiveToolResults.biasTesting) {
-        var saved = config.interactiveToolResults.biasTesting;
-        if (saved.domain) state.domain = saved.domain;
-        if (saved.jurisdictions) state.jurisdictions = saved.jurisdictions;
-        if (saved.characteristics) state.characteristics = saved.characteristics;
-        if (saved.metrics) state.metrics = saved.metrics;
-        if (saved.findings) state.findings = saved.findings;
-        if (saved.remediations) state.remediations = saved.remediations;
-      }
-      renderStep(currentStep);
-    });
-  }}));
-  toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: function() {
-    updateConfig();
-    saveConfigToFile(config);
-  }}));
-  toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: function() {
-    updateConfig();
-    exportMarkdown('bias-testing-evidence.md', generateMarkdown());
-  }}));
-  root.appendChild(toolbar);
-
-  // Progress bar
-  var progressBar = el('div', { className: 'progress' });
-  root.appendChild(progressBar);
-
-  // Steps container
-  var stepsContainer = el('div', { id: 'steps' });
-  root.appendChild(stepsContainer);
-
   function updateConfig() {
     config.interactiveToolResults = config.interactiveToolResults || {};
     config.interactiveToolResults.biasTesting = {
@@ -163,48 +117,61 @@
     };
   }
 
-  function renderProgress() {
-    while (progressBar.firstChild) progressBar.removeChild(progressBar.firstChild);
-    var labels = ['Domain', 'Jurisdictions', 'Characteristics', 'Metrics', 'Findings', 'Remediation', 'Summary'];
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      var dot = el('div', { className: cls, title: labels[i] });
-      progressBar.appendChild(dot);
-    }
+  function doSave() {
+    updateConfig();
+    saveConfigToFile(config);
   }
 
-  function renderStep(step) {
-    currentStep = step;
-    renderProgress();
-    while (stepsContainer.firstChild) stepsContainer.removeChild(stepsContainer.firstChild);
-
-    var stepEl = el('div', { className: 'step active' });
-
-    switch(step) {
-      case 0: renderDomainStep(stepEl); break;
-      case 1: renderJurisdictionStep(stepEl); break;
-      case 2: renderCharacteristicsStep(stepEl); break;
-      case 3: renderMetricsStep(stepEl); break;
-      case 4: renderFindingsStep(stepEl); break;
-      case 5: renderRemediationStep(stepEl); break;
-      case 6: renderSummaryStep(stepEl); break;
-    }
-
-    // Navigation
-    var nav = el('div', { className: 'step-nav' });
-    if (step > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { renderStep(step - 1); } }));
-    } else {
-      nav.appendChild(el('span'));
-    }
-    if (step < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { renderStep(step + 1); } }));
-    }
-    stepEl.appendChild(nav);
-    stepsContainer.appendChild(stepEl);
+  function doExport() {
+    updateConfig();
+    exportMarkdown('bias-testing-evidence.md', generateMarkdown());
   }
+
+  var wizard = createWizard({
+    title: 'Bias Testing Evidence Gatherer',
+    subtitle: 'Structured entry for Template 08 - AI Bias Testing and Fairness Assessment',
+    totalSteps: 7,
+    stepLabels: ['Domain', 'Jurisdictions', 'Characteristics', 'Metrics', 'Findings', 'Remediation', 'Summary'],
+    renderStep: function(step, container) {
+      if (step === 0) renderDomainStep(container);
+      else if (step === 1) renderJurisdictionStep(container);
+      else if (step === 2) renderCharacteristicsStep(container);
+      else if (step === 3) renderMetricsStep(container);
+      else if (step === 4) renderFindingsStep(container);
+      else if (step === 5) renderRemediationStep(container);
+      else if (step === 6) renderSummaryStep(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) {
+        config = c;
+        if (config.jurisdictions) {
+          state.jurisdictions = config.jurisdictions.slice();
+        }
+        if (config.interactiveToolResults && config.interactiveToolResults.biasTesting) {
+          var saved = config.interactiveToolResults.biasTesting;
+          if (saved.domain) state.domain = saved.domain;
+          if (saved.jurisdictions) state.jurisdictions = saved.jurisdictions;
+          if (saved.characteristics) state.characteristics = saved.characteristics;
+          if (saved.metrics) state.metrics = saved.metrics;
+          if (saved.findings) state.findings = saved.findings;
+          if (saved.remediations) state.remediations = saved.remediations;
+        }
+        wizard.refreshStep();
+      });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'biasTesting',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.domain !== undefined) state.domain = s.domain;
+      if (s.jurisdictions) state.jurisdictions = s.jurisdictions;
+      if (s.characteristics) state.characteristics = s.characteristics;
+      if (s.metrics) state.metrics = s.metrics;
+      if (s.findings) state.findings = s.findings;
+      if (s.remediations) state.remediations = s.remediations;
+    }
+  });
 
   function renderDomainStep(container) {
     container.appendChild(el('h2', {}, ['Step 1: Select Decision Domain']));
@@ -242,7 +209,7 @@
           } else {
             state.jurisdictions.push(j.code);
           }
-          renderStep(currentStep);
+          wizard.refreshStep();
         }
       });
       multiSelect.appendChild(chip);
@@ -279,7 +246,7 @@
       // Enable toggle
       card.appendChild(createToggle('Include in testing', chState.enabled, function(v) {
         chState.enabled = v;
-        renderStep(currentStep);
+        wizard.refreshStep();
       }));
 
       if (chState.enabled) {
@@ -306,12 +273,12 @@
         var passBtn = el('button', {
           className: 'pass-fail-btn' + (chState.result === 'pass' ? ' pass' : ''),
           textContent: 'Pass',
-          onClick: function() { chState.result = 'pass'; renderStep(currentStep); }
+          onClick: function() { chState.result = 'pass'; wizard.refreshStep(); }
         });
         var failBtn = el('button', {
           className: 'pass-fail-btn' + (chState.result === 'fail' ? ' fail' : ''),
           textContent: 'Fail',
-          onClick: function() { chState.result = 'fail'; renderStep(currentStep); }
+          onClick: function() { chState.result = 'fail'; wizard.refreshStep(); }
         });
         metricRow.appendChild(passBtn);
         metricRow.appendChild(failBtn);
@@ -354,12 +321,12 @@
       var yesBtn = el('button', {
         className: 'toggle-btn' + (state.metrics[m.key] ? ' active yes' : ''),
         textContent: 'On',
-        onClick: function() { state.metrics[m.key] = true; renderStep(currentStep); }
+        onClick: function() { state.metrics[m.key] = true; wizard.refreshStep(); }
       });
       var noBtn = el('button', {
         className: 'toggle-btn' + (!state.metrics[m.key] ? ' active no' : ''),
         textContent: 'Off',
-        onClick: function() { state.metrics[m.key] = false; renderStep(currentStep); }
+        onClick: function() { state.metrics[m.key] = false; wizard.refreshStep(); }
       });
       toggleDiv.appendChild(yesBtn);
       toggleDiv.appendChild(noBtn);
@@ -377,7 +344,7 @@
       card.appendChild(createTextInput('Finding Title', f.title, function(v) { f.title = v; }, 'Brief description'));
       card.appendChild(createSelect('Severity', SEVERITY_OPTIONS, f.severity || 'low', function(v) {
         f.severity = v;
-        renderStep(currentStep);
+        wizard.refreshStep();
       }));
       card.appendChild(createSelect('Characteristic', [{ value: '', label: '-- Select --' }].concat(
         CHARACTERISTICS.map(function(c) { return { value: c.id, label: c.label }; })
@@ -387,7 +354,7 @@
 
       var removeBtn = el('button', { className: 'btn', textContent: 'Remove Finding', onClick: function() {
         state.findings.splice(idx, 1);
-        renderStep(currentStep);
+        wizard.refreshStep();
       }});
       card.appendChild(removeBtn);
       container.appendChild(card);
@@ -395,7 +362,7 @@
 
     container.appendChild(el('button', { className: 'btn success', textContent: '+ Add Finding', onClick: function() {
       state.findings.push({ title: '', severity: 'low', characteristic: '', description: '', impact: '' });
-      renderStep(currentStep);
+      wizard.refreshStep();
     }}));
   }
 
@@ -419,7 +386,7 @@
 
       var removeBtn = el('button', { className: 'btn', textContent: 'Remove', onClick: function() {
         state.remediations.splice(idx, 1);
-        renderStep(currentStep);
+        wizard.refreshStep();
       }});
       card.appendChild(removeBtn);
       container.appendChild(card);
@@ -427,7 +394,7 @@
 
     container.appendChild(el('button', { className: 'btn success', textContent: '+ Add Remediation', onClick: function() {
       state.remediations.push({ action: '', priority: 'medium', owner: '', targetDate: '', status: 'planned', notes: '' });
-      renderStep(currentStep);
+      wizard.refreshStep();
     }}));
   }
 
@@ -585,7 +552,7 @@
   }
 
   // Initial render
-  renderStep(0);
+  wizard.render();
 })();
 </script>
 </body>

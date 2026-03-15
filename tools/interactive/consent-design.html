@@ -30,8 +30,6 @@
   document.head.appendChild(style);
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 5;
 
   var PURPOSES = [
     { id: 'aiTraining', label: 'AI model training' },
@@ -164,59 +162,35 @@
     });
   }
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['Consent Collection Design Tool']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, [
-      'Template 10 -- Serves EU GDPR Arts. 6-7, UK GDPR, Australia Privacy Act, South Korea PIPA'
-    ]));
-
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-
-    renderProgress();
-
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderSummary();
-
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    var labels = ['Legal Basis', 'Consent Mechanisms', 'Record Schema', 'Lifecycle', 'Summary'];
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: labels[i] }));
+  var wizard = createWizard({
+    title: 'Consent Collection Design Tool',
+    subtitle: 'Template 10 -- Serves EU GDPR Arts. 6-7, UK GDPR, Australia Privacy Act, South Korea PIPA',
+    totalSteps: 5,
+    stepLabels: ['Legal Basis', 'Consent Mechanisms', 'Record Schema', 'Lifecycle', 'Summary'],
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'consentDesign',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.legalBasis) state.legalBasis = s.legalBasis;
+      if (s.consentMechanisms) state.consentMechanisms = s.consentMechanisms;
+      if (s.recordSchema) state.recordSchema = s.recordSchema;
+      if (s.lifecycle) state.lifecycle = s.lifecycle;
     }
-    document.body.appendChild(prog);
-  }
-
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else {
-      nav.appendChild(el('span'));
-    }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
+  });
 
   // Step 1: Legal Basis Selection
-  function renderStep1() {
+  function renderStep1(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 1: Legal Basis Selection']));
     section.appendChild(createAlert('info', 'For each data processing purpose, select the legal basis under which processing will occur. Selecting "Consent" will activate consent mechanism design in Step 2.'));
@@ -227,7 +201,7 @@
 
       card.appendChild(createSelect('Legal Basis', LEGAL_BASIS_OPTIONS, state.legalBasis[p.id], function(v) {
         state.legalBasis[p.id] = v;
-        render();
+        wizard.refreshStep();
       }));
 
       // Jurisdiction-specific notes
@@ -248,11 +222,11 @@
       section.appendChild(createAlert('warning', consentCount + ' purpose(s) require consent. Configure consent mechanisms in the next step.'));
     }
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 2: Consent Mechanism Design
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Consent Mechanism Design']));
 
@@ -260,7 +234,7 @@
 
     if (consentPurposes.length === 0) {
       section.appendChild(createAlert('info', 'No purposes require consent based on Step 1 selections. You may proceed to Step 3, or go back and select "Consent" as a legal basis for applicable purposes.'));
-      document.body.appendChild(section);
+      container.appendChild(section);
       return;
     }
 
@@ -281,7 +255,7 @@
 
       card.appendChild(createToggle('Pre-checked?', mech.preChecked, function(v) {
         mech.preChecked = v;
-        render();
+        wizard.refreshStep();
       }));
 
       if (mech.preChecked) {
@@ -298,7 +272,7 @@
 
       card.appendChild(createToggle('Child Consent Handling Required', mech.childConsent, function(v) {
         mech.childConsent = v;
-        render();
+        wizard.refreshStep();
       }));
 
       if (mech.childConsent) {
@@ -311,11 +285,11 @@
       section.appendChild(card);
     });
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 3: Record Schema
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Consent Record Schema']));
     section.appendChild(createAlert('info', 'Define what data is captured for each consent event. GDPR Art. 7(1) requires controllers to demonstrate that consent was given.'));
@@ -334,7 +308,8 @@
     fields.forEach(function(f) {
       var toggle = createToggle(f.label, state.recordSchema[f.key], function(v) {
         state.recordSchema[f.key] = v;
-        render();
+        if (f.key === 'ipDeviceInfo') wizard.refreshStep();
+        else wizard.saveNow();
       });
       section.appendChild(toggle);
 
@@ -356,11 +331,11 @@
       el('span', { className: cls }, [pct + '% (' + enabledCount + '/' + fields.length + ' fields)'])
     ]));
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 4: Lifecycle Management
-  function renderStep4() {
+  function renderStep4(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Lifecycle Management']));
     section.appendChild(createAlert('info', 'Configure how consent is maintained, refreshed, and handled throughout its lifecycle.'));
@@ -387,11 +362,11 @@
 
     section.appendChild(createAlert('warning', 'EU GDPR: Consent withdrawal must not affect the lawfulness of processing based on consent before withdrawal (Art. 7(3)). Retain audit trail accordingly.'));
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 5: Summary
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 5: Summary']));
 
@@ -510,7 +485,7 @@
 
     section.appendChild(createAlert('info', 'This is compliance research evidence, not legal advice. Review with qualified legal counsel before implementation.'));
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function findLabel(options, value) {
@@ -615,7 +590,7 @@
     exportMarkdown('consent-design-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

@@ -11,8 +11,6 @@
 (function() {
   injectCSS();
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 7;
   var stepLabels = ["Classification","Response Workflow","Regulatory Reporting","Log Retention","Communication","Testing & Drills","Summary"];
   var responseTimes = [{value:"",label:"-- Select --"},{value:"immediate",label:"Immediate"},{value:"4h",label:"< 4 hours"},{value:"24h",label:"< 24 hours"},{value:"72h",label:"< 72 hours"}];
   var severityLevels = ["Critical","High","Medium","Low"];
@@ -59,21 +57,43 @@
   }
   initDefaults();
 
-  function render(){
-    document.body.textContent="";
-    document.body.appendChild(el("h1",{},["Incident Management Plan"]));
-    document.body.appendChild(el("p",{className:"subtitle"},["Template 13 \u2014 EU AI Act Art. 62; China GenAI; California SB 53; South Korea; UK Cyber Security Bill"]));
-    var toolbar=el("div",{className:"toolbar"});
-    toolbar.appendChild(el("button",{className:"btn",textContent:"Load Config",onClick:function(){loadConfigFromFile(function(c){config=c;loadState();render();});}}));
-    toolbar.appendChild(el("button",{className:"btn",textContent:"Save Config",onClick:doSave}));
-    toolbar.appendChild(el("button",{className:"btn primary",textContent:"Export Markdown",onClick:doExport}));
-    document.body.appendChild(toolbar);
-    var prog=el("div",{className:"progress"});for(var i=0;i<totalSteps;i++){var c="progress-dot";if(i===currentStep)c+=" active";else if(i<currentStep)c+=" done";prog.appendChild(el("span",{className:c,title:stepLabels[i]}));}document.body.appendChild(prog);
-    if(currentStep===0)renderStep1();else if(currentStep===1)renderStep2();else if(currentStep===2)renderStep3();else if(currentStep===3)renderStep4();else if(currentStep===4)renderStep5();else if(currentStep===5)renderStep6();else if(currentStep===6)renderStep7();
-    var nav=el("div",{className:"step-nav"});if(currentStep>0)nav.appendChild(el("button",{className:"btn",textContent:"Previous",onClick:function(){currentStep--;render();}}));else nav.appendChild(el("span"));if(currentStep<totalSteps-1)nav.appendChild(el("button",{className:"btn primary",textContent:"Next",onClick:function(){currentStep++;render();}}));document.body.appendChild(nav);
-  }
+  var wizard = createWizard({
+    title: 'Incident Management Plan',
+    subtitle: 'Template 13 \u2014 EU AI Act Art. 62; China GenAI; California SB 53; South Korea; UK Cyber Security Bill',
+    totalSteps: 7,
+    stepLabels: stepLabels,
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderStep5(container);
+      else if (step === 5) renderStep6(container);
+      else if (step === 6) renderStep7(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'incidentManagement',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.classification) { for (var k in s.classification) { state.classification[k] = s.classification[k]; } }
+      if (s.workflow) { for (var k in s.workflow) { state.workflow[k] = s.workflow[k]; } }
+      if (s.reporting) { for (var k in s.reporting) { state.reporting[k] = s.reporting[k]; } }
+      if (s.retention) {
+        if (s.retention.logStorage !== undefined) state.retention.logStorage = s.retention.logStorage;
+        if (s.retention.accessControl !== undefined) state.retention.accessControl = s.retention.accessControl;
+      }
+      if (s.communication) { for (var k in s.communication) { state.communication[k] = s.communication[k]; } }
+      if (s.drills) { for (var k in s.drills) { state.drills[k] = s.drills[k]; } }
+      if (s.evidenceChecklist) { for (var k in s.evidenceChecklist) { state.evidenceChecklist[k] = s.evidenceChecklist[k]; } }
+      initDefaults();
+    }
+  });
 
-  function renderStep1(){
+  function renderStep1(container){
     var s=el("div",{className:"section"});s.appendChild(el("h2",{},["Step 1: Incident Classification"]));
     s.appendChild(createAlert("info","Define severity levels for AI incidents. Defaults are pre-populated from Template 13 but can be customized."));
     for(var i=0;i<severityLevels.length;i++){(function(lv){var key=lv.toLowerCase();var cl=state.classification[key];
@@ -84,10 +104,10 @@
     card.appendChild(createTextArea("Examples",cl.examples,function(v){cl.examples=v;}));
     card.appendChild(createSelect("Response time",responseTimes,cl.responseTime,function(v){cl.responseTime=v;}));
     s.appendChild(card);})(severityLevels[i]);}
-    document.body.appendChild(s);
+    container.appendChild(s);
   }
 
-  function renderStep2(){
+  function renderStep2(container){
     var s=el("div",{className:"section"});s.appendChild(el("h2",{},["Step 2: Response Workflow"]));
     s.appendChild(createAlert("info","Define actions, responsible roles, and timelines for each phase of incident response."));
     for(var i=0;i<workflowPhases.length;i++){(function(phase){var key=phase.toLowerCase().replace(/\s+/g,"_");var wf=state.workflow[key];
@@ -97,10 +117,10 @@
     card.appendChild(createTextInput("Responsible role",wf.responsible,function(v){wf.responsible=v;}));
     card.appendChild(createTextInput("Timeline",wf.timeline,function(v){wf.timeline=v;}));
     s.appendChild(card);})(workflowPhases[i]);}
-    document.body.appendChild(s);
+    container.appendChild(s);
   }
 
-  function renderStep3(){
+  function renderStep3(container){
     var s=el("div",{className:"section"});s.appendChild(el("h2",{},["Step 3: Regulatory Reporting"]));
     s.appendChild(createAlert("warning","Regulatory reporting deadlines are strict. Ensure your incident team knows which authorities to notify and when."));
     var configJur=(config.project&&config.project.jurisdictions)?config.project.jurisdictions:[];
@@ -110,15 +130,15 @@
     var rp=state.reporting[j.id];
     var card=el("div",{className:"section",style:"border:1px solid #1E2D3D;padding:16px;border-radius:4px;margin-bottom:12px;"});
     card.appendChild(el("h3",{},[j.label]));
-    card.appendChild(createToggle("Applicable?",rp.applicable,function(v){rp.applicable=v;}));
+    card.appendChild(createToggle("Applicable?",rp.applicable,function(v){rp.applicable=v;wizard.saveNow();}));
     card.appendChild(createTextInput("What must be reported",rp.what,function(v){rp.what=v;}));
     card.appendChild(createTextInput("To whom",rp.whom,function(v){rp.whom=v;}));
     card.appendChild(createTextInput("Deadline",rp.deadline,function(v){rp.deadline=v;}));
     s.appendChild(card);})(jurisdictions[i]);}
-    document.body.appendChild(s);
+    container.appendChild(s);
   }
 
-  function renderStep4(){
+  function renderStep4(container){
     var s=el("div",{className:"section"});s.appendChild(el("h2",{},["Step 4: Log Retention"]));
     s.appendChild(createAlert("info","Different jurisdictions have different minimum log retention requirements."));
     var retentionTable=el("table",{className:"result-table"});var rth=el("thead");var rhr=el("tr");rhr.appendChild(el("th",{},["Jurisdiction"]));rhr.appendChild(el("th",{},["Minimum Retention"]));rhr.appendChild(el("th",{},["What Must Be Retained"]));rth.appendChild(rhr);retentionTable.appendChild(rth);
@@ -128,10 +148,10 @@
     retentionTable.appendChild(rtb);s.appendChild(retentionTable);
     s.appendChild(createTextInput("Log storage location",state.retention.logStorage,function(v){state.retention.logStorage=v;},"e.g., S3 bucket, on-premise SIEM"));
     s.appendChild(createTextInput("Access control method",state.retention.accessControl,function(v){state.retention.accessControl=v;},"e.g., RBAC, encryption at rest"));
-    document.body.appendChild(s);
+    container.appendChild(s);
   }
 
-  function renderStep5(){
+  function renderStep5(container){
     var s=el("div",{className:"section"});s.appendChild(el("h2",{},["Step 5: Communication Plan"]));
     for(var i=0;i<audiences.length;i++){(function(aud){var key=aud.toLowerCase().replace(/\s+/g,"_");var cm=state.communication[key];
     var card=el("div",{className:"section",style:"border:1px solid #1E2D3D;padding:12px 16px;border-radius:4px;margin-bottom:8px;"});
@@ -141,10 +161,10 @@
     card.appendChild(createTextArea("Content template",cm.template,function(v){cm.template=v;},"Key message points for this audience"));
     card.appendChild(createTextInput("Responsible person",cm.responsible,function(v){cm.responsible=v;}));
     s.appendChild(card);})(audiences[i]);}
-    document.body.appendChild(s);
+    container.appendChild(s);
   }
 
-  function renderStep6(){
+  function renderStep6(container){
     var s=el("div",{className:"section"});s.appendChild(el("h2",{},["Step 6: Testing & Drills"]));
     s.appendChild(createAlert("info","Regular testing ensures your incident management plan works when needed."));
     for(var i=0;i<drillTypes.length;i++){(function(dt){var key=dt.toLowerCase().replace(/\s+/g,"_");var dr=state.drills[key];
@@ -155,10 +175,10 @@
     var d2=el("div",{className:"field-row"});d2.appendChild(el("label",{className:"field-label"},["Next scheduled"]));var di2=el("input",{type:"date",className:"field-input",value:dr.nextScheduled||""});di2.addEventListener("change",function(){dr.nextScheduled=di2.value;});d2.appendChild(di2);card.appendChild(d2);
     card.appendChild(createTextArea("Findings",dr.findings,function(v){dr.findings=v;}));
     s.appendChild(card);})(drillTypes[i]);}
-    document.body.appendChild(s);
+    container.appendChild(s);
   }
 
-  function renderStep7(){
+  function renderStep7(container){
     var s=el("div",{className:"section"});s.appendChild(el("h2",{},["Step 7: Summary"]));
     var classComplete=0;for(var i=0;i<severityLevels.length;i++){var key=severityLevels[i].toLowerCase();var cl=state.classification[key];if(cl.definition&&cl.responseTime)classComplete++;}
     s.appendChild(createAlert(classComplete===4?"success":"warning","Classification completeness: "+classComplete+"/4 severity levels defined"));
@@ -175,7 +195,7 @@
     for(var i=0;i<evidenceItems.length;i++){(function(idx,item){var checked=state.evidenceChecklist[idx]||false;var cb=el("input",{type:"checkbox"});cb.checked=checked;cb.addEventListener("change",function(){state.evidenceChecklist[idx]=cb.checked;});var row=el("div",{className:"checklist-item"});row.appendChild(cb);row.appendChild(el("label",{},[item]));s.appendChild(row);})(i,evidenceItems[i]);}
     var ec=Object.values(state.evidenceChecklist).filter(Boolean).length;
     s.appendChild(createAlert(ec===evidenceItems.length?"success":ec>evidenceItems.length/2?"warning":"danger","Evidence checklist: "+ec+"/"+evidenceItems.length+" items completed"));
-    document.body.appendChild(s);
+    container.appendChild(s);
   }
 
   function loadState(){var sv=(config.interactiveToolResults&&config.interactiveToolResults.incidentManagement)?config.interactiveToolResults.incidentManagement:null;if(sv){if(sv.classification)state.classification=sv.classification;if(sv.workflow)state.workflow=sv.workflow;if(sv.reporting)state.reporting=sv.reporting;if(sv.retention)state.retention=sv.retention;if(sv.communication)state.communication=sv.communication;if(sv.drills)state.drills=sv.drills;if(sv.evidenceChecklist)state.evidenceChecklist=sv.evidenceChecklist;}initDefaults();}
@@ -198,7 +218,7 @@
     l.push("");l.push("---");l.push("*Generated by Incident Management Plan Tool. This is research, not legal advice.*");
     exportMarkdown("incident-management-report.md",l.join("\n"));
   }
-  render();
+  wizard.render();
 })();
 </script>
 </body>

@@ -12,8 +12,6 @@
   injectCSS();
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 6;
 
   var stepLabels = ['System Info', 'Training Audiences', 'Curriculum Design', 'Competency Assessment', 'EU AI Act Art. 4', 'Review & Export'];
 
@@ -110,50 +108,57 @@
   }
   initState();
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['AI Literacy & Training Records']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, ['Template 18 \u2014 EU AI Act Art. 4 (AI Literacy); EU AI Act Art. 9 (Risk Management Training); ISO/IEC 42001 Annex A']));
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-    renderProgress();
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderStep5();
-    else if (currentStep === 5) renderSummary();
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: stepLabels[i] }));
+  var wizard = createWizard({
+    title: 'AI Literacy & Training Records',
+    subtitle: 'Template 18 \u2014 EU AI Act Art. 4 (AI Literacy); EU AI Act Art. 9 (Risk Management Training); ISO/IEC 42001 Annex A',
+    totalSteps: 6,
+    stepLabels: stepLabels,
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderStep5(container);
+      else if (step === 5) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'aiLiteracyTraining',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.systemInfo) { for (var k in s.systemInfo) { state.systemInfo[k] = s.systemInfo[k]; } }
+      if (s.audiences) { for (var k in s.audiences) { state.audiences[k] = s.audiences[k]; } }
+      if (s.curriculum) { for (var k in s.curriculum) { state.curriculum[k] = s.curriculum[k]; } }
+      if (s.assessment) {
+        if (s.assessment.methods) { for (var k in s.assessment.methods) { state.assessment.methods[k] = s.assessment.methods[k]; } }
+        if (s.assessment.passingCriteria !== undefined) state.assessment.passingCriteria = s.assessment.passingCriteria;
+        if (s.assessment.retestPolicy !== undefined) state.assessment.retestPolicy = s.assessment.retestPolicy;
+        if (s.assessment.recordRetention !== undefined) state.assessment.recordRetention = s.assessment.recordRetention;
+        if (s.assessment.certificationValidity !== undefined) state.assessment.certificationValidity = s.assessment.certificationValidity;
+      }
+      if (s.euArt4) {
+        if (s.euArt4.applicable !== undefined) state.euArt4.applicable = s.euArt4.applicable;
+        if (s.euArt4.literacyObligation !== undefined) state.euArt4.literacyObligation = s.euArt4.literacyObligation;
+        if (s.euArt4.staffCoverage !== undefined) state.euArt4.staffCoverage = s.euArt4.staffCoverage;
+        if (s.euArt4.proportionality !== undefined) state.euArt4.proportionality = s.euArt4.proportionality;
+        if (s.euArt4.contextFactors !== undefined) state.euArt4.contextFactors = s.euArt4.contextFactors;
+        if (s.euArt4.documentedProgram !== undefined) state.euArt4.documentedProgram = s.euArt4.documentedProgram;
+        if (s.euArt4.regularUpdates !== undefined) state.euArt4.regularUpdates = s.euArt4.regularUpdates;
+        if (s.euArt4.updateFrequency !== undefined) state.euArt4.updateFrequency = s.euArt4.updateFrequency;
+        if (s.euArt4.vulnerableGroups !== undefined) state.euArt4.vulnerableGroups = s.euArt4.vulnerableGroups;
+        if (s.euArt4.vulnerableGroupsMeasures !== undefined) state.euArt4.vulnerableGroupsMeasures = s.euArt4.vulnerableGroupsMeasures;
+        if (s.euArt4.providerGuidance !== undefined) state.euArt4.providerGuidance = s.euArt4.providerGuidance;
+        if (s.euArt4.providerGuidanceDetails !== undefined) state.euArt4.providerGuidanceDetails = s.euArt4.providerGuidanceDetails;
+        if (s.euArt4.notes !== undefined) state.euArt4.notes = s.euArt4.notes;
+      }
+      initState();
     }
-    document.body.appendChild(prog);
-  }
+  });
 
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else { nav.appendChild(el('span')); }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
-
-  function renderStep1() {
+  function renderStep1(container) {
     var items = [];
     items.push(createAlert('info', 'Load your compliance config to pre-fill system information, or enter details manually.'));
     if (config.systemInfo) {
@@ -168,10 +173,10 @@
     items.push(createTextInput('System version', state.systemInfo.version, function(v) { state.systemInfo.version = v; }, 'e.g. 2.1.0'));
     items.push(createTextInput('Training program lead', state.systemInfo.trainingLead, function(v) { state.systemInfo.trainingLead = v; }, 'Name and role of person responsible'));
     items.push(createTextInput('Training program version', state.systemInfo.programVersion, function(v) { state.systemInfo.programVersion = v; }, 'e.g. v1.0, 2026-Q1'));
-    document.body.appendChild(createSection('Step 1: System Information', items));
+    container.appendChild(createSection('Step 1: System Information', items));
   }
 
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Training Audiences']));
     section.appendChild(createAlert('info', 'Identify all groups that interact with or are affected by the AI system. EU AI Act Art. 4 requires AI literacy measures proportionate to the context of use.'));
@@ -180,9 +185,9 @@
         var a = state.audiences[aud.id];
         var group = el('div', { style: 'margin-bottom: 12px; padding: 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [aud.label]));
-        group.appendChild(createToggle('Applicable audience?', a.applicable, function(v) { a.applicable = v; }));
+        group.appendChild(createToggle('Applicable audience?', a.applicable, function(v) { a.applicable = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Estimated headcount', a.headcount, function(v) { a.headcount = v; }, 'e.g. 25, 100-150'));
-        group.appendChild(createToggle('Currently trained?', a.currentlyTrained, function(v) { a.currentlyTrained = v; }));
+        group.appendChild(createToggle('Currently trained?', a.currentlyTrained, function(v) { a.currentlyTrained = v; wizard.saveNow(); }));
         group.appendChild(createSelect('Training frequency', [
           { value: '', label: '-- Select --' },
           { value: 'onboarding', label: 'Onboarding only' },
@@ -202,10 +207,10 @@
         section.appendChild(group);
       })(audienceTypes[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Training Curriculum Design']));
     section.appendChild(createAlert('info', 'For each applicable audience, select the training topics and depth. Different audiences need different levels of detail.'));
@@ -239,7 +244,7 @@
           (function(topic) {
             var t = cur.topics[topic.id];
             var topicRow = el('div', { style: 'margin-bottom: 6px; padding: 8px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
-            topicRow.appendChild(createToggle(topic.label, t.included, function(v) { t.included = v; }));
+            topicRow.appendChild(createToggle(topic.label, t.included, function(v) { t.included = v; wizard.saveNow(); }));
             topicRow.appendChild(createSelect('Depth', [
               { value: '', label: '-- Select depth --' },
               { value: 'awareness', label: 'Awareness (basic understanding)' },
@@ -253,10 +258,10 @@
         section.appendChild(audGroup);
       })(applicableAudiences[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep4() {
+  function renderStep4(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Competency Assessment Methods']));
     section.appendChild(createAlert('info', 'Define how training effectiveness is measured. This evidence demonstrates that AI literacy obligations are being met.'));
@@ -265,7 +270,7 @@
       (function(method) {
         var m = state.assessment.methods[method.id];
         var group = el('div', { style: 'margin-bottom: 8px; padding: 10px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
-        group.appendChild(createToggle(method.label, m.used, function(v) { m.used = v; }));
+        group.appendChild(createToggle(method.label, m.used, function(v) { m.used = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Implementation details', m.details, function(v) { m.details = v; }, 'Describe how this method is applied'));
         section.appendChild(group);
       })(assessmentMethods[i]);
@@ -298,14 +303,14 @@
       { value: 'no-expiry', label: 'No expiry' }
     ], state.assessment.certificationValidity, function(v) { state.assessment.certificationValidity = v; }));
     section.appendChild(policySection);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep5() {
+  function renderStep5(container) {
     var items = [];
     items.push(createAlert('warning', 'EU AI Act Article 4 (effective February 2, 2025) requires providers and deployers to ensure sufficient AI literacy among their staff and other persons dealing with AI systems on their behalf. This is a cross-cutting obligation that applies to ALL AI systems, not just high-risk.'));
-    items.push(createToggle('EU AI Act applicable?', state.euArt4.applicable, function(v) { state.euArt4.applicable = v; }));
-    items.push(createToggle('Art. 4 AI literacy obligation acknowledged?', state.euArt4.literacyObligation, function(v) { state.euArt4.literacyObligation = v; }));
+    items.push(createToggle('EU AI Act applicable?', state.euArt4.applicable, function(v) { state.euArt4.applicable = v; wizard.saveNow(); }));
+    items.push(createToggle('Art. 4 AI literacy obligation acknowledged?', state.euArt4.literacyObligation, function(v) { state.euArt4.literacyObligation = v; wizard.saveNow(); }));
     items.push(createSelect('Staff coverage', [
       { value: '', label: '-- Select --' },
       { value: 'all-staff', label: 'All staff interacting with AI' },
@@ -315,8 +320,8 @@
     ], state.euArt4.staffCoverage, function(v) { state.euArt4.staffCoverage = v; }));
     items.push(createTextArea('Proportionality assessment', state.euArt4.proportionality, function(v) { state.euArt4.proportionality = v; }, 'How training is proportionate to: context of use, persons involved, their technical knowledge and experience'));
     items.push(createTextArea('Context factors considered', state.euArt4.contextFactors, function(v) { state.euArt4.contextFactors = v; }, 'e.g. Risk level, sector, audience technical background, system complexity'));
-    items.push(createToggle('Documented training program?', state.euArt4.documentedProgram, function(v) { state.euArt4.documentedProgram = v; }));
-    items.push(createToggle('Regular updates to training?', state.euArt4.regularUpdates, function(v) { state.euArt4.regularUpdates = v; }));
+    items.push(createToggle('Documented training program?', state.euArt4.documentedProgram, function(v) { state.euArt4.documentedProgram = v; wizard.saveNow(); }));
+    items.push(createToggle('Regular updates to training?', state.euArt4.regularUpdates, function(v) { state.euArt4.regularUpdates = v; wizard.saveNow(); }));
     items.push(createSelect('Update frequency', [
       { value: '', label: '-- Select --' },
       { value: 'quarterly', label: 'Quarterly' },
@@ -324,12 +329,12 @@
       { value: 'annual', label: 'Annually' },
       { value: 'on-change', label: 'On regulatory / system change' }
     ], state.euArt4.updateFrequency, function(v) { state.euArt4.updateFrequency = v; }));
-    items.push(createToggle('Vulnerable groups considered?', state.euArt4.vulnerableGroups, function(v) { state.euArt4.vulnerableGroups = v; }));
+    items.push(createToggle('Vulnerable groups considered?', state.euArt4.vulnerableGroups, function(v) { state.euArt4.vulnerableGroups = v; wizard.saveNow(); }));
     items.push(createTextArea('Measures for vulnerable groups', state.euArt4.vulnerableGroupsMeasures, function(v) { state.euArt4.vulnerableGroupsMeasures = v; }, 'How training addresses impacts on vulnerable or disadvantaged groups'));
-    items.push(createToggle('Provider guidance incorporated?', state.euArt4.providerGuidance, function(v) { state.euArt4.providerGuidance = v; }));
+    items.push(createToggle('Provider guidance incorporated?', state.euArt4.providerGuidance, function(v) { state.euArt4.providerGuidance = v; wizard.saveNow(); }));
     items.push(createTextArea('Provider guidance details', state.euArt4.providerGuidanceDetails, function(v) { state.euArt4.providerGuidanceDetails = v; }, 'How AI provider instructions of use are integrated into training'));
     items.push(createTextArea('Additional Art. 4 compliance notes', state.euArt4.notes, function(v) { state.euArt4.notes = v; }, 'Any additional details about EU AI Act Art. 4 compliance'));
-    document.body.appendChild(createSection('Step 5: EU AI Act Art. 4 Compliance', items));
+    container.appendChild(createSection('Step 5: EU AI Act Art. 4 Compliance', items));
   }
 
   function calcSectionScore(sectionId) {
@@ -376,7 +381,7 @@
     return { filled: filled, total: total };
   }
 
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 6: Review & Export']));
     var sections = [
@@ -432,7 +437,7 @@
     exportBar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
     exportBar.appendChild(el('button', { className: 'btn success', textContent: 'Save Config', onClick: doSave }));
     section.appendChild(exportBar);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function loadState() {
@@ -569,7 +574,7 @@
     exportMarkdown('ai-literacy-training-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

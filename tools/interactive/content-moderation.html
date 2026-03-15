@@ -12,8 +12,6 @@
   injectCSS();
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 6;
 
   var stepLabels = ['System Info', 'Content Policy', 'Moderation Mechanisms', 'China GenAI Compliance', 'EU DSA Compliance', 'Review & Export'];
 
@@ -114,50 +112,68 @@
   }
   initState();
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['Content Moderation Evidence']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, ['Template 16 \u2014 China GenAI Measures; EU Digital Services Act; EU AI Act Art. 50; Platform Safety Laws']));
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-    renderProgress();
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderStep5();
-    else if (currentStep === 5) renderSummary();
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: stepLabels[i] }));
+  var wizard = createWizard({
+    title: 'Content Moderation Evidence',
+    subtitle: 'Template 16 \u2014 China GenAI Measures; EU Digital Services Act; EU AI Act Art. 50; Platform Safety Laws',
+    totalSteps: 6,
+    stepLabels: stepLabels,
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderStep5(container);
+      else if (step === 5) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'contentModeration',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.systemInfo) { for (var k in s.systemInfo) { state.systemInfo[k] = s.systemInfo[k]; } }
+      if (s.contentPolicy) {
+        if (s.contentPolicy.policyVersion !== undefined) state.contentPolicy.policyVersion = s.contentPolicy.policyVersion;
+        if (s.contentPolicy.policyLastUpdated !== undefined) state.contentPolicy.policyLastUpdated = s.contentPolicy.policyLastUpdated;
+        if (s.contentPolicy.policyUrl !== undefined) state.contentPolicy.policyUrl = s.contentPolicy.policyUrl;
+        if (s.contentPolicy.categories) { for (var k in s.contentPolicy.categories) { state.contentPolicy.categories[k] = s.contentPolicy.categories[k]; } }
+        if (s.contentPolicy.escalationProcess !== undefined) state.contentPolicy.escalationProcess = s.contentPolicy.escalationProcess;
+        if (s.contentPolicy.updateFrequency !== undefined) state.contentPolicy.updateFrequency = s.contentPolicy.updateFrequency;
+      }
+      if (s.mechanisms) { for (var k in s.mechanisms) { state.mechanisms[k] = s.mechanisms[k]; } }
+      if (s.china) {
+        if (s.china.applicable !== undefined) state.china.applicable = s.china.applicable;
+        if (s.china.requirements) { for (var k in s.china.requirements) { state.china.requirements[k] = s.china.requirements[k]; } }
+        if (s.china.cacFilingNumber !== undefined) state.china.cacFilingNumber = s.china.cacFilingNumber;
+        if (s.china.securityAssessmentDate !== undefined) state.china.securityAssessmentDate = s.china.securityAssessmentDate;
+        if (s.china.notes !== undefined) state.china.notes = s.china.notes;
+      }
+      if (s.dsa) {
+        if (s.dsa.applicable !== undefined) state.dsa.applicable = s.dsa.applicable;
+        if (s.dsa.vlop !== undefined) state.dsa.vlop = s.dsa.vlop;
+        if (s.dsa.transparencyReporting !== undefined) state.dsa.transparencyReporting = s.dsa.transparencyReporting;
+        if (s.dsa.reportingFrequency !== undefined) state.dsa.reportingFrequency = s.dsa.reportingFrequency;
+        if (s.dsa.trustedFlaggers !== undefined) state.dsa.trustedFlaggers = s.dsa.trustedFlaggers;
+        if (s.dsa.trustedFlaggerProcess !== undefined) state.dsa.trustedFlaggerProcess = s.dsa.trustedFlaggerProcess;
+        if (s.dsa.systemic) {
+          if (s.dsa.systemic.riskIdentified !== undefined) state.dsa.systemic.riskIdentified = s.dsa.systemic.riskIdentified;
+          if (s.dsa.systemic.riskDescription !== undefined) state.dsa.systemic.riskDescription = s.dsa.systemic.riskDescription;
+          if (s.dsa.systemic.mitigations !== undefined) state.dsa.systemic.mitigations = s.dsa.systemic.mitigations;
+          if (s.dsa.systemic.auditDate !== undefined) state.dsa.systemic.auditDate = s.dsa.systemic.auditDate;
+          if (s.dsa.systemic.auditResult !== undefined) state.dsa.systemic.auditResult = s.dsa.systemic.auditResult;
+        }
+        if (s.dsa.complaintMechanism !== undefined) state.dsa.complaintMechanism = s.dsa.complaintMechanism;
+        if (s.dsa.complaintDescription !== undefined) state.dsa.complaintDescription = s.dsa.complaintDescription;
+        if (s.dsa.outOfCourtResolution !== undefined) state.dsa.outOfCourtResolution = s.dsa.outOfCourtResolution;
+        if (s.dsa.notes !== undefined) state.dsa.notes = s.dsa.notes;
+      }
+      initState();
     }
-    document.body.appendChild(prog);
-  }
+  });
 
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else { nav.appendChild(el('span')); }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
-
-  function renderStep1() {
+  function renderStep1(container) {
     var items = [];
     items.push(createAlert('info', 'Load your compliance config to pre-fill system information, or enter details manually.'));
     if (config.systemInfo) {
@@ -180,10 +196,10 @@
       { value: 'code', label: 'Code generation' }
     ], state.systemInfo.contentTypes, function(v) { state.systemInfo.contentTypes = v; }));
     items.push(createTextInput('Target markets', state.systemInfo.targetMarkets, function(v) { state.systemInfo.targetMarkets = v; }, 'e.g. EU, US, China, Global'));
-    document.body.appendChild(createSection('Step 1: System Information', items));
+    container.appendChild(createSection('Step 1: System Information', items));
   }
 
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Content Policy Definition']));
     section.appendChild(createAlert('info', 'Define your content moderation policy. For each category, specify whether it is prohibited and what action is taken.'));
@@ -212,7 +228,7 @@
         var c = state.contentPolicy.categories[cat.id];
         var group = el('div', { style: 'margin-bottom: 8px; padding: 10px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [cat.label]));
-        group.appendChild(createToggle('Prohibited?', c.prohibited, function(v) { c.prohibited = v; }));
+        group.appendChild(createToggle('Prohibited?', c.prohibited, function(v) { c.prohibited = v; wizard.saveNow(); }));
         group.appendChild(createSelect('Detection threshold', [
           { value: '', label: '-- Select --' },
           { value: 'zero-tolerance', label: 'Zero tolerance' },
@@ -231,10 +247,10 @@
         section.appendChild(group);
       })(prohibitedCategories[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Moderation Mechanisms']));
     section.appendChild(createAlert('info', 'Document which moderation mechanisms are implemented and their effectiveness.'));
@@ -243,20 +259,20 @@
         var m = state.mechanisms[mech.id];
         var group = el('div', { style: 'margin-bottom: 10px; padding: 10px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [mech.label]));
-        group.appendChild(createToggle('Implemented?', m.implemented, function(v) { m.implemented = v; }));
+        group.appendChild(createToggle('Implemented?', m.implemented, function(v) { m.implemented = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Provider / tool', m.provider, function(v) { m.provider = v; }, 'e.g. OpenAI Moderation API, custom model, Perspective API'));
         group.appendChild(createTextInput('Measured accuracy / effectiveness', m.accuracy, function(v) { m.accuracy = v; }, 'e.g. 97.3% precision, <0.1% false positive rate'));
         group.appendChild(createTextInput('Notes', m.notes, function(v) { m.notes = v; }, 'Configuration details, thresholds, etc.'));
         section.appendChild(group);
       })(moderationMechanisms[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep4() {
+  function renderStep4(container) {
     var items = [];
     items.push(createAlert('warning', 'China Interim Measures for the Management of Generative AI Services (effective August 15, 2023) require specific content safety controls. Complete this section if your system operates in or serves users in China.'));
-    items.push(createToggle('China market applicable?', state.china.applicable, function(v) { state.china.applicable = v; }));
+    items.push(createToggle('China market applicable?', state.china.applicable, function(v) { state.china.applicable = v; wizard.saveNow(); }));
 
     var reqSection = el('div', { style: 'margin-top: 16px;' });
     reqSection.appendChild(el('h3', {}, ['China GenAI Requirements']));
@@ -264,7 +280,7 @@
       (function(req) {
         var r = state.china.requirements[req.id];
         var group = el('div', { style: 'margin-bottom: 8px; padding: 10px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
-        group.appendChild(createToggle(req.label, r.compliant, function(v) { r.compliant = v; }));
+        group.appendChild(createToggle(req.label, r.compliant, function(v) { r.compliant = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Implementation notes', r.notes, function(v) { r.notes = v; }, 'How this requirement is met'));
         reqSection.appendChild(group);
       })(chinaRequirements[i]);
@@ -278,30 +294,30 @@
     dateRow.appendChild(dateInput);
     items.push(dateRow);
     items.push(createTextArea('Additional China compliance notes', state.china.notes, function(v) { state.china.notes = v; }, 'Any additional details about China market compliance'));
-    document.body.appendChild(createSection('Step 4: China GenAI Compliance', items));
+    container.appendChild(createSection('Step 4: China GenAI Compliance', items));
   }
 
-  function renderStep5() {
+  function renderStep5(container) {
     var items = [];
     items.push(createAlert('info', 'The EU Digital Services Act (DSA) imposes content moderation obligations on platforms. Very Large Online Platforms (VLOPs) face additional systemic risk assessment requirements.'));
-    items.push(createToggle('EU DSA applicable?', state.dsa.applicable, function(v) { state.dsa.applicable = v; }));
-    items.push(createToggle('Designated as VLOP/VLOSE?', state.dsa.vlop, function(v) { state.dsa.vlop = v; }));
-    items.push(createToggle('Transparency reporting implemented?', state.dsa.transparencyReporting, function(v) { state.dsa.transparencyReporting = v; }));
+    items.push(createToggle('EU DSA applicable?', state.dsa.applicable, function(v) { state.dsa.applicable = v; wizard.saveNow(); }));
+    items.push(createToggle('Designated as VLOP/VLOSE?', state.dsa.vlop, function(v) { state.dsa.vlop = v; wizard.saveNow(); }));
+    items.push(createToggle('Transparency reporting implemented?', state.dsa.transparencyReporting, function(v) { state.dsa.transparencyReporting = v; wizard.saveNow(); }));
     items.push(createSelect('Reporting frequency', [
       { value: '', label: '-- Select --' },
       { value: 'biannual', label: 'Bi-annually (standard)' },
       { value: 'annual', label: 'Annually (VLOP)' },
       { value: 'quarterly', label: 'Quarterly' }
     ], state.dsa.reportingFrequency, function(v) { state.dsa.reportingFrequency = v; }));
-    items.push(createToggle('Trusted flagger program?', state.dsa.trustedFlaggers, function(v) { state.dsa.trustedFlaggers = v; }));
+    items.push(createToggle('Trusted flagger program?', state.dsa.trustedFlaggers, function(v) { state.dsa.trustedFlaggers = v; wizard.saveNow(); }));
     items.push(createTextArea('Trusted flagger process', state.dsa.trustedFlaggerProcess, function(v) { state.dsa.trustedFlaggerProcess = v; }, 'Describe how trusted flagger reports are prioritized'));
-    items.push(createToggle('Complaint mechanism available?', state.dsa.complaintMechanism, function(v) { state.dsa.complaintMechanism = v; }));
+    items.push(createToggle('Complaint mechanism available?', state.dsa.complaintMechanism, function(v) { state.dsa.complaintMechanism = v; wizard.saveNow(); }));
     items.push(createTextArea('Complaint mechanism description', state.dsa.complaintDescription, function(v) { state.dsa.complaintDescription = v; }, 'Describe the internal complaint-handling system'));
-    items.push(createToggle('Out-of-court dispute resolution?', state.dsa.outOfCourtResolution, function(v) { state.dsa.outOfCourtResolution = v; }));
+    items.push(createToggle('Out-of-court dispute resolution?', state.dsa.outOfCourtResolution, function(v) { state.dsa.outOfCourtResolution = v; wizard.saveNow(); }));
 
     var systemic = el('div', { style: 'margin-top: 16px; padding: 12px; border: 1px solid #D4943A55; border-radius: 4px; background: #D4943A11;' });
     systemic.appendChild(el('h3', {}, ['Systemic Risk Assessment (VLOP/VLOSE only)']));
-    systemic.appendChild(createToggle('Systemic risk identified?', state.dsa.systemic.riskIdentified, function(v) { state.dsa.systemic.riskIdentified = v; }));
+    systemic.appendChild(createToggle('Systemic risk identified?', state.dsa.systemic.riskIdentified, function(v) { state.dsa.systemic.riskIdentified = v; wizard.saveNow(); }));
     systemic.appendChild(createTextArea('Risk description', state.dsa.systemic.riskDescription, function(v) { state.dsa.systemic.riskDescription = v; }, 'Describe identified systemic risks (e.g., election manipulation, public health misinformation)'));
     systemic.appendChild(createTextArea('Mitigation measures', state.dsa.systemic.mitigations, function(v) { state.dsa.systemic.mitigations = v; }, 'Measures taken to mitigate systemic risks'));
     var auditDateRow = el('div', { className: 'field-row' });
@@ -320,7 +336,7 @@
     items.push(systemic);
 
     items.push(createTextArea('Additional DSA compliance notes', state.dsa.notes, function(v) { state.dsa.notes = v; }, 'Any additional details about EU DSA compliance'));
-    document.body.appendChild(createSection('Step 5: EU DSA Compliance', items));
+    container.appendChild(createSection('Step 5: EU DSA Compliance', items));
   }
 
   function calcSectionScore(sectionId) {
@@ -352,7 +368,7 @@
     return { filled: filled, total: total };
   }
 
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 6: Review & Export']));
     var sections = [
@@ -403,7 +419,7 @@
     exportBar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
     exportBar.appendChild(el('button', { className: 'btn success', textContent: 'Save Config', onClick: doSave }));
     section.appendChild(exportBar);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function loadState() {
@@ -541,7 +557,7 @@
     exportMarkdown('content-moderation-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

@@ -12,8 +12,6 @@
   injectCSS();
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 6;
 
   var stepLabels = ['System Info', 'Standards Mapping', 'Assessment Type', 'Evidence Cross-Reference', 'Outcome & Gaps', 'Review & Export'];
 
@@ -94,50 +92,44 @@
   }
   initState();
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['Conformity Assessment']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, ['Template 19 \u2014 EU AI Act Arts. 40-49, Annex VI-VII; ISO/IEC 42001; Sector-Specific Standards']));
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-    renderProgress();
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderStep5();
-    else if (currentStep === 5) renderSummary();
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: stepLabels[i] }));
+  var wizard = createWizard({
+    title: 'Conformity Assessment',
+    subtitle: 'Template 19 \u2014 EU AI Act Arts. 40-49, Annex VI-VII; ISO/IEC 42001; Sector-Specific Standards',
+    totalSteps: 6,
+    stepLabels: stepLabels,
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderStep5(container);
+      else if (step === 5) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'conformityAssessment',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.systemInfo) { for (var k in s.systemInfo) { state.systemInfo[k] = s.systemInfo[k]; } }
+      if (s.standards) { for (var k in s.standards) { state.standards[k] = s.standards[k]; } }
+      if (s.assessmentType) { for (var k in s.assessmentType) { state.assessmentType[k] = s.assessmentType[k]; } }
+      if (s.evidence) { for (var k in s.evidence) { state.evidence[k] = s.evidence[k]; } }
+      if (s.outcome) {
+        if (s.outcome.overallResult !== undefined) state.outcome.overallResult = s.outcome.overallResult;
+        if (s.outcome.summaryFindings !== undefined) state.outcome.summaryFindings = s.outcome.summaryFindings;
+        if (s.outcome.gaps) state.outcome.gaps = s.outcome.gaps;
+        if (s.outcome.declarationOfConformity !== undefined) state.outcome.declarationOfConformity = s.outcome.declarationOfConformity;
+        if (s.outcome.ceMarkingApplicable !== undefined) state.outcome.ceMarkingApplicable = s.outcome.ceMarkingApplicable;
+        if (s.outcome.nextReviewDate !== undefined) state.outcome.nextReviewDate = s.outcome.nextReviewDate;
+      }
+      initState();
     }
-    document.body.appendChild(prog);
-  }
+  });
 
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else { nav.appendChild(el('span')); }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
-
-  function renderStep1() {
+  function renderStep1(container) {
     var items = [];
     items.push(createAlert('info', 'Load your compliance config to pre-fill system information, or enter details manually.'));
     if (config.systemInfo) {
@@ -166,10 +158,10 @@
       { value: 'notified-body', label: 'Notified Body Representative' },
       { value: 'legal-counsel', label: 'Legal Counsel' }
     ], state.systemInfo.assessorRole, function(v) { state.systemInfo.assessorRole = v; }));
-    document.body.appendChild(createSection('Step 1: System Information', items));
+    container.appendChild(createSection('Step 1: System Information', items));
   }
 
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Applicable Standards Mapping']));
     section.appendChild(createAlert('info', 'Identify which standards apply to your AI system. For EU AI Act high-risk systems, harmonised standards provide presumption of conformity (Art. 40).'));
@@ -178,7 +170,7 @@
         var std = state.standards[cat.id];
         var group = el('div', { style: 'margin-bottom: 12px; padding: 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [cat.label]));
-        group.appendChild(createToggle('Applicable?', std.applicable, function(v) { std.applicable = v; }));
+        group.appendChild(createToggle('Applicable?', std.applicable, function(v) { std.applicable = v; wizard.saveNow(); }));
         group.appendChild(createSelect('Compliance status', [
           { value: '', label: '-- Select --' },
           { value: 'not-started', label: 'Not started' },
@@ -191,10 +183,10 @@
         section.appendChild(group);
       })(standardCategories[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep3() {
+  function renderStep3(container) {
     var items = [];
     items.push(createAlert('warning', 'EU AI Act requires third-party conformity assessment for high-risk biometric and critical infrastructure systems (Annex III). Self-assessment is permitted for other high-risk categories if harmonised standards are followed.'));
     items.push(createSelect('Assessment approach', [
@@ -222,10 +214,10 @@
     dateInput.addEventListener('change', function() { state.assessmentType.targetCompletionDate = dateInput.value; });
     dateRow.appendChild(dateInput);
     items.push(dateRow);
-    document.body.appendChild(createSection('Step 3: Assessment Type Decision', items));
+    container.appendChild(createSection('Step 3: Assessment Type Decision', items));
   }
 
-  function renderStep4() {
+  function renderStep4(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Evidence Cross-Reference']));
     section.appendChild(createAlert('info', 'Check each template whose evidence is available. This creates a traceable link between your conformity assessment and the supporting documentation (Templates 01-18).'));
@@ -237,16 +229,16 @@
         header.appendChild(el('span', { className: 'badge enacted' }, ['T' + tmpl.num]));
         header.appendChild(el('span', { style: 'font-size: 0.9em;' }, [tmpl.label]));
         group.appendChild(header);
-        group.appendChild(createToggle('Evidence available?', ev.available, function(v) { ev.available = v; }));
+        group.appendChild(createToggle('Evidence available?', ev.available, function(v) { ev.available = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Evidence location', ev.location, function(v) { ev.location = v; }, 'File path, URL, or document reference'));
         group.appendChild(createTextInput('Notes', ev.notes, function(v) { ev.notes = v; }, 'Status, version, or caveats'));
         section.appendChild(group);
       })(templateCrossRef[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep5() {
+  function renderStep5(container) {
     var items = [];
     items.push(createAlert('info', 'Document the overall assessment result. Identify any gaps requiring remediation before the EU AI Act compliance deadline (August 2, 2026 for high-risk systems).'));
     items.push(createSelect('Overall assessment result', [
@@ -257,8 +249,8 @@
       { value: 'in-progress', label: 'Assessment in progress' }
     ], state.outcome.overallResult, function(v) { state.outcome.overallResult = v; }));
     items.push(createTextArea('Summary of findings', state.outcome.summaryFindings, function(v) { state.outcome.summaryFindings = v; }, 'High-level summary of the conformity assessment findings'));
-    items.push(createToggle('Declaration of Conformity drafted?', state.outcome.declarationOfConformity, function(v) { state.outcome.declarationOfConformity = v; }));
-    items.push(createToggle('CE Marking applicable?', state.outcome.ceMarkingApplicable, function(v) { state.outcome.ceMarkingApplicable = v; }));
+    items.push(createToggle('Declaration of Conformity drafted?', state.outcome.declarationOfConformity, function(v) { state.outcome.declarationOfConformity = v; wizard.saveNow(); }));
+    items.push(createToggle('CE Marking applicable?', state.outcome.ceMarkingApplicable, function(v) { state.outcome.ceMarkingApplicable = v; wizard.saveNow(); }));
     var dateRow = el('div', { className: 'field-row' });
     dateRow.appendChild(el('label', { className: 'field-label' }, ['Next review date']));
     var dateInput = el('input', { type: 'date', className: 'field-input', value: state.outcome.nextReviewDate || '' });
@@ -291,7 +283,7 @@
       })(state.outcome.gaps[i], i);
     }
     items.push(gapSection);
-    document.body.appendChild(createSection('Step 5: Assessment Outcome & Gaps', items));
+    container.appendChild(createSection('Step 5: Assessment Outcome & Gaps', items));
   }
 
   function calcSectionScore(sectionId) {
@@ -317,7 +309,7 @@
     return { filled: filled, total: total };
   }
 
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 6: Review & Export']));
     var sections = [
@@ -376,7 +368,7 @@
     exportBar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
     exportBar.appendChild(el('button', { className: 'btn success', textContent: 'Save Config', onClick: doSave }));
     section.appendChild(exportBar);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function loadState() {
@@ -500,7 +492,7 @@
     exportMarkdown('conformity-assessment-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

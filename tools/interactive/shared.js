@@ -199,3 +199,131 @@ function injectCSS() {
   style.textContent = SHARED_CSS;
   document.head.appendChild(style);
 }
+
+// --- Session persistence ---
+// Auto-saves form state to sessionStorage so browser reloads don't lose data.
+function persistState(key, state) {
+  try { sessionStorage.setItem('wizard_' + key, JSON.stringify(state)); } catch(e) {}
+}
+function restoreState(key) {
+  try {
+    var raw = sessionStorage.getItem('wizard_' + key);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+function persistStep(key, step) {
+  try { sessionStorage.setItem('wizard_step_' + key, String(step)); } catch(e) {}
+}
+function restoreStep(key) {
+  try {
+    var raw = sessionStorage.getItem('wizard_step_' + key);
+    return raw !== null ? parseInt(raw, 10) : 0;
+  } catch(e) { return 0; }
+}
+
+// --- Wizard framework ---
+// Renders page chrome (title, toolbar, progress, nav) once.
+// Only the step content area is rebuilt on state changes.
+// This prevents full-page DOM wipes that destroy in-progress input data.
+// Optional: pass stateKey + getState + setState for auto-persist across reloads.
+function createWizard(opts) {
+  // opts: { title, subtitle, totalSteps, stepLabels, renderStep, onSave, onExport, onLoad,
+  //         stateKey, getState, setState }
+  var _currentStep = opts.stateKey ? restoreStep(opts.stateKey) : 0;
+  if (_currentStep >= opts.totalSteps) _currentStep = 0;
+  var _built = false;
+  var _stepContainer = null;
+  var _progressContainer = null;
+  var _navContainer = null;
+
+  function buildChrome() {
+    document.body.textContent = '';
+    document.body.appendChild(el('h1', {}, [opts.title]));
+    if (opts.subtitle) document.body.appendChild(el('p', { className: 'subtitle' }, [opts.subtitle]));
+
+    var toolbar = el('div', { className: 'toolbar' });
+    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
+      if (opts.onLoad) opts.onLoad();
+    }}));
+    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: function() {
+      if (opts.onSave) opts.onSave();
+    }}));
+    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: function() {
+      if (opts.onExport) opts.onExport();
+    }}));
+    document.body.appendChild(toolbar);
+
+    _progressContainer = el('div', { className: 'progress' });
+    document.body.appendChild(_progressContainer);
+
+    _stepContainer = el('div', { id: 'step-container' });
+    if (opts.stateKey && opts.getState) {
+      var _saveTimer = null;
+      _stepContainer.addEventListener('input', function() {
+        clearTimeout(_saveTimer);
+        _saveTimer = setTimeout(function() {
+          persistState(opts.stateKey, opts.getState());
+        }, 300);
+      });
+    }
+    document.body.appendChild(_stepContainer);
+
+    _navContainer = el('div', { className: 'step-nav' });
+    document.body.appendChild(_navContainer);
+
+    _built = true;
+  }
+
+  function updateProgress() {
+    _progressContainer.textContent = '';
+    for (var i = 0; i < opts.totalSteps; i++) {
+      var cls = 'progress-dot';
+      if (i === _currentStep) cls += ' active';
+      else if (i < _currentStep) cls += ' done';
+      _progressContainer.appendChild(el('span', { className: cls, title: opts.stepLabels[i] }));
+    }
+  }
+
+  function updateNav() {
+    _navContainer.textContent = '';
+    if (_currentStep > 0) {
+      _navContainer.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { _currentStep--; refreshStep(); } }));
+    } else {
+      _navContainer.appendChild(el('span'));
+    }
+    if (_currentStep < opts.totalSteps - 1) {
+      _navContainer.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { _currentStep++; refreshStep(); } }));
+    }
+  }
+
+  function refreshStep() {
+    if (!_built) buildChrome();
+    var scrollY = window.scrollY;
+    _stepContainer.textContent = '';
+    updateProgress();
+    opts.renderStep(_currentStep, _stepContainer);
+    updateNav();
+    if (opts.stateKey) {
+      persistStep(opts.stateKey, _currentStep);
+      if (opts.getState) persistState(opts.stateKey, opts.getState());
+    }
+    requestAnimationFrame(function() { window.scrollTo(0, scrollY); });
+  }
+
+  return {
+    render: function() {
+      if (opts.stateKey && opts.setState) {
+        var saved = restoreState(opts.stateKey);
+        if (saved) opts.setState(saved);
+      }
+      buildChrome();
+      refreshStep();
+    },
+    refreshStep: refreshStep,
+    saveNow: function() {
+      if (opts.stateKey && opts.getState) persistState(opts.stateKey, opts.getState());
+    },
+    getCurrentStep: function() { return _currentStep; },
+    setStep: function(s) { _currentStep = s; refreshStep(); }
+  };
+}
