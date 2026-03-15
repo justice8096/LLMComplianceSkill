@@ -30,5 +30,13 @@
     "configLastUpdated": "YYYY-MM-DD"
   },
   "completedTemplates": {},
-  "interactiveToolResults": {}
+  "interactiveToolResults": {
+    "llmSelector": {
+      "usesLlm": "third-party",
+      "selectedModels": [],
+      "customModels": [],
+      "deployments": {},
+      "notes": ""
+    }
+  }
 }
