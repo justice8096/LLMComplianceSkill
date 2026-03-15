@@ -12,9 +12,6 @@
   injectCSS();
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 5;
-  var stepLabels = ['Requirements', 'Copy Design', 'Checklist', 'Evidence Log', 'Summary'];
 
   var disclosureTypes = [
     { id: 'aiInteraction', label: 'AI Interaction Notice', badges: [
@@ -99,49 +96,35 @@
   }
   initState();
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['User-Facing Disclosure Toolkit']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, ['Template 02 \u2014 EU Art. 50; South Korea; China GenAI; Utah; California SB 942; Colorado; NYC LL 144; Illinois AIVIA']));
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-    renderProgress();
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderSummary();
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: stepLabels[i] }));
+  var wizard = createWizard({
+    title: 'User-Facing Disclosure Toolkit',
+    subtitle: 'Template 02 \u2014 EU Art. 50; South Korea; China GenAI; Utah; California SB 942; Colorado; NYC LL 144; Illinois AIVIA',
+    totalSteps: 5,
+    stepLabels: ['Requirements', 'Copy Design', 'Checklist', 'Evidence Log', 'Summary'],
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'disclosureToolkit',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.requirements) state.requirements = s.requirements;
+      if (s.copyDesign) state.copyDesign = s.copyDesign;
+      if (s.checklist) state.checklist = s.checklist;
+      if (s.evidenceLog) state.evidenceLog = s.evidenceLog;
+      initState();
     }
-    document.body.appendChild(prog);
-  }
+  });
 
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else { nav.appendChild(el('span')); }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
-
-  function renderStep1() {
+  function renderStep1(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 1: Disclosure Requirements Matrix']));
     section.appendChild(createAlert('info', 'Identify which disclosure types apply to your system and whether they have been implemented.'));
@@ -155,15 +138,15 @@
           badgeRow.appendChild(el('span', { className: 'badge ' + dt.badges[b].cls }, [dt.badges[b].text]));
         }
         group.appendChild(badgeRow);
-        group.appendChild(createToggle('Applies to your system?', req.applies, function(v) { req.applies = v; }));
-        group.appendChild(createToggle('Implemented?', req.implemented, function(v) { req.implemented = v; }));
+        group.appendChild(createToggle('Applies to your system?', req.applies, function(v) { req.applies = v; wizard.saveNow(); }));
+        group.appendChild(createToggle('Implemented?', req.implemented, function(v) { req.implemented = v; wizard.saveNow(); }));
         section.appendChild(group);
       })(disclosureTypes[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Disclosure Copy Design']));
     section.appendChild(createAlert('info', 'For each applicable disclosure, design the user-facing copy. Select a variation to pre-populate a suggestion.'));
@@ -184,21 +167,21 @@
           if (v && defaultCopy[dt.id] && defaultCopy[dt.id][v] && !cd.copyText) {
             cd.copyText = defaultCopy[dt.id][v];
           }
-          render();
+          wizard.refreshStep();
         }));
         group.appendChild(createTextArea('Actual copy text', cd.copyText, function(v) { cd.copyText = v; }, 'Enter the disclosure text shown to users'));
         group.appendChild(createTextInput('Placement location', cd.placement, function(v) { cd.placement = v; }, 'e.g. Modal dialog, banner, footer, in-chat'));
-        group.appendChild(createToggle('Available in all required languages?', cd.allLanguages, function(v) { cd.allLanguages = v; }));
+        group.appendChild(createToggle('Available in all required languages?', cd.allLanguages, function(v) { cd.allLanguages = v; wizard.saveNow(); }));
         section.appendChild(group);
       })(disclosureTypes[i]);
     }
     if (!anyApplicable) {
       section.appendChild(createAlert('warning', 'No disclosure types marked as applicable. Go back to Step 1 to identify applicable disclosures.'));
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Implementation Checklist']));
     section.appendChild(createAlert('info', 'Track implementation progress across design, coding, and testing phases.'));
@@ -217,7 +200,7 @@
             var checked = state.checklist[phase.id][key] || false;
             var cb = el('input', { type: 'checkbox' });
             cb.checked = checked;
-            cb.addEventListener('change', function() { state.checklist[phase.id][key] = cb.checked; });
+            cb.addEventListener('change', function() { state.checklist[phase.id][key] = cb.checked; wizard.saveNow(); });
             var row = el('div', { className: 'checklist-item' });
             row.appendChild(cb);
             row.appendChild(el('label', {}, [item]));
@@ -227,10 +210,10 @@
         section.appendChild(phaseSection);
       })(phases[p]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep4() {
+  function renderStep4(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Evidence Log']));
     section.appendChild(createAlert('info', 'Document evidence of each disclosure implementation for audit purposes.'));
@@ -241,7 +224,7 @@
         var header = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;' });
         header.appendChild(el('h3', {}, ['Evidence Entry ' + (idx + 1)]));
         header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.75em;', onClick: function() {
-          state.evidenceLog.splice(idx, 1); render();
+          state.evidenceLog.splice(idx, 1); wizard.refreshStep();
         }}));
         group.appendChild(header);
         var typeOpts = [{ value: '', label: '-- Select type --' }];
@@ -262,12 +245,12 @@
       })(i);
     }
     section.appendChild(el('button', { className: 'btn', textContent: '+ Add Evidence Entry', onClick: function() {
-      state.evidenceLog.push({ type: '', location: '', screenshot: '', dateVerified: '', verifiedBy: '' }); render();
+      state.evidenceLog.push({ type: '', location: '', screenshot: '', dateVerified: '', verifiedBy: '' }); wizard.refreshStep();
     }}));
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 5: Summary']));
     var applicableCount = 0; var implementedCount = 0;
@@ -312,7 +295,7 @@
     exportBar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
     exportBar.appendChild(el('button', { className: 'btn success', textContent: 'Save Config', onClick: doSave }));
     section.appendChild(exportBar);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function addRow(tbody, metric, value, scoreCls) {
@@ -423,7 +406,7 @@
     exportMarkdown('disclosure-toolkit-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

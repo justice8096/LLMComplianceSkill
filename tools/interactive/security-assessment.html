@@ -38,8 +38,6 @@
   document.head.appendChild(style);
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 5;
 
   var THREATS = [
     { id: 'promptInjectionDirect', label: 'Prompt injection (direct)' },
@@ -118,59 +116,37 @@
     return THREATS.filter(function(t) { return state.threats[t.id].applicable; });
   }
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['AI Security Assessment Tool']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, [
-      'Template 15 -- Serves EU AI Act Art. 15, UK DUA Act, China GenAI Security Specs'
-    ]));
-
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-
-    renderProgress();
-
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderSummary();
-
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    var labels = ['Threat Model', 'Security Controls', 'China Requirements', 'Infrastructure', 'Summary'];
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: labels[i] }));
+  var wizard = createWizard({
+    title: 'AI Security Assessment Tool',
+    subtitle: 'Template 15 -- Serves EU AI Act Art. 15, UK DUA Act, China GenAI Security Specs',
+    totalSteps: 5,
+    stepLabels: ['Threat Model', 'Security Controls', 'China Requirements', 'Infrastructure', 'Summary'],
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'securityAssessment',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.threats) state.threats = s.threats;
+      if (s.controls) state.controls = s.controls;
+      if (s.china) state.china = s.china;
+      if (s.infrastructure) state.infrastructure = s.infrastructure;
+      if (s.penTestSchedule !== undefined) state.penTestSchedule = s.penTestSchedule;
+      if (s.incidentResponseRef !== undefined) state.incidentResponseRef = s.incidentResponseRef;
     }
-    document.body.appendChild(prog);
-  }
-
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else {
-      nav.appendChild(el('span'));
-    }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
+  });
 
   // Step 1: Threat Model
-  function renderStep1() {
+  function renderStep1(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 1: Threat Model']));
     section.appendChild(createAlert('info', 'Identify applicable threats to your AI system. For each applicable threat, set the severity level. EU AI Act Art. 15 requires AI systems to be resilient against attempts by unauthorized third parties.'));
@@ -189,13 +165,13 @@
 
       card.appendChild(createToggle('Applicable', tState.applicable, function(v) {
         tState.applicable = v;
-        render();
+        wizard.refreshStep();
       }));
 
       if (tState.applicable) {
         card.appendChild(createSelect('Severity', SEVERITY_OPTIONS, tState.severity, function(v) {
           tState.severity = v;
-          render();
+          wizard.refreshStep();
         }));
       }
 
@@ -216,11 +192,11 @@
       section.appendChild(createAlert(alertType, summaryText));
     }
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 2: Security Controls
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Security Controls']));
 
@@ -228,7 +204,7 @@
 
     if (identified.length === 0) {
       section.appendChild(createAlert('info', 'No threats identified in Step 1. Go back to identify applicable threats, or proceed if no threats apply.'));
-      document.body.appendChild(section);
+      container.appendChild(section);
       return;
     }
 
@@ -264,23 +240,23 @@
       section.appendChild(card);
     });
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 3: China-Specific Requirements
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: China-Specific Requirements']));
     section.appendChild(createAlert('info', 'Skip this step if China is not in your target jurisdictions. These requirements apply under China GenAI Measures and related security specifications.'));
 
     section.appendChild(createToggle('China is a target jurisdiction', state.china.applicable, function(v) {
       state.china.applicable = v;
-      render();
+      wizard.refreshStep();
     }));
 
     if (!state.china.applicable) {
       section.appendChild(createAlert('success', 'China requirements skipped. Proceed to next step.'));
-      document.body.appendChild(section);
+      container.appendChild(section);
       return;
     }
 
@@ -289,22 +265,27 @@
 
     chinaDiv.appendChild(createToggle('Pre-training data security assessment completed', state.china.preTrainingAssessment, function(v) {
       state.china.preTrainingAssessment = v;
+      wizard.saveNow();
     }));
 
     chinaDiv.appendChild(createToggle('GenAI safety evaluation passed', state.china.safetyEvaluation, function(v) {
       state.china.safetyEvaluation = v;
+      wizard.saveNow();
     }));
 
     chinaDiv.appendChild(createToggle('Content security mechanisms in place', state.china.contentSecurity, function(v) {
       state.china.contentSecurity = v;
+      wizard.saveNow();
     }));
 
     chinaDiv.appendChild(createToggle('Algorithm filing completed', state.china.algorithmFiling, function(v) {
       state.china.algorithmFiling = v;
+      wizard.saveNow();
     }));
 
     chinaDiv.appendChild(createToggle('Data annotation management documented', state.china.dataAnnotation, function(v) {
       state.china.dataAnnotation = v;
+      wizard.saveNow();
     }));
 
     var chinaFields = ['preTrainingAssessment', 'safetyEvaluation', 'contentSecurity', 'algorithmFiling', 'dataAnnotation'];
@@ -318,11 +299,11 @@
     }
 
     section.appendChild(chinaDiv);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 4: Infrastructure Security
-  function renderStep4() {
+  function renderStep4(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Infrastructure Security']));
     section.appendChild(createAlert('info', 'Assess the security posture of your AI infrastructure. EU AI Act Art. 15 requires appropriate levels of accuracy, robustness, and cybersecurity.'));
@@ -332,7 +313,7 @@
 
       section.appendChild(createToggle(item.label, iState.enabled, function(v) {
         iState.enabled = v;
-        render();
+        wizard.refreshStep();
       }));
 
       if (iState.enabled) {
@@ -357,11 +338,11 @@
     var alertType = infraPct >= 80 ? 'success' : infraPct >= 50 ? 'warning' : 'danger';
     section.appendChild(createAlert(alertType, 'Infrastructure checklist: ' + infraComplete + '/' + INFRA_ITEMS.length + ' controls enabled (' + infraPct + '%).'));
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   // Step 5: Summary
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 5: Security Assessment Summary']));
 
@@ -492,7 +473,7 @@
 
     section.appendChild(createAlert('info', 'This is compliance research evidence, not legal advice. Review with qualified security and legal professionals before deployment.'));
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function computePostureScore(coveragePct, infraPct, bySeverity) {
@@ -644,7 +625,7 @@
     exportMarkdown('security-assessment-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

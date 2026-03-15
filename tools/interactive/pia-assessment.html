@@ -59,18 +59,6 @@
   document.head.appendChild(extraStyle);
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 8;
-  var stepLabels = [
-    'Processing Activity',
-    'Necessity & Proportionality',
-    'Data Subject Risks',
-    'AI-Specific Risks',
-    'Data Subject Rights',
-    'Protection Measures',
-    'Consultation',
-    'Outcome & Summary'
-  ];
 
   var personalDataTypes = ['Identity', 'Contact', 'Financial', 'Health', 'Biometric', 'Behavioral', 'Location', "Children's", 'Criminal'];
   var legalBasisOptions = [
@@ -343,73 +331,71 @@
     exportMarkdown('pia-assessment.md', md);
   }
 
-  // --- RENDER ---
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['Privacy Impact Assessment Tool']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, [
-      'Template 07 \u2014 Serves EU GDPR Art. 35, UK GDPR/DUA Act, India DPDPA, Brazil LGPD, Australia Privacy Act, 17 jurisdictions'
-    ]));
-
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-
-    renderProgress();
-
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderStep5();
-    else if (currentStep === 5) renderStep6();
-    else if (currentStep === 6) renderStep7();
-    else if (currentStep === 7) renderStep8();
-
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      var dot = el('div', { className: cls, title: stepLabels[i] });
-      prog.appendChild(dot);
+  var wizard = createWizard({
+    title: 'Privacy Impact Assessment Tool',
+    subtitle: 'Template 07 \u2014 Serves EU GDPR Art. 35, UK GDPR/DUA Act, India DPDPA, Brazil LGPD, Australia Privacy Act, 17 jurisdictions',
+    totalSteps: 8,
+    stepLabels: [
+      'Processing Activity',
+      'Necessity & Proportionality',
+      'Data Subject Risks',
+      'AI-Specific Risks',
+      'Data Subject Rights',
+      'Protection Measures',
+      'Consultation',
+      'Outcome & Summary'
+    ],
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderStep5(container);
+      else if (step === 5) renderStep6(container);
+      else if (step === 6) renderStep7(container);
+      else if (step === 7) renderStep8(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'piaAssessment',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.processing) {
+        if (s.processing.dataTypes) { for (var k in s.processing.dataTypes) { state.processing.dataTypes[k] = s.processing.dataTypes[k]; } }
+        if (s.processing.purpose !== undefined) state.processing.purpose = s.processing.purpose;
+        if (s.processing.legalBasis !== undefined) state.processing.legalBasis = s.processing.legalBasis;
+        if (s.processing.subjects) { for (var k in s.processing.subjects) { state.processing.subjects[k] = s.processing.subjects[k]; } }
+        if (s.processing.estimatedSubjects !== undefined) state.processing.estimatedSubjects = s.processing.estimatedSubjects;
+        if (s.processing.specialCategory !== undefined) state.processing.specialCategory = s.processing.specialCategory;
+        if (s.processing.art9Condition !== undefined) state.processing.art9Condition = s.processing.art9Condition;
+        if (s.processing.crossBorder !== undefined) state.processing.crossBorder = s.processing.crossBorder;
+        if (s.processing.crossBorderCountry !== undefined) state.processing.crossBorderCountry = s.processing.crossBorderCountry;
+        if (s.processing.transferMechanism !== undefined) state.processing.transferMechanism = s.processing.transferMechanism;
+        if (s.processing.retentionPeriod !== undefined) state.processing.retentionPeriod = s.processing.retentionPeriod;
+        if (s.processing.processors !== undefined) state.processing.processors = s.processing.processors;
+      }
+      if (s.necessity) state.necessity = s.necessity;
+      if (s.dsRisks) state.dsRisks = s.dsRisks;
+      if (s.aiRisks) state.aiRisks = s.aiRisks;
+      if (s.rights) state.rights = s.rights;
+      if (s.measures) state.measures = s.measures;
+      if (s.consultation) state.consultation = s.consultation;
+      if (s.outcome) {
+        if (s.outcome.overallRisk !== undefined) state.outcome.overallRisk = s.outcome.overallRisk;
+        if (s.outcome.decision !== undefined) state.outcome.decision = s.outcome.decision;
+        if (s.outcome.conditions !== undefined) state.outcome.conditions = s.outcome.conditions;
+        if (s.outcome.approvedBy !== undefined) state.outcome.approvedBy = s.outcome.approvedBy;
+        if (s.outcome.dpoOpinion !== undefined) state.outcome.dpoOpinion = s.outcome.dpoOpinion;
+      }
+      initState();
     }
-    document.body.appendChild(prog);
-  }
-
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: '\u2190 Previous', onClick: function() {
-        saveState(); currentStep--; render();
-      }}));
-    } else {
-      nav.appendChild(el('span'));
-    }
-    var label = el('span', { className: 'subtitle' }, [
-      'Step ' + (currentStep + 1) + ' of ' + totalSteps + ': ' + stepLabels[currentStep]
-    ]);
-    nav.appendChild(label);
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next \u2192', onClick: function() {
-        saveState(); currentStep++; render();
-      }}));
-    } else {
-      nav.appendChild(el('span'));
-    }
-    document.body.appendChild(nav);
-  }
+  });
 
   // ========== STEP 1: Processing Activity ==========
-  function renderStep1() {
+  function renderStep1(container) {
     var items = [];
 
     items.push(el('h3', {}, ['Personal Data Types Processed']));
@@ -419,6 +405,7 @@
         var dt = personalDataTypes[idx];
         grid.appendChild(createToggle(dt, state.processing.dataTypes[dt], function(v) {
           state.processing.dataTypes[dt] = v;
+          wizard.saveNow();
         }));
       })(i);
     }
@@ -439,6 +426,7 @@
         var ds = dataSubjects[idx];
         sgrid.appendChild(createToggle(ds, state.processing.subjects[ds], function(v) {
           state.processing.subjects[ds] = v;
+          wizard.saveNow();
         }));
       })(i);
     }
@@ -450,7 +438,7 @@
 
     items.push(createToggle('Special category data (Art. 9)?', state.processing.specialCategory, function(v) {
       state.processing.specialCategory = v;
-      render();
+      wizard.refreshStep();
     }));
     if (state.processing.specialCategory === true) {
       items.push(createSelect('Art. 9 Condition', art9Conditions, state.processing.art9Condition, function(v) {
@@ -460,7 +448,7 @@
 
     items.push(createToggle('Cross-border transfers?', state.processing.crossBorder, function(v) {
       state.processing.crossBorder = v;
-      render();
+      wizard.refreshStep();
     }));
     if (state.processing.crossBorder === true) {
       items.push(createTextInput('Transfer destination country/countries', state.processing.crossBorderCountry, function(v) {
@@ -479,11 +467,11 @@
       state.processing.processors = v;
     }, 'List third-party processors (name, role, location)...'));
 
-    document.body.appendChild(createSection('Step 1: Processing Activity Description', items));
+    container.appendChild(createSection('Step 1: Processing Activity Description', items));
   }
 
   // ========== STEP 2: Necessity & Proportionality ==========
-  function renderStep2() {
+  function renderStep2(container) {
     var items = [];
 
     for (var i = 0; i < necessityQuestions.length; i++) {
@@ -493,7 +481,7 @@
         items.push(el('h3', {}, [(idx + 1) + '. ' + q]));
         items.push(createToggle('Answer', nItem.answer, function(v) {
           state.necessity[idx].answer = v;
-          render();
+          wizard.saveNow();
         }));
         items.push(createTextArea('Justification', nItem.justification, function(v) {
           state.necessity[idx].justification = v;
@@ -523,11 +511,11 @@
       items.push(createAlert('warning', warnings[w]));
     }
 
-    document.body.appendChild(createSection('Step 2: Necessity & Proportionality', items));
+    container.appendChild(createSection('Step 2: Necessity & Proportionality', items));
   }
 
   // ========== STEP 3: Data Subject Risks ==========
-  function renderStep3() {
+  function renderStep3(container) {
     var items = [];
     items.push(el('p', { className: 'subtitle' }, ['Assess each risk by selecting likelihood and severity. Mitigation is required for Medium risk and above.']));
 
@@ -535,11 +523,11 @@
       items.push(buildRiskRow(dataSubjectRisks[i], state.dsRisks[i], i, 'dsRisks'));
     }
 
-    document.body.appendChild(createSection('Step 3: Risk Assessment \u2014 Data Subject Risks', items));
+    container.appendChild(createSection('Step 3: Risk Assessment \u2014 Data Subject Risks', items));
   }
 
   // ========== STEP 4: AI-Specific Risks ==========
-  function renderStep4() {
+  function renderStep4(container) {
     var items = [];
     items.push(el('p', { className: 'subtitle' }, ['AI and machine learning introduce additional privacy risks. Assess each below.']));
 
@@ -547,7 +535,7 @@
       items.push(buildRiskRow(aiSpecificRisks[i], state.aiRisks[i], i, 'aiRisks'));
     }
 
-    document.body.appendChild(createSection('Step 4: Risk Assessment \u2014 AI-Specific Privacy Risks', items));
+    container.appendChild(createSection('Step 4: Risk Assessment \u2014 AI-Specific Privacy Risks', items));
   }
 
   function buildRiskRow(riskName, riskState, idx, stateKey) {
@@ -586,7 +574,7 @@
     lSel.className = 'field-select';
     lSel.style.cssText = 'flex:none;width:auto;padding:4px 8px;';
     lSel.addEventListener('change', (function(k, i2) {
-      return function() { state[k][i2].likelihood = lSel.value; render(); };
+      return function() { state[k][i2].likelihood = lSel.value; wizard.refreshStep(); };
     })(stateKey, idx));
 
     var sSel = el('select');
@@ -599,7 +587,7 @@
     sSel.className = 'field-select';
     sSel.style.cssText = 'flex:none;width:auto;padding:4px 8px;';
     sSel.addEventListener('change', (function(k, i2) {
-      return function() { state[k][i2].severity = sSel.value; render(); };
+      return function() { state[k][i2].severity = sSel.value; wizard.refreshStep(); };
     })(stateKey, idx));
 
     selects.appendChild(el('label', {}, ['Likelihood: ']));
@@ -628,7 +616,7 @@
   }
 
   // ========== STEP 5: Data Subject Rights ==========
-  function renderStep5() {
+  function renderStep5(container) {
     var items = [];
 
     var notes = [
@@ -653,7 +641,7 @@
 
         row.appendChild(createToggle('Implemented?', rState.implemented, function(v) {
           state.rights[idx].implemented = v;
-          render();
+          wizard.refreshStep();
         }));
 
         if (rState.implemented === true) {
@@ -678,11 +666,11 @@
       items.push(createAlert('danger', 'One or more data subject rights are not implemented. Under GDPR, all listed rights must be facilitated unless a specific exemption applies.'));
     }
 
-    document.body.appendChild(createSection('Step 5: Data Subject Rights Implementation', items));
+    container.appendChild(createSection('Step 5: Data Subject Rights Implementation', items));
   }
 
   // ========== STEP 6: Data Protection Measures ==========
-  function renderStep6() {
+  function renderStep6(container) {
     var items = [];
 
     var pct = getMeasureCompleteness();
@@ -707,7 +695,7 @@
 
         row.appendChild(createToggle('Implemented?', mState.implemented, function(v) {
           state.measures[idx].implemented = v;
-          render();
+          wizard.refreshStep();
         }));
 
         if (mState.implemented === true) {
@@ -729,11 +717,11 @@
       items.push(createAlert('danger', 'Critical measures missing: ' + criticalMissing.join(', ') + '. These are typically mandatory under GDPR Art. 32 and other data protection laws.'));
     }
 
-    document.body.appendChild(createSection('Step 6: Data Protection Measures', items));
+    container.appendChild(createSection('Step 6: Data Protection Measures', items));
   }
 
   // ========== STEP 7: Consultation Records ==========
-  function renderStep7() {
+  function renderStep7(container) {
     var items = [];
 
     for (var i = 0; i < consultees.length; i++) {
@@ -746,7 +734,7 @@
 
         row.appendChild(createToggle('Consulted?', cState.consulted, function(v) {
           state.consultation[idx].consulted = v;
-          render();
+          wizard.refreshStep();
         }));
 
         if (cState.consulted === true) {
@@ -756,6 +744,7 @@
           }, 'YYYY-MM-DD'));
           fields.appendChild(createToggle('Issues addressed?', cState.addressed, function(v) {
             state.consultation[idx].addressed = v;
+            wizard.saveNow();
           }));
           row.appendChild(fields);
           row.appendChild(createTextArea('Summary of input', cState.summary, function(v) {
@@ -772,11 +761,11 @@
       items.push(createAlert('danger', 'Data Protection Officer has not been consulted. Under GDPR Art. 35(2), the controller shall seek the advice of the DPO when carrying out a DPIA. This is mandatory.'));
     }
 
-    document.body.appendChild(createSection('Step 7: Consultation Records', items));
+    container.appendChild(createSection('Step 7: Consultation Records', items));
   }
 
   // ========== STEP 8: Outcome & Summary ==========
-  function renderStep8() {
+  function renderStep8(container) {
     var items = [];
 
     // Auto-suggest overall risk
@@ -787,7 +776,6 @@
 
     items.push(createSelect('Overall risk level after mitigation', overallRiskOptions, state.outcome.overallRisk, function(v) {
       state.outcome.overallRisk = v;
-      render();
     }));
     if (suggested) {
       items.push(el('div', { className: 'jurisdiction-note' }, ['Auto-suggested based on risk scores: ' + suggested.charAt(0).toUpperCase() + suggested.slice(1)]));
@@ -795,7 +783,7 @@
 
     items.push(createSelect('Decision', decisionOptions, state.outcome.decision, function(v) {
       state.outcome.decision = v;
-      render();
+      wizard.refreshStep();
     }));
 
     if (state.outcome.decision === 'proceed_conditions') {
@@ -889,7 +877,7 @@
     bottomBar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
     items.push(bottomBar);
 
-    document.body.appendChild(createSection('Step 8: Outcome & Summary', items));
+    container.appendChild(createSection('Step 8: Outcome & Summary', items));
   }
 
   function buildHeatmap() {
@@ -1116,7 +1104,7 @@
     return lines.join('\n');
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

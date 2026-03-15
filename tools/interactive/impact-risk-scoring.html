@@ -26,8 +26,6 @@
   document.head.appendChild(extraStyle);
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 4;
 
   var fundamentalRights = [
     { id: 'dignity', text: 'Right to dignity' },
@@ -148,55 +146,33 @@
     return result;
   }
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['Impact & Risk Assessment Scoring Tool']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, ['Template 06 \u2014 Serves EU AI Act Art. 9, Colorado SB 24-205, South Korea AI Basic Act']));
-
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-
-    renderProgress();
-
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderSummary();
-
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    var labels = ['Fundamental Rights', 'Risk Dimensions', 'Mitigation', 'Summary'];
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: labels[i] }));
+  var wizard = createWizard({
+    title: 'Impact & Risk Assessment Scoring Tool',
+    subtitle: 'Template 06 \u2014 Serves EU AI Act Art. 9, Colorado SB 24-205, South Korea AI Basic Act',
+    totalSteps: 4,
+    stepLabels: ['Fundamental Rights', 'Risk Dimensions', 'Mitigation', 'Summary'],
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'impactRiskScoring',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.rights) { for (var k in s.rights) { state.rights[k] = s.rights[k]; } }
+      if (s.dimensions) { for (var k in s.dimensions) { state.dimensions[k] = s.dimensions[k]; } }
+      if (s.mitigations) { for (var k in s.mitigations) { state.mitigations[k] = s.mitigations[k]; } }
+      initState();
     }
-    document.body.appendChild(prog);
-  }
+  });
 
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else {
-      nav.appendChild(el('span'));
-    }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
-
-  function renderStep1() {
+  function renderStep1(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 1: Fundamental Rights Impact Assessment']));
     section.appendChild(createAlert('info', 'For each fundamental right, indicate whether the AI system impacts it and describe the nature of the impact.'));
@@ -206,7 +182,7 @@
         var rs = state.rights[right.id];
         var toggle = createToggle(right.text, rs.impacted, function(v) {
           state.rights[right.id].impacted = v;
-          render();
+          wizard.refreshStep();
         });
         section.appendChild(toggle);
 
@@ -228,10 +204,10 @@
       section.appendChild(createAlert('warning', impactedCount + ' fundamental right(s) identified as impacted. Detailed risk assessment and mitigation planning recommended.'));
     }
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Risk Dimensions']));
     section.appendChild(createAlert('info', 'Assess severity and likelihood for each risk dimension. Dimensions rated Medium severity or above will require mitigation planning in the next step.'));
@@ -251,28 +227,28 @@
 
         card.appendChild(createSelect('Severity', severityOptions, dd.severity, function(v) {
           state.dimensions[dim.id].severity = v;
-          render();
+          wizard.refreshStep();
         }));
         card.appendChild(createSelect('Likelihood', likelihoodOptions, dd.likelihood, function(v) {
           state.dimensions[dim.id].likelihood = v;
-          render();
+          wizard.refreshStep();
         }));
 
         section.appendChild(card);
       })(riskDimensions[i]);
     }
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Risk Mitigation']));
 
     var elevated = getMediumOrAbove();
     if (elevated.length === 0) {
       section.appendChild(createAlert('success', 'No risk dimensions scored Medium severity or above. No mitigation plans required at this time. You may proceed to the summary.'));
-      document.body.appendChild(section);
+      container.appendChild(section);
       return;
     }
 
@@ -307,10 +283,10 @@
       })(elevated[i]);
     }
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Assessment Summary']));
 
@@ -484,7 +460,7 @@
     actions.appendChild(el('button', { className: 'btn success', textContent: 'Save Config', onClick: doSave }));
     section.appendChild(actions);
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function loadState() {
@@ -611,7 +587,7 @@
     exportMarkdown('impact-risk-assessment.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

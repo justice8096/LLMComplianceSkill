@@ -12,9 +12,6 @@
   injectCSS();
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 6;
-  var stepLabels = ['Content Types', 'Explicit Labeling', 'Metadata Labeling', 'Checklist', 'Evidence Log', 'Summary'];
 
   var contentTypes = [
     { id: 'text', label: 'Text', jurisdictions: [
@@ -114,50 +111,51 @@
   }
   initState();
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['Content Labeling Specification']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, ['Template 03 \u2014 EU AI Act Art. 50; China Labeling Measures; China Deep Synthesis; South Korea; California SB 942']));
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-    renderProgress();
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderStep5();
-    else if (currentStep === 5) renderSummaryStep();
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: stepLabels[i] }));
+  var wizard = createWizard({
+    title: 'Content Labeling Specification',
+    subtitle: 'Template 03 \u2014 EU AI Act Art. 50; China Labeling Measures; China Deep Synthesis; South Korea; California SB 942',
+    totalSteps: 6,
+    stepLabels: ['Content Types', 'Explicit Labeling', 'Metadata Labeling', 'Checklist', 'Evidence Log', 'Summary'],
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderStep5(container);
+      else if (step === 5) renderSummaryStep(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'contentLabeling',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.contentTypes) { for (var k in s.contentTypes) { state.contentTypes[k] = s.contentTypes[k]; } }
+      if (s.explicitLabels) { for (var k in s.explicitLabels) { state.explicitLabels[k] = s.explicitLabels[k]; } }
+      if (s.chinaMetadata) {
+        if (s.chinaMetadata.providerName !== undefined) state.chinaMetadata.providerName = s.chinaMetadata.providerName;
+        if (s.chinaMetadata.contentAttributes !== undefined) state.chinaMetadata.contentAttributes = s.chinaMetadata.contentAttributes;
+        if (s.chinaMetadata.contentNumber !== undefined) state.chinaMetadata.contentNumber = s.chinaMetadata.contentNumber;
+        if (s.chinaMetadata.generationTimestamp !== undefined) state.chinaMetadata.generationTimestamp = s.chinaMetadata.generationTimestamp;
+      }
+      if (s.californiaSB942) {
+        if (s.californiaSB942.watermarkMethod !== undefined) state.californiaSB942.watermarkMethod = s.californiaSB942.watermarkMethod;
+        if (s.californiaSB942.detectionTool !== undefined) state.californiaSB942.detectionTool = s.californiaSB942.detectionTool;
+        if (s.californiaSB942.robustness !== undefined) state.californiaSB942.robustness = s.californiaSB942.robustness;
+      }
+      if (s.euMetadata) {
+        if (s.euMetadata.standard !== undefined) state.euMetadata.standard = s.euMetadata.standard;
+        if (s.euMetadata.interoperability !== undefined) state.euMetadata.interoperability = s.euMetadata.interoperability;
+      }
+      if (s.checklist) { for (var phase in s.checklist) { if (!state.checklist[phase]) state.checklist[phase] = {}; for (var k in s.checklist[phase]) { state.checklist[phase][k] = s.checklist[phase][k]; } } }
+      if (s.evidenceLog) state.evidenceLog = s.evidenceLog;
+      initState();
     }
-    document.body.appendChild(prog);
-  }
+  });
 
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else { nav.appendChild(el('span')); }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
-
-  function renderStep1() {
+  function renderStep1(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 1: Content Types']));
     section.appendChild(createAlert('info', 'Identify which content types are generated by your AI system. Jurisdiction-specific requirements will be shown for each applicable type.'));
@@ -166,7 +164,7 @@
         var ctState = state.contentTypes[ct.id];
         var group = el('div', { style: 'margin-bottom: 12px; padding: 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [ct.label]));
-        group.appendChild(createToggle('Generated by this system?', ctState.generated, function(v) { ctState.generated = v; render(); }));
+        group.appendChild(createToggle('Generated by this system?', ctState.generated, function(v) { ctState.generated = v; wizard.refreshStep(); }));
         if (ctState.generated === true) {
           var badgeRow = el('div', { style: 'margin-top: 8px;' });
           badgeRow.appendChild(el('span', { style: 'font-size: 0.8em; color: #6B7B8D; margin-right: 8px;' }, ['Required by:']));
@@ -178,10 +176,10 @@
         section.appendChild(group);
       })(contentTypes[i]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Explicit Labeling']));
     section.appendChild(createAlert('info', 'Configure visible labels for each applicable content type.'));
@@ -197,7 +195,7 @@
         group.appendChild(createSelect('Placement', placementOptions, lbl.placement, function(v) { lbl.placement = v; }));
         group.appendChild(createSelect('Persistence', persistenceOptions, lbl.persistence, function(v) { lbl.persistence = v; }));
         group.appendChild(createTextInput('Minimum size / visibility spec', lbl.minSize, function(v) { lbl.minSize = v; }, 'e.g. 12px font, 4.5:1 contrast ratio'));
-        group.appendChild(createToggle('Available in all content languages?', lbl.allLanguages, function(v) { lbl.allLanguages = v; }));
+        group.appendChild(createToggle('Available in all content languages?', lbl.allLanguages, function(v) { lbl.allLanguages = v; wizard.saveNow(); }));
         if (chinaExplicitLabels[ct.id]) {
           var chinaNote = el('div', { style: 'margin-top: 8px;' });
           chinaNote.appendChild(el('span', { className: 'badge enacted' }, ['China requirement']));
@@ -210,10 +208,10 @@
     if (!anyApplicable) {
       section.appendChild(createAlert('warning', 'No content types marked as generated. Go back to Step 1 to identify applicable content types.'));
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Implicit / Metadata Labeling']));
 
@@ -236,7 +234,7 @@
     caSection.appendChild(caBadge);
     caSection.appendChild(createSelect('Watermarking method', watermarkOptions, state.californiaSB942.watermarkMethod, function(v) { state.californiaSB942.watermarkMethod = v; }));
     caSection.appendChild(createTextInput('Detection tool description', state.californiaSB942.detectionTool, function(v) { state.californiaSB942.detectionTool = v; }, 'Describe the tool used to detect watermarks'));
-    caSection.appendChild(createToggle('Robustness assessment completed?', state.californiaSB942.robustness, function(v) { state.californiaSB942.robustness = v; }));
+    caSection.appendChild(createToggle('Robustness assessment completed?', state.californiaSB942.robustness, function(v) { state.californiaSB942.robustness = v; wizard.saveNow(); }));
     section.appendChild(caSection);
 
     var euSection = el('div', { style: 'margin-bottom: 20px;' });
@@ -245,13 +243,13 @@
     euBadge.appendChild(el('span', { className: 'badge enacted' }, ['EU Art. 50(2)']));
     euSection.appendChild(euBadge);
     euSection.appendChild(createSelect('Machine-readable standard', machineReadableOptions, state.euMetadata.standard, function(v) { state.euMetadata.standard = v; }));
-    euSection.appendChild(createToggle('Interoperability with other systems?', state.euMetadata.interoperability, function(v) { state.euMetadata.interoperability = v; }));
+    euSection.appendChild(createToggle('Interoperability with other systems?', state.euMetadata.interoperability, function(v) { state.euMetadata.interoperability = v; wizard.saveNow(); }));
     section.appendChild(euSection);
 
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep4() {
+  function renderStep4(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Implementation Checklist']));
     section.appendChild(createAlert('info', 'Track implementation progress across design, coding, and testing phases.'));
@@ -280,10 +278,10 @@
         section.appendChild(phaseSection);
       })(phases[p]);
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep5() {
+  function renderStep5(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 5: Evidence Log']));
     section.appendChild(createAlert('info', 'Document evidence of content labeling implementation for each content type.'));
@@ -302,7 +300,7 @@
         var header = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;' });
         header.appendChild(el('h3', {}, ['Evidence Entry ' + (idx + 1)]));
         header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.75em;', onClick: function() {
-          state.evidenceLog.splice(idx, 1); render();
+          state.evidenceLog.splice(idx, 1); wizard.refreshStep();
         }}));
         group.appendChild(header);
         group.appendChild(createSelect('Content type', contentTypeOpts, entry.contentType, function(v) { entry.contentType = v; }));
@@ -320,12 +318,12 @@
       })(i);
     }
     section.appendChild(el('button', { className: 'btn', textContent: '+ Add Evidence Entry', onClick: function() {
-      state.evidenceLog.push({ contentType: '', labelType: '', implMethod: '', testDate: '', testResult: '', sampleRef: '' }); render();
+      state.evidenceLog.push({ contentType: '', labelType: '', implMethod: '', testDate: '', testResult: '', sampleRef: '' }); wizard.refreshStep();
     }}));
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderSummaryStep() {
+  function renderSummaryStep(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 6: Summary']));
     var generatedCount = 0; var generatedTypes = [];
@@ -389,7 +387,7 @@
     exportBar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
     exportBar.appendChild(el('button', { className: 'btn success', textContent: 'Save Config', onClick: doSave }));
     section.appendChild(exportBar);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function addRow(tbody, metric, value, scoreCls) {
@@ -526,7 +524,7 @@
     exportMarkdown('content-labeling-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>

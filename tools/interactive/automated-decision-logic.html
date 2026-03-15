@@ -12,9 +12,6 @@
   injectCSS();
 
   var config = {};
-  var currentStep = 0;
-  var totalSteps = 6;
-  var stepLabels = ['Load Config', 'Map Decisions', 'Classify Significance', 'Human Review', 'Explainability', 'Review & Export'];
 
   var affectedGroupOptions = [
     { value: '', label: '-- Select --' },
@@ -116,50 +113,53 @@
   }
   initState();
 
-  function render() {
-    document.body.textContent = '';
-    document.body.appendChild(el('h1', {}, ['Automated Decision Logic']));
-    document.body.appendChild(el('p', { className: 'subtitle' }, ['Template 04 \u2014 GDPR Art. 22; EU AI Act Arts. 14, 86; Colorado SB 24-205; Canada Directive on ADM']));
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
-      loadConfigFromFile(function(c) { config = c; loadState(); render(); });
-    }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: doSave }));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
-    document.body.appendChild(toolbar);
-    renderProgress();
-    if (currentStep === 0) renderStep1();
-    else if (currentStep === 1) renderStep2();
-    else if (currentStep === 2) renderStep3();
-    else if (currentStep === 3) renderStep4();
-    else if (currentStep === 4) renderStep5();
-    else if (currentStep === 5) renderSummary();
-    renderNav();
-  }
-
-  function renderProgress() {
-    var prog = el('div', { className: 'progress' });
-    for (var i = 0; i < totalSteps; i++) {
-      var cls = 'progress-dot';
-      if (i === currentStep) cls += ' active';
-      else if (i < currentStep) cls += ' done';
-      prog.appendChild(el('span', { className: cls, title: stepLabels[i] }));
+  var wizard = createWizard({
+    title: 'Automated Decision Logic',
+    subtitle: 'Template 04 \u2014 GDPR Art. 22; EU AI Act Arts. 14, 86; Colorado SB 24-205; Canada Directive on ADM',
+    totalSteps: 6,
+    stepLabels: ['Load Config', 'Map Decisions', 'Classify Significance', 'Human Review', 'Explainability', 'Review & Export'],
+    renderStep: function(step, container) {
+      if (step === 0) renderStep1(container);
+      else if (step === 1) renderStep2(container);
+      else if (step === 2) renderStep3(container);
+      else if (step === 3) renderStep4(container);
+      else if (step === 4) renderStep5(container);
+      else if (step === 5) renderSummary(container);
+    },
+    onLoad: function() {
+      loadConfigFromFile(function(c) { config = c; loadState(); wizard.refreshStep(); });
+    },
+    onSave: doSave,
+    onExport: doExport,
+    stateKey: 'automatedDecisionLogic',
+    getState: function() { return state; },
+    setState: function(s) {
+      if (s.decisions && s.decisions.length > 0) state.decisions = s.decisions;
+      if (s.significance) { for (var k in s.significance) { state.significance[k] = s.significance[k]; } }
+      if (s.humanReview) {
+        if (s.humanReview.oversightModel !== undefined) state.humanReview.oversightModel = s.humanReview.oversightModel;
+        if (s.humanReview.appealProcess !== undefined) state.humanReview.appealProcess = s.humanReview.appealProcess;
+        if (s.humanReview.appealContact !== undefined) state.humanReview.appealContact = s.humanReview.appealContact;
+        if (s.humanReview.appealResponseTime !== undefined) state.humanReview.appealResponseTime = s.humanReview.appealResponseTime;
+        if (s.humanReview.humanOverrideDescription !== undefined) state.humanReview.humanOverrideDescription = s.humanReview.humanOverrideDescription;
+        if (s.humanReview.overrideAuthority !== undefined) state.humanReview.overrideAuthority = s.humanReview.overrideAuthority;
+        if (s.humanReview.escalationCriteria !== undefined) state.humanReview.escalationCriteria = s.humanReview.escalationCriteria;
+        if (s.humanReview.reviewLogRetention !== undefined) state.humanReview.reviewLogRetention = s.humanReview.reviewLogRetention;
+      }
+      if (s.explainability) {
+        if (s.explainability.methods) { for (var k in s.explainability.methods) { state.explainability.methods[k] = s.explainability.methods[k]; } }
+        if (s.explainability.layeredApproach !== undefined) state.explainability.layeredApproach = s.explainability.layeredApproach;
+        if (s.explainability.shortExplanationTemplate !== undefined) state.explainability.shortExplanationTemplate = s.explainability.shortExplanationTemplate;
+        if (s.explainability.detailedExplanationTemplate !== undefined) state.explainability.detailedExplanationTemplate = s.explainability.detailedExplanationTemplate;
+        if (s.explainability.technicalExplanationTemplate !== undefined) state.explainability.technicalExplanationTemplate = s.explainability.technicalExplanationTemplate;
+        if (s.explainability.explanationLanguages !== undefined) state.explainability.explanationLanguages = s.explainability.explanationLanguages;
+        if (s.explainability.explanationAccessibility !== undefined) state.explainability.explanationAccessibility = s.explainability.explanationAccessibility;
+      }
+      initState();
     }
-    document.body.appendChild(prog);
-  }
+  });
 
-  function renderNav() {
-    var nav = el('div', { className: 'step-nav' });
-    if (currentStep > 0) {
-      nav.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { currentStep--; render(); } }));
-    } else { nav.appendChild(el('span')); }
-    if (currentStep < totalSteps - 1) {
-      nav.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { currentStep++; render(); } }));
-    }
-    document.body.appendChild(nav);
-  }
-
-  function renderStep1() {
+  function renderStep1(container) {
     var items = [];
     items.push(createAlert('info', 'Load your compliance-config.json to pre-populate system information. This tool documents automated decisions, their significance under GDPR Art. 22, human review mechanisms, and explainability approaches.'));
     if (config.project) {
@@ -175,10 +175,10 @@
     } else {
       items.push(createAlert('warning', 'No config loaded. Click "Load Config" above to load your compliance-config.json, or proceed to fill in fields manually.'));
     }
-    document.body.appendChild(createSection('Step 1: Load Config & System Info', items));
+    container.appendChild(createSection('Step 1: Load Config & System Info', items));
   }
 
-  function renderStep2() {
+  function renderStep2(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 2: Map Automated Decisions']));
     section.appendChild(createAlert('info', 'Document each automated decision your system makes. Include what the decision is, who is affected, and what data is used.'));
@@ -189,7 +189,7 @@
         var header = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;' });
         header.appendChild(el('h3', { style: 'color: #E8B96A;' }, ['Decision ' + (idx + 1)]));
         if (state.decisions.length > 1) {
-          header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.8em;', onClick: function() { state.decisions.splice(idx, 1); render(); } }));
+          header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.8em;', onClick: function() { state.decisions.splice(idx, 1); wizard.refreshStep(); } }));
         }
         group.appendChild(header);
         group.appendChild(createTextInput('Decision name', d.name, function(v) { d.name = v; }, 'e.g. Loan approval, content recommendation'));
@@ -203,7 +203,7 @@
         dataSection.appendChild(el('h3', { style: 'margin-bottom: 8px;' }, ['Data categories used']));
         for (var j = 0; j < dataCategories.length; j++) {
           (function(cat) {
-            dataSection.appendChild(createToggle(cat.label, d.dataUsed[cat.id] === undefined ? null : d.dataUsed[cat.id], function(v) { d.dataUsed[cat.id] = v; }));
+            dataSection.appendChild(createToggle(cat.label, d.dataUsed[cat.id] === undefined ? null : d.dataUsed[cat.id], function(v) { d.dataUsed[cat.id] = v; wizard.saveNow(); }));
           })(dataCategories[j]);
         }
         group.appendChild(dataSection);
@@ -212,12 +212,12 @@
       })(i);
     }
     if (state.decisions.length < MAX_DECISIONS) {
-      section.appendChild(el('button', { className: 'btn', textContent: '+ Add Another Decision', onClick: function() { state.decisions.push(createEmptyDecision()); render(); } }));
+      section.appendChild(el('button', { className: 'btn', textContent: '+ Add Another Decision', onClick: function() { state.decisions.push(createEmptyDecision()); wizard.refreshStep(); } }));
     }
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep3() {
+  function renderStep3(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Classify Decision Significance']));
     section.appendChild(createAlert('warning', 'GDPR Art. 22 restricts decisions based solely on automated processing that produce legal effects or similarly significantly affect individuals. Assess each criterion below.'));
@@ -227,7 +227,7 @@
         var group = el('div', { style: 'margin-bottom: 16px; padding: 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [cDef.label]));
         group.appendChild(el('p', { style: 'font-size: 0.8em; color: #6B7B8D; margin-bottom: 8px;' }, [cDef.description]));
-        group.appendChild(createToggle('Applies to your system?', c.applies, function(v) { c.applies = v; }));
+        group.appendChild(createToggle('Applies to your system?', c.applies, function(v) { c.applies = v; wizard.saveNow(); }));
         group.appendChild(createTextArea('Justification', c.justification, function(v) { c.justification = v; }, 'Explain why this does or does not apply'));
         section.appendChild(group);
       })(significanceCriteria[i]);
@@ -238,10 +238,10 @@
     if (triggered >= 2) section.appendChild(createAlert('danger', 'GDPR Art. 22 likely applies: your system makes solely automated decisions with legal or significant effects. You must provide meaningful human involvement, the right to contest, and explicit consent or valid legal basis (Art. 22(2)).'));
     else if (triggered === 1) section.appendChild(createAlert('warning', 'One Art. 22 trigger criterion is met. Carefully assess whether GDPR Art. 22 restrictions apply. Consult legal counsel.'));
     else section.appendChild(createAlert('info', 'Based on current inputs, GDPR Art. 22 may not be triggered. Verify with legal counsel.'));
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
-  function renderStep4() {
+  function renderStep4(container) {
     var items = [];
     items.push(createAlert('info', 'Design the human review and appeal mechanism. Required under GDPR Art. 22(3), EU AI Act Art. 14, and Colorado SB 24-205.'));
     items.push(createSelect('Oversight model', oversightModelOptions, state.humanReview.oversightModel, function(v) { state.humanReview.oversightModel = v; }));
@@ -252,10 +252,10 @@
     items.push(createTextInput('Override authority', state.humanReview.overrideAuthority, function(v) { state.humanReview.overrideAuthority = v; }, 'Who has authority to override? (role/title)'));
     items.push(createTextArea('Escalation criteria', state.humanReview.escalationCriteria, function(v) { state.humanReview.escalationCriteria = v; }, 'When is a decision automatically escalated for human review?'));
     items.push(createTextInput('Review log retention period', state.humanReview.reviewLogRetention, function(v) { state.humanReview.reviewLogRetention = v; }, 'e.g. 3 years, 7 years'));
-    document.body.appendChild(createSection('Step 4: Human Review Mechanism', items));
+    container.appendChild(createSection('Step 4: Human Review Mechanism', items));
   }
 
-  function renderStep5() {
+  function renderStep5(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 5: Decision Logic Explainability']));
     section.appendChild(createAlert('info', 'Document how automated decisions are explained to affected individuals. GDPR Art. 22(3) requires "meaningful information about the logic involved." EU AI Act Art. 86 establishes a right to explanation.'));
@@ -266,19 +266,19 @@
         var group = el('div', { style: 'margin-bottom: 12px; padding: 10px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [mDef.label]));
         group.appendChild(el('p', { style: 'font-size: 0.8em; color: #6B7B8D; margin-bottom: 8px;' }, [mDef.description]));
-        group.appendChild(createToggle('Used?', m.used, function(v) { m.used = v; }));
+        group.appendChild(createToggle('Used?', m.used, function(v) { m.used = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Implementation details', m.implementation, function(v) { m.implementation = v; }, 'How is this method implemented?'));
         section.appendChild(group);
       })(explainabilityMethods[i]);
     }
     section.appendChild(el('h3', { style: 'margin-top: 24px;' }, ['Layered explanation approach']));
-    section.appendChild(createToggle('Use layered explanations (short, detailed, technical)?', state.explainability.layeredApproach, function(v) { state.explainability.layeredApproach = v; }));
+    section.appendChild(createToggle('Use layered explanations (short, detailed, technical)?', state.explainability.layeredApproach, function(v) { state.explainability.layeredApproach = v; wizard.saveNow(); }));
     section.appendChild(createTextArea('Short explanation template', state.explainability.shortExplanationTemplate, function(v) { state.explainability.shortExplanationTemplate = v; }, 'e.g. "Your application was [approved/denied] based on [top 3 factors]."'));
     section.appendChild(createTextArea('Detailed explanation template', state.explainability.detailedExplanationTemplate, function(v) { state.explainability.detailedExplanationTemplate = v; }, 'Full explanation with all relevant factors and data sources'));
     section.appendChild(createTextArea('Technical explanation template', state.explainability.technicalExplanationTemplate, function(v) { state.explainability.technicalExplanationTemplate = v; }, 'For regulators/auditors: model details, feature weights, confidence scores'));
     section.appendChild(createTextInput('Explanation languages', state.explainability.explanationLanguages, function(v) { state.explainability.explanationLanguages = v; }, 'e.g. English, Spanish, French'));
     section.appendChild(createTextArea('Accessibility notes', state.explainability.explanationAccessibility, function(v) { state.explainability.explanationAccessibility = v; }, 'e.g. Screen reader friendly, plain language'));
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function calcSectionScore(sectionId) {
@@ -309,7 +309,7 @@
     return { filled: filled, total: total };
   }
 
-  function renderSummary() {
+  function renderSummary(container) {
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 6: Review & Export']));
     var sections = [
@@ -383,7 +383,7 @@
     exportBar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: doExport }));
     exportBar.appendChild(el('button', { className: 'btn success', textContent: 'Save Config', onClick: doSave }));
     section.appendChild(exportBar);
-    document.body.appendChild(section);
+    container.appendChild(section);
   }
 
   function loadState() {
@@ -510,7 +510,7 @@
     exportMarkdown('automated-decision-logic-report.md', lines.join('\n'));
   }
 
-  render();
+  wizard.render();
 })();
 </script>
 </body>
