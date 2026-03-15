@@ -31,13 +31,67 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - Include a disclaimer that this is research, not legal advice
 
 ## Evidence Collection Kit
-- `templates/` — 22 evidence templates covering all compliance categories
+
+### Templates (23)
+- `templates/` — 23 evidence templates (00–23) covering all compliance categories
+- Includes supply chain risk (23) with MITRE ATLAS, OWASP LLM03, NIST SP 800-218A, EU AI Act Art. 25
+
+### Interactive Tools (21)
+- `tools/interactive/` — 21 browser-based HTML wizard tools for human-judgment fields
+- All tools use `createWizard()` from `shared.js` with sessionStorage auto-persist
+- Each tool has a `stateKey`, `getState`, and `setState` for persistence across page reloads
+- Includes: risk classification, bias testing, consent design, human oversight, impact scoring, security assessment, LLM selector, supply chain risk, and 13 others
+- Design: navy #0B1426, amber #D4943A, teal #2A7B7B — zero innerHTML, zero external dependencies
+
+### LLM Registry
+- `tools/data/llm-registry.json` — Index file pointing to 6 chunked registry files
+- `tools/data/llm-registry-*.json` — 66 models across Meta, Mistral, Google, Microsoft, Chinese providers, and API-only services
+- Each model includes compliance metadata, autoFillFields, deployment info, and license details
+- Browser loads via `Promise.all` on chunk URLs; Node.js loads sequentially
+
+### Evidence Extractors
+- `tools/extractors/git-evidence.js` — Git history analysis (commits, PRs, AI attribution, security practices)
+- `tools/extractors/package-evidence.js` — Package ecosystem analysis (npm/pip/cargo/go/composer/maven/gradle)
+- `tools/extractors/ci-evidence.js` — CI/CD pipeline analysis (GitHub Actions/GitLab CI/Azure DevOps/etc.)
+- `tools/extract-evidence.js` — Runner that orchestrates all 3 extractors and merges into config
+- All extractors are zero-dependency Node.js scripts using `execFileSync` for git CLI
+
+### Autofill
 - `tools/autofill.js` — Auto-fills templates from `compliance-config.json`
-- `tools/interactive/` — 6 HTML tools for human-judgment fields (risk classification, bias testing, consent design, human oversight, impact scoring, security assessment)
-- `tools/data/` — Extracted jurisdiction matrix and deadline data in JSON
-- Workflow: Edit config → Run interactive tools → Run autofill → Review output → Hand to legal
+- Integrates LLM registry data, extracted evidence, and manual config
+- `tools/compliance-config.example.json` — Example configuration
+
+### Data Files
+- `tools/data/jurisdiction-matrix.json` — Jurisdiction comparison data
+- `tools/data/deadline-data.json` — Compliance deadline tracking data
+
+### Workflow
+1. Run `node extract-evidence.js --repo /path/to/repo` to auto-extract evidence
+2. Open interactive tools in browser for human-judgment fields
+3. Edit `compliance-config.json` for remaining manual fields
+4. Run `node autofill.js` to fill templates
+5. Review output and hand to legal/compliance team
+
+## Technical Conventions
+- Security pre-commit hook flags unsafe shell patterns even in comments/docs/markdown — avoid trigger words like `exec()` in generated text
+- Large generated files (50+ model entries, extensive JSON) should be split across multiple agents writing separate chunk files — single agents hit token limits
+- Interactive tools use targeted DOM manipulation (toggle `display:none`) instead of `refreshStep()` for fields with in-progress text — prevents form data loss
+- Extractors output JSON to stdout, progress/errors to stderr — designed for piping
+- `normalizeModel()` maps registry fields (`countryOfOrigin` to `country`, ISO codes to full names)
+- Security: use `execFileSync` with argument arrays, never string-interpolated shell commands
+- No `document.body.textContent = ''` — wizard framework handles DOM lifecycle
+
+## Obsidian Integration
+- Knowledge base exports go to `D:/SecondBrainData/SoftwarePractices/`
+- Templates export to `AI-Compliance-Templates/` subfolder
+- Use `[[wikilinks]]` for cross-note references in exported Obsidian notes
+- Existing vault notes to keep in sync: Evidence-Collection-Pipeline-Architecture, Wizard-Rendering-Pattern, Claude-Code-Plugin-Skill-Structure, Law-Evidence-Matrix, LLMComplianceSkill-Lessons-Learned
 
 ## Updating
 - When adding or updating a jurisdiction, update both the regional file and the Global Overview
 - Keep the world map HTML data in sync with regional file changes
 - Maintain the comparison matrix in Global Overview when any jurisdiction's status changes
+- When adding LLM models, add to the appropriate chunk file and update the index if needed
+- When adding templates, create a matching interactive tool and update autofill.js
+- When exporting to Obsidian, update the corresponding vault notes (pipeline architecture, lessons learned)
+- New templates should be copied to `D:/SecondBrainData/SoftwarePractices/AI-Compliance-Templates/`

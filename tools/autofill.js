@@ -25,6 +25,22 @@ function loadConfig(configPath) {
   return cfg;
 }
 
+function loadLlmRegistry() {
+  const indexPath = path.join(DATA_DIR, 'llm-registry.json');
+  if (!fs.existsSync(indexPath)) return null;
+  const index = loadJSON(indexPath);
+  if (!index.chunks || !index.chunks.length) return index;
+  const allModels = [];
+  for (const chunkFile of index.chunks) {
+    const chunkPath = path.join(DATA_DIR, chunkFile);
+    if (fs.existsSync(chunkPath)) {
+      const chunk = loadJSON(chunkPath);
+      if (chunk.models) allModels.push(...chunk.models);
+    }
+  }
+  return { _meta: index._meta, sources: index.sources, models: allModels };
+}
+
 // --- Template field replacement ---
 function fillTableField(md, fieldName, value) {
   // Match: | Field Name | <empty or placeholder> |
@@ -189,6 +205,221 @@ function fillTemplate(templatePath, config, matrix, deadlines) {
         md = md.replace('## 4. Project-Specific Deadline Calendar', warning + '\n## 4. Project-Specific Deadline Calendar');
       }
     }
+  }
+
+  // --- F0. LLM Selector auto-fill ---
+  const llmSel = (config.interactiveToolResults || {}).llmSelector;
+  if (llmSel && llmSel.usesLlm !== 'no') {
+    const registry = loadLlmRegistry();
+
+    // Collect all selected models (registry + custom)
+    const selectedModels = [];
+    if (registry && llmSel.selectedModels?.length) {
+      for (const modelId of llmSel.selectedModels) {
+        const found = registry.models.find(m => m.id === modelId);
+        if (found) selectedModels.push(found);
+      }
+    }
+    if (llmSel.customModels?.length) {
+      for (const cm of llmSel.customModels) {
+        selectedModels.push({
+          id: cm.name,
+          family: cm.name,
+          provider: cm.provider,
+          countryOfOrigin: cm.country || '',
+          license: cm.license || '',
+          openSource: !!cm.openSource,
+          autoFillFields: {}
+        });
+      }
+    }
+
+    if (selectedModels.length > 0) {
+      // Use first model as primary for single-value fields
+      const primary = selectedModels[0];
+      const modelNames = selectedModels.map(m => `${m.family || m.id}, ${m.provider}`).join('; ');
+      const deployType = (llmSel.deployments && llmSel.deployments[primary.id])
+        ? llmSel.deployments[primary.id].type : '';
+
+      // Auto-fill system fields from LLM selection
+      md = fillTableField(md, 'Model type', config.system.modelType || primary.autoFillFields?.['system.modelType'] || 'LLM');
+      md = fillTableField(md, 'Foundation model (if any)', config.system.foundationModel || modelNames);
+
+      // Auto-fill from model's autoFillFields
+      if (primary.autoFillFields) {
+        const af = primary.autoFillFields;
+        if (af['transparencyDoc.modelProvider']) md = fillTableField(md, 'Model provider', af['transparencyDoc.modelProvider']);
+        if (af['transparencyDoc.modelProviderCountry']) md = fillTableField(md, 'Model provider country', af['transparencyDoc.modelProviderCountry']);
+        if (af['transparencyDoc.modelLicense']) md = fillTableField(md, 'Model license', af['transparencyDoc.modelLicense']);
+        if (af['transparencyDoc.trainingDataSummary']) md = fillTableField(md, 'Training data summary', af['transparencyDoc.trainingDataSummary']);
+        if (af['transparencyDoc.knownLimitations']) md = fillTableField(md, 'Known limitations', af['transparencyDoc.knownLimitations']);
+        if (af['trainingDataDisclosure.providerDisclosure']) md = fillTableField(md, 'Provider disclosure level', af['trainingDataDisclosure.providerDisclosure']);
+      }
+
+      // Deployment-specific fills
+      if (deployType === 'local') {
+        md = fillTableField(md, 'Model hosting', 'Local / on-device');
+        md = fillTableField(md, 'Data residency', 'Local — no data leaves the device');
+        md = fillTableField(md, 'Data transmission', 'None — all processing occurs locally');
+      } else if (deployType === 'api') {
+        const apiProvider = primary.provider || 'third-party';
+        md = fillTableField(md, 'Model hosting', `Cloud API (${apiProvider})`);
+        md = fillTableField(md, 'Data residency', 'Cloud — data sent to provider servers');
+        md = fillTableField(md, 'Data transmission', `Data transmitted to ${apiProvider} API endpoints`);
+      } else if (deployType === 'cloud') {
+        const dep = llmSel.deployments[primary.id] || {};
+        const cloudInfo = [dep.provider, dep.region].filter(Boolean).join(' ');
+        md = fillTableField(md, 'Model hosting', `Self-hosted cloud (${cloudInfo})`);
+        md = fillTableField(md, 'Data residency', `Self-hosted — ${cloudInfo || 'provider/region not specified'}`);
+      }
+
+      // Provider vs deployer role
+      if (llmSel.usesLlm === 'third-party') {
+        md = fillTableField(md, 'Role', 'Deployer (using third-party model)');
+        md = fillTableField(md, 'Provider obligations', 'Model provider responsible; deployer must verify documentation received');
+      } else if (llmSel.usesLlm === 'own') {
+        md = fillTableField(md, 'Role', 'Provider and Deployer');
+        md = fillTableField(md, 'Provider obligations', 'Full provider obligations apply — must produce all provider documentation');
+      }
+
+      // Country-of-origin compliance flags
+      const countries = [...new Set(selectedModels.map(m => m.countryOfOrigin))];
+      const jurs = config.jurisdictions || [];
+
+      if (countries.includes('CN') && jurs.some(j => j === 'EU' || j.startsWith('US'))) {
+        md = fillTableField(md, 'Cross-border compliance note',
+          'Model originates from China — review data sovereignty implications for EU/US deployment');
+      }
+      if (jurs.includes('CN')) {
+        md = fillTableField(md, 'China filing requirement',
+          'CAC algorithm filing mandatory for public-facing GenAI services in China');
+      }
+
+      // Open source exemption notes
+      const allOpen = selectedModels.every(m => m.openSource);
+      if (allOpen && jurs.includes('EU')) {
+        md = fillTableField(md, 'GPAI open-source exemption',
+          'Open-weight model — GPAI documentation exemptions may apply if not monetized (EU AI Act Art. 53(2))');
+      }
+    }
+  }
+
+  // --- F1. Supply Chain Risk auto-fill from LLM selection ---
+  if (tplNum === '23' && llmSel && selectedModels && selectedModels.length > 0) {
+    // Fill component inventory with selected models
+    const componentRows = selectedModels.map((m, i) => {
+      const dep = (llmSel.deployments || {})[m.id] || {};
+      const riskTier = m.compliance?.systemicRisk ? 'Critical' :
+        (m.countryOfOrigin === 'CN' ? 'High' : 'Medium');
+      return `| ${m.family || m.id} | Model | ${m.provider || ''} | ${m.parameterSizes?.[0] || ''} | ${m.countryOfOrigin || ''} | ${m.license || ''} | ${riskTier} |`;
+    }).join('\n');
+
+    md = md.replace(
+      /\| \[Foundation model\] \| Model \|[^|]*\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|/,
+      componentRows
+    );
+
+    // Fill model provenance checks based on model data
+    for (const m of selectedModels) {
+      if (m.compliance?.modelCard) md = fillCheckbox(md, 'Model card reviewed');
+      if (m.license) md = fillCheckbox(md, 'License compatibility confirmed');
+    }
+  }
+
+  // --- F2. Extracted evidence auto-fill ---
+  const extracted = config.extractedEvidence || {};
+  const eaf = config.extractedAutoFill || {};
+
+  // Git evidence
+  const gitEv = extracted['git-evidence'] || {};
+  if (gitEv.codeReview) {
+    const cr = gitEv.codeReview;
+    if (cr.prBasedWorkflow) {
+      md = fillTableField(md, 'Code review process', `PR-based workflow (${cr.mergePercentage}% of commits via merge/PR)`);
+    }
+    if (cr.uniqueReviewers?.length) {
+      md = fillTableField(md, 'Reviewers', cr.uniqueReviewers.join(', '));
+    }
+  }
+  if (gitEv.changeManagement) {
+    const cm = gitEv.changeManagement;
+    if (cm.releaseTags?.length) {
+      md = fillTableField(md, 'Release history', `${cm.releaseTags.length} releases; avg interval: ${cm.releaseFrequencyDays || 'N/A'} days`);
+    }
+    if (cm.conventionalCommitPercentage > 50) {
+      md = fillTableField(md, 'Commit convention', `Conventional Commits (${cm.conventionalCommitPercentage}% compliance)`);
+    }
+  }
+  if (gitEv.aiCodeGeneration?.aiAttributedCommits > 0) {
+    const ai = gitEv.aiCodeGeneration;
+    const tools = (ai.aiToolsDetected || []).map(t => `${t.tool} (${t.commits})`).join(', ');
+    md = fillTableField(md, 'AI code generation', `${ai.aiAttributionPercentage}% of commits AI-attributed: ${tools}`);
+  }
+  if (gitEv.governance) {
+    const gov = gitEv.governance;
+    if (gov.licenseType) md = fillTableField(md, 'Project license', gov.licenseType);
+    if (gov.uniqueContributors) md = fillTableField(md, 'Contributors', `${gov.uniqueContributors} unique contributors`);
+  }
+  if (gitEv.securityPractices) {
+    const sp = gitEv.securityPractices;
+    if (sp.signedPercentage > 50) {
+      md = fillCheckbox(md, 'Commit signing enabled');
+    }
+    if (sp.hasPreCommitHooks) {
+      md = fillCheckbox(md, 'Pre-commit hooks configured');
+    }
+    if (sp.gitignoreExcludesSecrets) {
+      md = fillCheckbox(md, '.gitignore excludes secrets');
+    }
+  }
+
+  // Package evidence
+  const pkgEv = extracted['package-evidence'] || {};
+  if (pkgEv.inventory) {
+    md = fillTableField(md, 'Total dependencies', `${pkgEv.inventory.directDependencies} direct, ${pkgEv.inventory.transitiveDependencies} transitive`);
+  }
+  if (pkgEv.sbom) {
+    if (pkgEv.sbom.lockFilePresent) md = fillCheckbox(md, 'Lock file present');
+    if (pkgEv.sbom.existingSbomFiles?.length) md = fillCheckbox(md, 'SBOM generated');
+  }
+  if (pkgEv.licenses?.copyleftPackages?.length) {
+    md = fillTableField(md, 'License risk', `${pkgEv.licenses.copyleftPackages.length} copyleft package(s): ${pkgEv.licenses.copyleftPackages.slice(0, 5).join(', ')}`);
+  }
+  if (pkgEv.aiDependencies?.detected?.length) {
+    const aiDeps = pkgEv.aiDependencies.detected;
+    const apiClients = aiDeps.filter(d => d.dataFlow === 'cloud');
+    if (apiClients.length) {
+      md = fillTableField(md, 'AI API dependencies', apiClients.map(d => `${d.name} ${d.version}`).join(', '));
+    }
+  }
+
+  // CI evidence
+  const ciEv = extracted['ci-evidence'] || {};
+  if (ciEv.securityScanning) {
+    const ss = ciEv.securityScanning;
+    if (ss.sast?.detected) md = fillCheckbox(md, 'SAST scan on all AI-generated code');
+    if (ss.dependencyScanning?.detected) md = fillCheckbox(md, 'Dependency verification');
+    if (ss.secretScanning?.detected) md = fillCheckbox(md, 'Secret scanning');
+    if (ss.licenseScanning?.detected) md = fillCheckbox(md, 'License scan');
+  }
+  if (ciEv.testing) {
+    if (ciEv.testing.testRunners?.length) {
+      md = fillTableField(md, 'Test framework', ciEv.testing.testRunners.join(', '));
+    }
+    if (ciEv.testing.coverageTools?.length) {
+      md = fillTableField(md, 'Coverage tool', ciEv.testing.coverageTools.join(', '));
+    }
+  }
+  if (ciEv.buildProvenance) {
+    const bp = ciEv.buildProvenance;
+    if (bp.estimatedSlsaLevel >= 1) md = fillCheckbox(md, 'Build process documented');
+    if (bp.estimatedSlsaLevel >= 2) md = fillCheckbox(md, 'Hosted build service with signed provenance');
+    if (bp.estimatedSlsaLevel >= 3) md = fillCheckbox(md, 'Tamper-proof build with non-falsifiable provenance');
+  }
+  if (ciEv.aiCodeControls) {
+    if (ciEv.aiCodeControls.hasAiInstructionFiles) md = fillCheckbox(md, 'AI coding tool vetted and approved');
+    if (ciEv.aiCodeControls.hasPreCommitHooks) md = fillCheckbox(md, 'Tool configuration hardened');
+    if (ciEv.aiCodeControls.sastOnPRs) md = fillCheckbox(md, 'Human review of all AI-generated code before merge');
   }
 
   // --- F. Cross-references from interactive tool results ---
