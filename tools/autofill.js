@@ -9,11 +9,26 @@
 
 const fs = require('fs');
 const path = require('path');
+const i18n = require('./i18n/index');
 
 const TOOLS_DIR = __dirname;
 const TEMPLATES_DIR = path.join(TOOLS_DIR, '..', 'templates');
 const OUTPUT_DIR = path.join(TOOLS_DIR, '..', 'output');
 const DATA_DIR = path.join(TOOLS_DIR, 'data');
+
+// i18n field-name resolver: returns translated field name for the active locale
+function f(enFieldName) {
+  var key = i18n.fieldKey(enFieldName);
+  if (!key) return enFieldName;
+  return i18n.fieldName(key);
+}
+
+// i18n checkbox-label resolver
+function cb(enLabel) {
+  var key = i18n.checkboxKey(enLabel);
+  if (!key) return enLabel;
+  return i18n.t('checkboxes.' + key, enLabel);
+}
 
 // --- Load data ---
 function loadJSON(filePath) {
@@ -45,26 +60,42 @@ function loadLlmRegistry() {
 function fillTableField(md, fieldName, value) {
   // Match: | Field Name | <empty or placeholder> |
   // Handles variations with spaces and placeholder brackets
-  const escaped = fieldName.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
-  const re = new RegExp(
-    `(\\|\\s*${escaped}\\s*\\|)([^|]*)(\\|)`,
-    'gm'
-  );
-  return md.replace(re, (match, prefix, oldVal, suffix) => {
-    const trimmed = oldVal.trim();
-    // Only fill if empty or contains a placeholder like [YYYY-MM-DD]
-    if (trimmed === '' || trimmed.startsWith('[') || trimmed === 'Value') {
-      return `${prefix} ${value} ${suffix}`;
-    }
-    return match;
-  });
+  // Try both the English name and the translated name (for localized templates)
+  const names = [fieldName];
+  const translated = f(fieldName);
+  if (translated !== fieldName) names.push(translated);
+
+  for (const name of names) {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
+    const re = new RegExp(
+      `(\\|\\s*${escaped}\\s*\\|)([^|]*)(\\|)`,
+      'gm'
+    );
+    md = md.replace(re, (match, prefix, oldVal, suffix) => {
+      const trimmed = oldVal.trim();
+      // Only fill if empty or contains a placeholder like [YYYY-MM-DD]
+      if (trimmed === '' || trimmed.startsWith('[') || trimmed === 'Value') {
+        return `${prefix} ${value} ${suffix}`;
+      }
+      return match;
+    });
+  }
+  return md;
 }
 
 function fillCheckbox(md, itemText, checked) {
   if (!checked) return md;
-  const escaped = itemText.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
-  const re = new RegExp(`\\[ \\](\\s*${escaped})`, 'g');
-  return md.replace(re, `[x]$1`);
+  // Try both English and translated checkbox labels
+  const labels = [itemText];
+  const translated = cb(itemText);
+  if (translated !== itemText) labels.push(translated);
+
+  for (const label of labels) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
+    const re = new RegExp(`\\[ \\](\\s*${escaped})`, 'g');
+    md = md.replace(re, `[x]$1`);
+  }
+  return md;
 }
 
 function fillJurisdictionCheckbox(md, jurisdictionName) {
@@ -631,10 +662,19 @@ function generateManifest(config, matrix, deadlines) {
 function main() {
   const args = process.argv.slice(2);
   let configPath = path.join(TOOLS_DIR, 'compliance-config.json');
+  let locale = 'en';
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--config' && args[i + 1]) {
       configPath = path.resolve(args[i + 1]);
+    } else if (args[i] === '--locale' && args[i + 1]) {
+      locale = args[i + 1];
     }
+  }
+
+  // Load i18n locale (affects f() and cb() helpers used in fillTableField/fillCheckbox calls)
+  i18n.load(locale);
+  if (locale !== 'en') {
+    console.log(`Locale: ${i18n.currentLocale()} (${i18n.t('locale', locale)})`);
   }
 
   console.log(`Loading config from: ${configPath}`);
@@ -642,20 +682,32 @@ function main() {
   const matrix = loadJSON(path.join(DATA_DIR, 'jurisdiction-matrix.json'));
   const deadlines = loadJSON(path.join(DATA_DIR, 'deadline-data.json'));
 
-  // Ensure output directory
-  if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  // When using a non-English locale, read from pre-translated templates if available
+  let templatesDir = TEMPLATES_DIR;
+  const localeTemplatesDir = path.join(OUTPUT_DIR, locale);
+  if (locale !== 'en' && fs.existsSync(localeTemplatesDir)) {
+    templatesDir = localeTemplatesDir;
+    console.log(`Using translated templates from: ${localeTemplatesDir}`);
+  } else if (locale !== 'en') {
+    console.log(`Warning: No translated templates for "${locale}" — run generate-templates.js first`);
+    console.log(`Falling back to English templates with translated field matching`);
+  }
+
+  // Output directory — locale-specific when not English
+  const outputDir = locale !== 'en' ? path.join(OUTPUT_DIR, locale) : OUTPUT_DIR;
+  if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
   // Process each template
-  const templateFiles = fs.readdirSync(TEMPLATES_DIR)
-    .filter(f => f.endsWith('.md') && f !== '00-Evidence-Collection-Kit-README.md')
+  const templateFiles = fs.readdirSync(templatesDir)
+    .filter(tplFile => tplFile.endsWith('.md') && tplFile !== '00-Evidence-Collection-Kit-README.md')
     .sort();
 
   let filled = 0;
   for (const file of templateFiles) {
-    const templatePath = path.join(TEMPLATES_DIR, file);
+    const templatePath = path.join(templatesDir, file);
     const result = fillTemplate(templatePath, config, matrix, deadlines);
-    const outputPath = path.join(OUTPUT_DIR, file);
-    fs.writeFileSync(outputPath, result, 'utf8');
+    const outPath = path.join(outputDir, file);
+    fs.writeFileSync(outPath, result, 'utf8');
     filled++;
     console.log(`  ✓ ${file}`);
   }
@@ -663,25 +715,25 @@ function main() {
   // Copy README
   const readmeSrc = path.join(TEMPLATES_DIR, '00-Evidence-Collection-Kit-README.md');
   if (fs.existsSync(readmeSrc)) {
-    fs.copyFileSync(readmeSrc, path.join(OUTPUT_DIR, '00-Evidence-Collection-Kit-README.md'));
+    fs.copyFileSync(readmeSrc, path.join(outputDir, '00-Evidence-Collection-Kit-README.md'));
     console.log('  ✓ 00-Evidence-Collection-Kit-README.md (copied)');
   }
 
   // Generate manifest
   const manifest = generateManifest(config, matrix, deadlines);
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'MANIFEST.md'), manifest, 'utf8');
+  fs.writeFileSync(path.join(outputDir, 'MANIFEST.md'), manifest, 'utf8');
   console.log('  ✓ MANIFEST.md (generated)');
 
   // Save config snapshot
-  const snapshot = { ...config, _generatedAt: today(), _generatedBy: 'autofill.js' };
+  const snapshot = { ...config, _generatedAt: today(), _generatedBy: 'autofill.js', _locale: locale };
   fs.writeFileSync(
-    path.join(OUTPUT_DIR, 'compliance-config-snapshot.json'),
+    path.join(outputDir, 'compliance-config-snapshot.json'),
     JSON.stringify(snapshot, null, 2),
     'utf8'
   );
   console.log('  ✓ compliance-config-snapshot.json');
 
-  console.log(`\nDone! ${filled} templates filled → ${OUTPUT_DIR}`);
+  console.log(`\nDone! ${filled} templates filled → ${outputDir}`);
 
   const required = getRequiredTemplates(config, matrix);
   if (required.length > 0) {

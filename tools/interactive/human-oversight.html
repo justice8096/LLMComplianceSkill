@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.humanOversight.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var extraStyle = document.createElement('style');
   extraStyle.textContent = [
@@ -27,21 +32,25 @@
 
   var config = {};
 
-  var oversightModels = [
-    { id: 'hitl', label: 'Human-in-the-Loop', description: 'A human reviews and approves every AI decision before it is executed. The AI system cannot act autonomously. This provides maximum oversight but may reduce throughput.' },
-    { id: 'hotl', label: 'Human-on-the-Loop', description: 'The AI system can act autonomously but a human monitors outputs and can intervene when needed. Decisions proceed unless the human overrides. Balances efficiency with oversight.' },
-    { id: 'hic', label: 'Human-in-Command', description: 'A human retains overall authority and can override, shut down, or redirect the AI system at any time, but does not review individual decisions. Strategic-level oversight for high-autonomy systems.' }
-  ];
+  function getOversightModels() {
+    return [
+      { id: 'hitl', label: t(T + 'model.humanInLoop', 'Human-in-the-Loop'), description: 'A human reviews and approves every AI decision before it is executed. The AI system cannot act autonomously. This provides maximum oversight but may reduce throughput.' },
+      { id: 'hotl', label: t(T + 'model.humanOnLoop', 'Human-on-the-Loop'), description: 'The AI system can act autonomously but a human monitors outputs and can intervene when needed. Decisions proceed unless the human overrides. Balances efficiency with oversight.' },
+      { id: 'hic', label: t(T + 'model.humanInCommand', 'Human-in-Command'), description: 'A human retains overall authority and can override, shut down, or redirect the AI system at any time, but does not review individual decisions. Strategic-level oversight for high-autonomy systems.' }
+    ];
+  }
 
-  var overrideMechanisms = [
-    { id: 'emergencyShutdown', text: 'Emergency shutdown (kill switch)' },
-    { id: 'outputOverride', text: 'Output override/correction' },
-    { id: 'inputFiltering', text: 'Input filtering/rejection' },
-    { id: 'confidenceThreshold', text: 'Confidence threshold adjustment' },
-    { id: 'manualFallback', text: 'Full manual fallback mode' },
-    { id: 'partialAutomation', text: 'Partial automation with human approval' },
-    { id: 'batchReview', text: 'Batch review before release' }
-  ];
+  function getOverrideMechanisms() {
+    return [
+      { id: 'emergencyShutdown', text: t(T + 'override.killSwitch', 'Emergency shutdown (kill switch)') },
+      { id: 'outputOverride', text: t(T + 'override.outputOverride', 'Output override/correction') },
+      { id: 'inputFiltering', text: t(T + 'override.inputFiltering', 'Input filtering/rejection') },
+      { id: 'confidenceThreshold', text: t(T + 'override.confidenceThreshold', 'Confidence threshold adjustment') },
+      { id: 'manualFallback', text: t(T + 'override.manualFallback', 'Full manual fallback mode') },
+      { id: 'partialAutomation', text: t(T + 'override.partialAutomation', 'Partial automation with human approval') },
+      { id: 'batchReview', text: t(T + 'override.batchReview', 'Batch review before release') }
+    ];
+  }
 
   var authorityOptions = [
     { value: '', label: '-- Select Authority Level --' },
@@ -88,9 +97,9 @@
   };
 
   function initState() {
-    for (var i = 0; i < overrideMechanisms.length; i++) {
-      if (!state.mechanisms[overrideMechanisms[i].id]) {
-        state.mechanisms[overrideMechanisms[i].id] = { enabled: null, description: '', responseTime: '' };
+    for (var i = 0; i < getOverrideMechanisms().length; i++) {
+      if (!state.mechanisms[getOverrideMechanisms()[i].id]) {
+        state.mechanisms[getOverrideMechanisms()[i].id] = { enabled: null, description: '', responseTime: '' };
       }
     }
     for (var i = 0; i < biasMeasures.length; i++) {
@@ -103,8 +112,8 @@
 
   function getEnabledMechanismCount() {
     var count = 0;
-    for (var i = 0; i < overrideMechanisms.length; i++) {
-      if (state.mechanisms[overrideMechanisms[i].id].enabled === true) count++;
+    for (var i = 0; i < getOverrideMechanisms().length; i++) {
+      if (state.mechanisms[getOverrideMechanisms()[i].id].enabled === true) count++;
     }
     return count;
   }
@@ -118,10 +127,10 @@
   }
 
   var wizard = createWizard({
-    title: 'Human Oversight Design Tool',
-    subtitle: 'Template 09 \u2014 Serves EU AI Act Art. 14, UK DUA Act, Australia Privacy Act ADM',
+    title: t(T + 'title', 'Human Oversight Design Tool'),
+    subtitle: t(T + 'subtitle', 'Template 09 \u2014 Serves EU AI Act Art. 14, UK DUA Act, Australia Privacy Act ADM'),
     totalSteps: 5,
-    stepLabels: ['Oversight Model', 'Override Mechanisms', 'Personnel & Training', 'Automation Bias', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Oversight Model'), t(T + 'step2', 'Override Mechanisms'), t(T + 'step3', 'Personnel & Training'), t(T + 'step4', 'Automation Bias'), t(T + 'step5', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -158,7 +167,7 @@
     var buttons = [];
     var descContainers = [];
 
-    for (var i = 0; i < oversightModels.length; i++) {
+    for (var i = 0; i < getOversightModels().length; i++) {
       (function(model, idx) {
         var isSelected = state.oversightModel === model.id;
         var btn = el('div', {
@@ -196,7 +205,7 @@
         });
 
         section.appendChild(btn);
-      })(oversightModels[i], i);
+      })(getOversightModels()[i], i);
     }
 
     var justificationWrap = el('div', { style: state.oversightModel ? '' : 'display:none' });
@@ -225,7 +234,7 @@
       }
     }
 
-    for (var i = 0; i < overrideMechanisms.length; i++) {
+    for (var i = 0; i < getOverrideMechanisms().length; i++) {
       (function(mech) {
         var ms = state.mechanisms[mech.id];
 
@@ -245,7 +254,7 @@
         });
         section.appendChild(toggle);
         section.appendChild(detail);
-      })(overrideMechanisms[i]);
+      })(getOverrideMechanisms()[i]);
     }
 
     section.appendChild(statusEl);
@@ -325,10 +334,10 @@
     section.appendChild(el('h3', {}, ['Oversight Model']));
     var modelLabel = 'Not selected';
     var modelDesc = '';
-    for (var i = 0; i < oversightModels.length; i++) {
-      if (oversightModels[i].id === state.oversightModel) {
-        modelLabel = oversightModels[i].label;
-        modelDesc = oversightModels[i].description;
+    for (var i = 0; i < getOversightModels().length; i++) {
+      if (getOversightModels()[i].id === state.oversightModel) {
+        modelLabel = getOversightModels()[i].label;
+        modelDesc = getOversightModels()[i].description;
       }
     }
     var modelBox = el('div', { className: 'summary-model' });
@@ -343,13 +352,13 @@
 
     // Override mechanisms
     var enabledMechs = [];
-    for (var i = 0; i < overrideMechanisms.length; i++) {
-      if (state.mechanisms[overrideMechanisms[i].id].enabled === true) {
-        enabledMechs.push(overrideMechanisms[i]);
+    for (var i = 0; i < getOverrideMechanisms().length; i++) {
+      if (state.mechanisms[getOverrideMechanisms()[i].id].enabled === true) {
+        enabledMechs.push(getOverrideMechanisms()[i]);
       }
     }
 
-    section.appendChild(el('h3', {}, ['Override Mechanisms (' + enabledMechs.length + '/' + overrideMechanisms.length + ' enabled)']));
+    section.appendChild(el('h3', {}, ['Override Mechanisms (' + enabledMechs.length + '/' + getOverrideMechanisms().length + ' enabled)']));
 
     if (enabledMechs.length > 0) {
       var mechTable = el('table', { className: 'result-table' });
@@ -493,15 +502,15 @@
 
   function buildResults() {
     var enabledMechs = [];
-    for (var i = 0; i < overrideMechanisms.length; i++) {
-      if (state.mechanisms[overrideMechanisms[i].id].enabled === true) {
-        enabledMechs.push(overrideMechanisms[i].id);
+    for (var i = 0; i < getOverrideMechanisms().length; i++) {
+      if (state.mechanisms[getOverrideMechanisms()[i].id].enabled === true) {
+        enabledMechs.push(getOverrideMechanisms()[i].id);
       }
     }
 
     var modelLabel = 'Not selected';
-    for (var i = 0; i < oversightModels.length; i++) {
-      if (oversightModels[i].id === state.oversightModel) modelLabel = oversightModels[i].label;
+    for (var i = 0; i < getOversightModels().length; i++) {
+      if (getOversightModels()[i].id === state.oversightModel) modelLabel = getOversightModels()[i].label;
     }
 
     return {
@@ -540,9 +549,9 @@
     lines.push('');
     lines.push('**Selected Model:** ' + results.oversightModelLabel);
     lines.push('');
-    for (var i = 0; i < oversightModels.length; i++) {
-      if (oversightModels[i].id === state.oversightModel) {
-        lines.push(oversightModels[i].description);
+    for (var i = 0; i < getOversightModels().length; i++) {
+      if (getOversightModels()[i].id === state.oversightModel) {
+        lines.push(getOversightModels()[i].description);
         lines.push('');
       }
     }
@@ -553,8 +562,8 @@
 
     lines.push('## 2. Override Mechanisms');
     lines.push('');
-    for (var i = 0; i < overrideMechanisms.length; i++) {
-      var mech = overrideMechanisms[i];
+    for (var i = 0; i < getOverrideMechanisms().length; i++) {
+      var mech = getOverrideMechanisms()[i];
       var ms = state.mechanisms[mech.id];
       var marker = ms.enabled === true ? 'x' : ' ';
       lines.push('- [' + marker + '] **' + mech.text + '**');
@@ -621,6 +630,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

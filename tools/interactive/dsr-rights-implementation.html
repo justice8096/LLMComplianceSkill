@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.dsrRights.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var style = document.createElement('style');
   style.textContent = [
@@ -60,16 +65,16 @@
 
   // --- Rights Definition ---
   var RIGHTS = [
-    { id: 'informed', name: 'Right to be informed', jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
-    { id: 'access', name: 'Right of access', jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
-    { id: 'rectification', name: 'Right to rectification', jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
-    { id: 'erasure', name: 'Right to erasure/deletion', jurisdictions: ['EU','UK','India','Brazil','Australia','S.Korea'] },
-    { id: 'restrict', name: 'Right to restrict processing', jurisdictions: ['EU','UK'] },
-    { id: 'portability', name: 'Right to data portability', jurisdictions: ['EU','UK','Brazil','S.Korea'] },
-    { id: 'object', name: 'Right to object', jurisdictions: ['EU','UK','Brazil','S.Africa','Canada','Australia','S.Korea'] },
-    { id: 'automated', name: 'Right re: automated decisions', jurisdictions: ['EU','UK','Brazil','S.Africa','Australia','S.Korea'] },
-    { id: 'withdrawConsent', name: 'Right to withdraw consent', jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
-    { id: 'complain', name: 'Right to complain to authority', jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] }
+    { id: 'informed', name: t(T + 'right.informed', 'Right to be informed'), jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
+    { id: 'access', name: t(T + 'right.access', 'Right of access'), jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
+    { id: 'rectification', name: t(T + 'right.rectification', 'Right to rectification'), jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
+    { id: 'erasure', name: t(T + 'right.erasure', 'Right to erasure/deletion'), jurisdictions: ['EU','UK','India','Brazil','Australia','S.Korea'] },
+    { id: 'restrict', name: t(T + 'right.restrict', 'Right to restrict processing'), jurisdictions: ['EU','UK'] },
+    { id: 'portability', name: t(T + 'right.portability', 'Right to data portability'), jurisdictions: ['EU','UK','Brazil','S.Korea'] },
+    { id: 'object', name: t(T + 'right.object', 'Right to object'), jurisdictions: ['EU','UK','Brazil','S.Africa','Canada','Australia','S.Korea'] },
+    { id: 'automated', name: t(T + 'right.automatedDecision', 'Right re: automated decisions'), jurisdictions: ['EU','UK','Brazil','S.Africa','Australia','S.Korea'] },
+    { id: 'withdrawConsent', name: t(T + 'right.withdrawConsent', 'Right to withdraw consent'), jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] },
+    { id: 'complain', name: t(T + 'right.complain', 'Right to complain to authority'), jurisdictions: ['EU','UK','India','Brazil','S.Africa','Canada','Australia','S.Korea'] }
   ];
 
   var RESPONSE_TIME_OPTIONS = [
@@ -279,7 +284,7 @@
 
   // --- Wizard ---
   var wizard = createWizard({
-    title: 'Data Subject Rights Implementation',
+    title: t(T + 'title', 'Data Subject Rights Implementation'),
     subtitle: 'Template 11 \u2014 Evidence gathering for GDPR, UK GDPR, DPDPA, LGPD, POPIA, PIPEDA, Privacy Act, PIPA, PDPA (14+ laws)',
     totalSteps: 6,
     stepLabels: ['Rights Matrix', 'Request Handling', 'AI Challenges', 'Exemptions', 'Logging & Audit', 'Summary'],
@@ -1270,6 +1275,7 @@
 
   // Init
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

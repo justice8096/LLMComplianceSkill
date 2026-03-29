@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.riskClassification.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
@@ -20,66 +25,73 @@
     notes: ''
   };
 
-  var prohibitedQuestions = [
-    { id: 'subliminal', text: 'Does the system deploy subliminal, manipulative, or deceptive techniques to distort behavior?', badges: ['EU AI Act Art.5(1)(a)'] },
-    { id: 'vulnerability', text: 'Does the system exploit vulnerabilities due to age, disability, or socio-economic situation?', badges: ['EU AI Act Art.5(1)(b)'] },
-    { id: 'socialScoring', text: 'Does the system perform social scoring by public authorities?', badges: ['EU AI Act Art.5(1)(c)', 'China PIPL'] },
-    { id: 'crimePrediction', text: 'Does the system predict criminal offenses based solely on profiling or personality traits?', badges: ['EU AI Act Art.5(1)(d)'] },
-    { id: 'facialScraping', text: 'Does the system create facial recognition databases via untargeted scraping?', badges: ['EU AI Act Art.5(1)(e)'] },
-    { id: 'emotionInference', text: 'Does the system infer emotions in workplace or educational contexts (without medical/safety reasons)?', badges: ['EU AI Act Art.5(1)(f)'] },
-    { id: 'biometricCategorization', text: 'Does the system perform biometric categorization to infer sensitive attributes (race, political opinion, etc.)?', badges: ['EU AI Act Art.5(1)(g)'] },
-    { id: 'realTimeBiometric', text: 'Does the system use real-time remote biometric identification in publicly accessible spaces for law enforcement?', badges: ['EU AI Act Art.5(1)(h)', 'Brazil AI Bill'] },
-    { id: 'autonomousWeapons', text: 'Does the system operate as a fully autonomous lethal weapons system?', badges: ['Brazil AI Bill', 'South Korea Ethics'] },
-    { id: 'denialEssentialServices', text: 'Does the system make fully automated decisions denying essential services without human review?', badges: ['Colorado SB21-169', 'Brazil AI Bill'] }
-  ];
+  var PROHIBITED_IDS = ['subliminal','vulnerability','socialScoring','crimePrediction','facialScraping','emotionInference','biometricCategorization','realTimeBiometric','autonomousWeapons','denialEssentialServices'];
+  var PROHIBITED_BADGES = {
+    subliminal: ['EU AI Act Art.5(1)(a)'],
+    vulnerability: ['EU AI Act Art.5(1)(b)'],
+    socialScoring: ['EU AI Act Art.5(1)(c)', 'China PIPL'],
+    crimePrediction: ['EU AI Act Art.5(1)(d)'],
+    facialScraping: ['EU AI Act Art.5(1)(e)'],
+    emotionInference: ['EU AI Act Art.5(1)(f)'],
+    biometricCategorization: ['EU AI Act Art.5(1)(g)'],
+    realTimeBiometric: ['EU AI Act Art.5(1)(h)', 'Brazil AI Bill'],
+    autonomousWeapons: ['Brazil AI Bill', 'South Korea Ethics'],
+    denialEssentialServices: ['Colorado SB21-169', 'Brazil AI Bill']
+  };
 
-  var euAnnexIIICategories = [
-    { id: 'biometrics', text: 'Biometric identification and categorization of natural persons' },
-    { id: 'criticalInfra', text: 'Management and operation of critical infrastructure' },
-    { id: 'education', text: 'Education and vocational training (admissions, assessment)' },
-    { id: 'employment', text: 'Employment, worker management, and access to self-employment' },
-    { id: 'essentialServices', text: 'Access to essential private/public services and benefits' },
-    { id: 'lawEnforcement', text: 'Law enforcement (risk assessment, polygraphs, evidence evaluation)' },
-    { id: 'migration', text: 'Migration, asylum, and border control management' },
-    { id: 'justice', text: 'Administration of justice and democratic processes' }
-  ];
+  var EU_ANNEX_III_IDS = ['biometrics','criticalInfra','education','employment','essentialServices','lawEnforcement','migration','justice'];
+  var COLORADO_IDS = ['insurance','employment','financial','housing','education','government'];
+  var SOUTH_KOREA_IDS = ['healthcare','publicSafety','financial','employment'];
+  var BRAZIL_IDS = ['biometric','autonomousVehicles','healthcare','judicial','education'];
+  var LIMITED_RISK_IDS = ['chatbot','syntheticContent','emotionRecognition','biometricCat'];
+  var LIMITED_RISK_BADGES = {
+    chatbot: ['EU AI Act Art.50(1)'],
+    syntheticContent: ['EU AI Act Art.50(2)', 'China Deep Synthesis'],
+    emotionRecognition: ['EU AI Act Art.50(3)'],
+    biometricCat: ['EU AI Act Art.50(3)']
+  };
 
-  var coloradoCategories = [
-    { id: 'coInsurance', text: 'Insurance underwriting or pricing decisions' },
-    { id: 'coEmployment', text: 'Employment decisions (hiring, termination, compensation)' },
-    { id: 'coFinancial', text: 'Financial services (lending, credit)' },
-    { id: 'coHousing', text: 'Housing decisions (rental, sale, mortgage)' },
-    { id: 'coEducation', text: 'Educational enrollment or opportunity decisions' },
-    { id: 'coGovernment', text: 'Government services access decisions' }
-  ];
+  function getProhibitedQuestions() {
+    return PROHIBITED_IDS.map(function(id) {
+      return { id: id, text: t(T + 'prohibited.' + id, id), badges: PROHIBITED_BADGES[id] };
+    });
+  }
 
-  var southKoreaCategories = [
-    { id: 'skHealthcare', text: 'Healthcare diagnosis or treatment recommendations' },
-    { id: 'skPublicSafety', text: 'Public safety and security systems' },
-    { id: 'skFinancial', text: 'Financial creditworthiness assessment' },
-    { id: 'skEmployment', text: 'Employment screening and evaluation' }
-  ];
+  function getEuAnnexIII() {
+    return EU_ANNEX_III_IDS.map(function(id) {
+      return { id: id, text: t(T + 'euAnnexIII.' + id, id) };
+    });
+  }
 
-  var brazilCategories = [
-    { id: 'brBiometric', text: 'Biometric identification in public spaces' },
-    { id: 'brAutonomousVehicles', text: 'Autonomous vehicle operation' },
-    { id: 'brHealthcare', text: 'Healthcare and diagnostic systems' },
-    { id: 'brJudicial', text: 'Judicial and law enforcement decisions' },
-    { id: 'brEducation', text: 'Educational assessment and access' }
-  ];
+  function getColoradoCategories() {
+    return COLORADO_IDS.map(function(id) {
+      return { id: 'co' + id.charAt(0).toUpperCase() + id.slice(1), text: t(T + 'colorado.' + id, id) };
+    });
+  }
 
-  var limitedRiskTriggers = [
-    { id: 'chatbot', text: 'System interacts with humans as a chatbot or conversational agent', badges: ['EU AI Act Art.50(1)'] },
-    { id: 'syntheticContent', text: 'System generates synthetic audio, image, video, or text content', badges: ['EU AI Act Art.50(2)', 'China Deep Synthesis'] },
-    { id: 'emotionRecognition', text: 'System performs emotion recognition on individuals', badges: ['EU AI Act Art.50(3)'] },
-    { id: 'biometricCat', text: 'System performs biometric categorization (non-prohibited use)', badges: ['EU AI Act Art.50(3)'] }
-  ];
+  function getSouthKoreaCategories() {
+    return SOUTH_KOREA_IDS.map(function(id) {
+      return { id: 'sk' + id.charAt(0).toUpperCase() + id.slice(1), text: t(T + 'southKorea.' + id, id) };
+    });
+  }
+
+  function getBrazilCategories() {
+    return BRAZIL_IDS.map(function(id) {
+      return { id: 'br' + id.charAt(0).toUpperCase() + id.slice(1), text: t(T + 'brazil.' + id, id) };
+    });
+  }
+
+  function getLimitedRiskTriggers() {
+    return LIMITED_RISK_IDS.map(function(id) {
+      return { id: id, text: t(T + 'limitedRisk.' + id, id), badges: LIMITED_RISK_BADGES[id] };
+    });
+  }
 
   var wizard = createWizard({
-    title: 'AI Risk Classification Decision Tree',
-    subtitle: 'Template 17 - Interactive risk classification across multiple regulatory frameworks',
+    title: t(T + 'title', 'AI Risk Classification Decision Tree'),
+    subtitle: t(T + 'subtitle', 'Template 17 - Interactive risk classification across multiple regulatory frameworks'),
     totalSteps: 4,
-    stepLabels: ['Prohibited', 'High-Risk', 'Limited Risk', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Prohibited'), t(T + 'step2', 'High-Risk'), t(T + 'step3', 'Limited Risk'), t(T + 'step4', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -108,9 +120,10 @@
 
   function renderStep1(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 1: Prohibited Practices Check']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle1', 'Step 1: Prohibited Practices Check')]));
     section.appendChild(createAlert('warning', 'If any of these apply, the AI system may be PROHIBITED under applicable law. Answering "Yes" does not automatically mean prohibition - exceptions may apply.'));
 
+    var prohibitedQuestions = getProhibitedQuestions();
     for (var i = 0; i < prohibitedQuestions.length; i++) {
       (function(q) {
         var row = createToggle(q.text, state.prohibited[q.id] === undefined ? null : state.prohibited[q.id], function(v) {
@@ -136,20 +149,20 @@
 
   function renderStep2(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 2: High-Risk Categories']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle2', 'Step 2: High-Risk Categories')]));
     section.appendChild(createAlert('info', 'Check all categories that apply to your AI system. Different jurisdictions define high-risk differently.'));
 
     section.appendChild(el('h3', {}, ['EU AI Act - Annex III High-Risk Categories']));
-    renderChecklist(section, euAnnexIIICategories, state.highRisk.euAnnexIII, 'enacted');
+    renderChecklist(section, getEuAnnexIII(), state.highRisk.euAnnexIII, 'enacted');
 
     section.appendChild(el('h3', {}, ['Colorado SB21-169 - Consequential Decisions']));
-    renderChecklist(section, coloradoCategories, state.highRisk.colorado, 'active-sector');
+    renderChecklist(section, getColoradoCategories(), state.highRisk.colorado, 'active-sector');
 
     section.appendChild(el('h3', {}, ['South Korea - High-Risk AI Areas']));
-    renderChecklist(section, southKoreaCategories, state.highRisk.southKorea, 'enacted');
+    renderChecklist(section, getSouthKoreaCategories(), state.highRisk.southKorea, 'enacted');
 
     section.appendChild(el('h3', {}, ['Brazil AI Bill - High-Risk Categories']));
-    renderChecklist(section, brazilCategories, state.highRisk.brazil, 'active-sector');
+    renderChecklist(section, getBrazilCategories(), state.highRisk.brazil, 'active-sector');
 
     container.appendChild(section);
   }
@@ -172,32 +185,33 @@
 
   function renderStep3(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 3: Limited Risk Transparency Triggers']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle3', 'Step 3: Limited Risk Transparency Triggers')]));
     section.appendChild(createAlert('info', 'Limited risk systems require transparency obligations - users must be informed they are interacting with AI.'));
 
+    var limitedRiskTriggers = getLimitedRiskTriggers();
     for (var i = 0; i < limitedRiskTriggers.length; i++) {
-      (function(t) {
-        var row = createToggle(t.text, state.limitedRisk[t.id] === undefined ? null : state.limitedRisk[t.id], function(v) {
-          state.limitedRisk[t.id] = v;
+      (function(trigger) {
+        var row = createToggle(trigger.text, state.limitedRisk[trigger.id] === undefined ? null : state.limitedRisk[trigger.id], function(v) {
+          state.limitedRisk[trigger.id] = v;
           wizard.saveNow();
         });
         var badgeRow = el('div', { className: 'toggle-row', style: 'border: none; padding: 0 16px 4px; margin-top: -6px; background: transparent;' });
-        for (var b = 0; b < t.badges.length; b++) {
-          badgeRow.appendChild(el('span', { className: 'badge enacted' }, [t.badges[b]]));
+        for (var b = 0; b < trigger.badges.length; b++) {
+          badgeRow.appendChild(el('span', { className: 'badge enacted' }, [trigger.badges[b]]));
         }
         section.appendChild(row);
         section.appendChild(badgeRow);
       })(limitedRiskTriggers[i]);
     }
 
-    section.appendChild(createTextArea('Additional Notes', state.notes, function(v) { state.notes = v; }, 'Any additional classification notes...'));
+    section.appendChild(createTextArea(t(T + 'label.notes', 'Additional Notes'), state.notes, function(v) { state.notes = v; }, 'Any additional classification notes...'));
 
     container.appendChild(section);
   }
 
   function renderSummary(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Classification Summary']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle4', 'Classification Summary')]));
 
     var anyProhibited = Object.values(state.prohibited).some(function(v) { return v === true; });
     var prohibitedCount = Object.values(state.prohibited).filter(function(v) { return v === true; }).length;
@@ -340,6 +354,7 @@
     lines.push('');
     lines.push('## Prohibited Practices Check');
     lines.push('');
+    var prohibitedQuestions = getProhibitedQuestions();
     for (var i = 0; i < prohibitedQuestions.length; i++) {
       var q = prohibitedQuestions[i];
       var v = state.prohibited[q.id];
@@ -349,35 +364,40 @@
     lines.push('## High-Risk Classifications');
     lines.push('');
     lines.push('### EU AI Act Annex III');
-    for (var i = 0; i < euAnnexIIICategories.length; i++) {
-      var c = euAnnexIIICategories[i];
+    var euItems = getEuAnnexIII();
+    for (var i = 0; i < euItems.length; i++) {
+      var c = euItems[i];
       lines.push('- [' + (state.highRisk.euAnnexIII[c.id] ? 'x' : ' ') + '] ' + c.text);
     }
     lines.push('');
     lines.push('### Colorado SB21-169');
-    for (var i = 0; i < coloradoCategories.length; i++) {
-      var c = coloradoCategories[i];
+    var coItems = getColoradoCategories();
+    for (var i = 0; i < coItems.length; i++) {
+      var c = coItems[i];
       lines.push('- [' + (state.highRisk.colorado[c.id] ? 'x' : ' ') + '] ' + c.text);
     }
     lines.push('');
     lines.push('### South Korea');
-    for (var i = 0; i < southKoreaCategories.length; i++) {
-      var c = southKoreaCategories[i];
+    var skItems = getSouthKoreaCategories();
+    for (var i = 0; i < skItems.length; i++) {
+      var c = skItems[i];
       lines.push('- [' + (state.highRisk.southKorea[c.id] ? 'x' : ' ') + '] ' + c.text);
     }
     lines.push('');
     lines.push('### Brazil AI Bill');
-    for (var i = 0; i < brazilCategories.length; i++) {
-      var c = brazilCategories[i];
+    var brItems = getBrazilCategories();
+    for (var i = 0; i < brItems.length; i++) {
+      var c = brItems[i];
       lines.push('- [' + (state.highRisk.brazil[c.id] ? 'x' : ' ') + '] ' + c.text);
     }
     lines.push('');
     lines.push('## Limited Risk Triggers');
     lines.push('');
-    for (var i = 0; i < limitedRiskTriggers.length; i++) {
-      var t = limitedRiskTriggers[i];
-      var v = state.limitedRisk[t.id];
-      lines.push('- [' + (v === true ? 'x' : ' ') + '] ' + t.text);
+    var lrTriggers = getLimitedRiskTriggers();
+    for (var i = 0; i < lrTriggers.length; i++) {
+      var trigger = lrTriggers[i];
+      var v = state.limitedRisk[trigger.id];
+      lines.push('- [' + (v === true ? 'x' : ' ') + '] ' + trigger.text);
     }
     lines.push('');
     lines.push('## Classification Summary');
@@ -402,6 +422,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

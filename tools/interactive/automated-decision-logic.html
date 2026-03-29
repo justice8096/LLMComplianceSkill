@@ -10,19 +10,27 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.automatedDecisionLogic.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
-  var affectedGroupOptions = [
-    { value: '', label: '-- Select --' },
-    { value: 'employees', label: 'Employees / job applicants' },
-    { value: 'consumers', label: 'Consumers / customers' },
-    { value: 'patients', label: 'Patients' },
-    { value: 'students', label: 'Students' },
-    { value: 'citizens', label: 'Citizens / public' },
-    { value: 'businesses', label: 'Businesses / vendors' },
-    { value: 'other', label: 'Other' }
-  ];
+  function getAffectedGroupOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'employees', label: t(T + 'group.employees', 'Employees / job applicants') },
+      { value: 'consumers', label: t(T + 'group.consumers', 'Consumers / customers') },
+      { value: 'patients', label: t(T + 'group.patients', 'Patients') },
+      { value: 'students', label: t(T + 'group.students', 'Students') },
+      { value: 'citizens', label: t(T + 'group.citizens', 'Citizens / public') },
+      { value: 'businesses', label: t(T + 'group.businesses', 'Businesses / vendors') },
+      { value: 'other', label: t(T + 'group.other', 'Other') }
+    ];
+  }
+  var affectedGroupOptions = getAffectedGroupOptions();
 
   var dataCategories = [
     { id: 'personalId', label: 'Personal identifiers (name, ID, email)' },
@@ -49,14 +57,17 @@
     { id: 'noAlternative', label: 'No alternative available', description: 'Data subjects cannot easily avoid the automated decision.' }
   ];
 
-  var oversightModelOptions = [
-    { value: '', label: '-- Select --' },
-    { value: 'hitl', label: 'Human-in-the-Loop (every decision reviewed)' },
-    { value: 'hotl', label: 'Human-on-the-Loop (monitoring with override)' },
-    { value: 'hic', label: 'Human-in-Command (strategic oversight)' },
-    { value: 'appeal', label: 'Post-decision appeal only' },
-    { value: 'hybrid', label: 'Hybrid (varies by decision risk)' }
-  ];
+  function getOversightModelOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'hitl', label: t(T + 'oversight.humanInLoop', 'Human-in-the-Loop') + ' (every decision reviewed)' },
+      { value: 'hotl', label: t(T + 'oversight.humanOnLoop', 'Human-on-the-Loop') + ' (monitoring with override)' },
+      { value: 'hic', label: t(T + 'oversight.humanInCommand', 'Human-in-Command') + ' (strategic oversight)' },
+      { value: 'appeal', label: t(T + 'oversight.appealOnly', 'Post-decision appeal only') },
+      { value: 'hybrid', label: t(T + 'oversight.hybrid', 'Hybrid (varies by decision risk)') }
+    ];
+  }
+  var oversightModelOptions = getOversightModelOptions();
 
   var responseTimeOptions = [
     { value: '', label: '-- Select --' },
@@ -69,14 +80,14 @@
   ];
 
   var explainabilityMethods = [
-    { id: 'featureImportance', label: 'Feature importance / key factors', description: 'Show which input features most influenced the decision.' },
-    { id: 'counterfactual', label: 'Counterfactual explanations', description: 'Explain what would need to change for a different outcome.' },
-    { id: 'rulesBased', label: 'Rules-based explanation', description: 'Translate decision into plain-language if/then rules.' },
-    { id: 'confidence', label: 'Confidence / probability score', description: 'Provide the system confidence level in the decision.' },
-    { id: 'comparison', label: 'Comparison with similar cases', description: 'Show how similar inputs were decided.' },
-    { id: 'processFlow', label: 'Process flow description', description: 'Step-by-step walkthrough of the decision pipeline.' },
-    { id: 'dataProvenance', label: 'Data provenance', description: 'Show which data sources contributed to the decision.' },
-    { id: 'modelCard', label: 'Model card / system documentation', description: 'Provide link to detailed system documentation.' }
+    { id: 'featureImportance', label: t(T + 'explainability.featureImportance', 'Feature importance / key factors'), description: 'Show which input features most influenced the decision.' },
+    { id: 'counterfactual', label: t(T + 'explainability.counterfactual', 'Counterfactual explanations'), description: 'Explain what would need to change for a different outcome.' },
+    { id: 'rulesBased', label: t(T + 'explainability.rulesBased', 'Rules-based explanation'), description: 'Translate decision into plain-language if/then rules.' },
+    { id: 'confidence', label: t(T + 'explainability.confidenceScore', 'Confidence / probability score'), description: 'Provide the system confidence level in the decision.' },
+    { id: 'comparison', label: t(T + 'explainability.similarCases', 'Comparison with similar cases'), description: 'Show how similar inputs were decided.' },
+    { id: 'processFlow', label: t(T + 'explainability.processFlow', 'Process flow description'), description: 'Step-by-step walkthrough of the decision pipeline.' },
+    { id: 'dataProvenance', label: t(T + 'explainability.dataProvenance', 'Data provenance'), description: 'Show which data sources contributed to the decision.' },
+    { id: 'modelCard', label: t(T + 'explainability.modelCard', 'Model card / system documentation'), description: 'Provide link to detailed system documentation.' }
   ];
 
   var MAX_DECISIONS = 10;
@@ -114,7 +125,7 @@
   initState();
 
   var wizard = createWizard({
-    title: 'Automated Decision Logic',
+    title: t(T + 'title', 'Automated Decision Logic'),
     subtitle: 'Template 04 \u2014 GDPR Art. 22; EU AI Act Arts. 14, 86; Colorado SB 24-205; Canada Directive on ADM',
     totalSteps: 6,
     stepLabels: ['Load Config', 'Map Decisions', 'Classify Significance', 'Human Review', 'Explainability', 'Review & Export'],
@@ -511,6 +522,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

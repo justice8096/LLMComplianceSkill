@@ -2,6 +2,157 @@
  * Shared utilities for compliance interactive tools
  */
 
+// --- i18n (browser-side) ---
+var _i18nLocale = 'en';
+var _i18nData = {};
+var _i18nEn = {};
+var _i18nReady = false;
+
+/**
+ * Translate a dot-path key. Falls back to English, then to the raw key.
+ * @param {string} key  e.g. 'tools.securityAssessment.step1' or 'ui.btn.next'
+ * @param {string} [fallback]  Optional fallback string
+ * @returns {string}
+ */
+function t(key, fallback) {
+  var val = _i18nResolve(_i18nData, key);
+  if (val !== undefined) return val;
+  var enVal = _i18nResolve(_i18nEn, key);
+  if (enVal !== undefined) return enVal;
+  return fallback !== undefined ? fallback : key;
+}
+
+function _i18nResolve(obj, key) {
+  var parts = key.split('.');
+  var val = obj;
+  for (var i = 0; i < parts.length; i++) {
+    if (val == null || typeof val !== 'object') return undefined;
+    // Try joining remaining parts as a single dotted key (handles flat keys like "severity.critical")
+    var rest = parts.slice(i).join('.');
+    if (typeof val[rest] === 'string') return val[rest];
+    val = val[parts[i]];
+  }
+  return typeof val === 'string' ? val : undefined;
+}
+
+/**
+ * Load a locale file asynchronously from ../i18n/locales/<code>.json
+ * Falls back to 'en' if the requested locale is not found.
+ * @param {string} code  BCP-47 locale code, e.g. 'zh-CN', 'ko', 'en'
+ * @param {Function} [callback]  Called when loading is complete
+ */
+function i18nLoad(code, callback) {
+  var basePath = '../i18n/locales/';
+
+  function loadJson(url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try { cb(null, JSON.parse(xhr.responseText)); } catch(e) { cb(e); }
+      } else {
+        cb(new Error('HTTP ' + xhr.status));
+      }
+    };
+    xhr.onerror = function() { cb(new Error('Network error')); };
+    xhr.send();
+  }
+
+  // Always load English first as fallback
+  loadJson(basePath + 'en.json', function(err, enData) {
+    if (err) {
+      console.warn('[i18n] Failed to load en.json:', err);
+      _i18nReady = true;
+      if (callback) callback();
+      return;
+    }
+    _i18nEn = enData;
+
+    if (!code || code === 'en') {
+      _i18nData = enData;
+      _i18nLocale = 'en';
+      _i18nReady = true;
+      if (callback) callback();
+      return;
+    }
+
+    loadJson(basePath + code + '.json', function(err2, locData) {
+      if (err2) {
+        console.warn('[i18n] Locale "' + code + '" not found, using en');
+        _i18nData = enData;
+        _i18nLocale = 'en';
+      } else {
+        _i18nData = locData;
+        _i18nLocale = code;
+      }
+      _i18nReady = true;
+      if (callback) callback();
+    });
+  });
+}
+
+/**
+ * Get the current locale code.
+ * @returns {string}
+ */
+function i18nCurrentLocale() {
+  return _i18nLocale;
+}
+
+/**
+ * Create a locale switcher dropdown. Calls onChange(code) when user picks a locale.
+ * @param {Function} onChange  callback(localeCode)
+ * @returns {HTMLElement}
+ */
+function createLocaleSwitcher(onChange) {
+  var locales = [
+    { code: 'en', name: 'English' },
+    { code: 'zh-CN', name: '中文（简体）' },
+    { code: 'ko', name: '한국어' },
+    { code: 'ja', name: '日本語' },
+    { code: 'pt-BR', name: 'Português (BR)' },
+    { code: 'es', name: 'Español' },
+    { code: 'fr', name: 'Français' }
+  ];
+
+  var row = el('div', { className: 'field-row' });
+  row.appendChild(el('label', { className: 'field-label' }, [t('ui.locale.label', 'Language')]));
+  var select = el('select', { className: 'field-select' });
+  for (var i = 0; i < locales.length; i++) {
+    var opt = el('option', { value: locales[i].code, textContent: locales[i].name });
+    if (locales[i].code === _i18nLocale) opt.selected = true;
+    select.appendChild(opt);
+  }
+  select.addEventListener('change', function() {
+    var code = select.value;
+    i18nLoad(code, function() {
+      try { sessionStorage.setItem('wizard_locale', code); } catch(e) {}
+      if (onChange) onChange(code);
+    });
+  });
+  row.appendChild(select);
+  return row;
+}
+
+/**
+ * Get the saved locale from sessionStorage, or detect from browser language.
+ * @returns {string}
+ */
+function i18nDetectLocale() {
+  try {
+    var saved = sessionStorage.getItem('wizard_locale');
+    if (saved) return saved;
+  } catch(e) {}
+  var lang = (navigator.language || 'en').toLowerCase();
+  if (lang.indexOf('zh') === 0) return 'zh-CN';
+  if (lang.indexOf('ko') === 0) return 'ko';
+  if (lang.indexOf('ja') === 0) return 'ja';
+  if (lang.indexOf('pt') === 0) return 'pt-BR';
+  if (lang.indexOf('es') === 0) return 'es';
+  if (lang.indexOf('fr') === 0) return 'fr';
+  return 'en';
+}
+
 // --- Config load/save ---
 function loadConfigFromFile(callback) {
   const input = document.createElement('input');
@@ -81,12 +232,12 @@ function createToggle(label, value, onChange) {
 
   const yesBtn = el('button', {
     className: 'toggle-btn' + (value === true ? ' active yes' : ''),
-    textContent: 'Yes',
+    textContent: t('ui.toggle.yes', 'Yes'),
     onClick: function() { onChange(true); updateToggle(wrapper, true); }
   });
   const noBtn = el('button', {
     className: 'toggle-btn' + (value === false ? ' active no' : ''),
-    textContent: 'No',
+    textContent: t('ui.toggle.no', 'No'),
     onClick: function() { onChange(false); updateToggle(wrapper, false); }
   });
   group.appendChild(yesBtn);
@@ -242,15 +393,16 @@ function createWizard(opts) {
     if (opts.subtitle) document.body.appendChild(el('p', { className: 'subtitle' }, [opts.subtitle]));
 
     var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Load Config', onClick: function() {
+    toolbar.appendChild(el('button', { className: 'btn', textContent: t('ui.btn.loadConfig', 'Load Config'), onClick: function() {
       if (opts.onLoad) opts.onLoad();
     }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: 'Save Config', onClick: function() {
+    toolbar.appendChild(el('button', { className: 'btn', textContent: t('ui.btn.saveConfig', 'Save Config'), onClick: function() {
       if (opts.onSave) opts.onSave();
     }}));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: 'Export Markdown', onClick: function() {
+    toolbar.appendChild(el('button', { className: 'btn primary', textContent: t('ui.btn.exportMarkdown', 'Export Markdown'), onClick: function() {
       if (opts.onExport) opts.onExport();
     }}));
+    toolbar.appendChild(createLocaleSwitcher(function() { refreshStep(); }));
     document.body.appendChild(toolbar);
 
     _progressContainer = el('div', { className: 'progress' });
@@ -287,12 +439,12 @@ function createWizard(opts) {
   function updateNav() {
     _navContainer.textContent = '';
     if (_currentStep > 0) {
-      _navContainer.appendChild(el('button', { className: 'btn', textContent: 'Previous', onClick: function() { _currentStep--; refreshStep(); } }));
+      _navContainer.appendChild(el('button', { className: 'btn', textContent: t('ui.btn.previous', 'Previous'), onClick: function() { _currentStep--; refreshStep(); } }));
     } else {
       _navContainer.appendChild(el('span'));
     }
     if (_currentStep < opts.totalSteps - 1) {
-      _navContainer.appendChild(el('button', { className: 'btn primary', textContent: 'Next', onClick: function() { _currentStep++; refreshStep(); } }));
+      _navContainer.appendChild(el('button', { className: 'btn primary', textContent: t('ui.btn.next', 'Next'), onClick: function() { _currentStep++; refreshStep(); } }));
     }
   }
 

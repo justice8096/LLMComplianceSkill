@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.consentRecordsAudit.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var style = document.createElement('style');
   style.textContent = [
@@ -84,13 +89,13 @@
   ];
 
   var LIFECYCLE_EVENTS = [
-    { id: 'requested', name: 'Consent requested', desc: 'Logs request timestamp + UI shown + consent text version' },
-    { id: 'granted', name: 'Consent granted', desc: 'Records all schema fields' },
-    { id: 'refused', name: 'Consent refused', desc: 'Records refusal + offers alternative' },
-    { id: 'withdrawn', name: 'Consent withdrawn', desc: 'Records withdrawal + ceases processing + handles data' },
-    { id: 'purpose_change', name: 'Purpose change', desc: 'Requests new consent + pauses processing' },
-    { id: 'expires', name: 'Consent expires', desc: 'Sends renewal notice + logs expiration' },
-    { id: 'reconfirmed', name: 'Consent re-confirmed', desc: 'Updates record with new timestamp' }
+    { id: 'requested', name: t(T + 'event.requested', 'Consent requested'), desc: 'Logs request timestamp + UI shown + consent text version' },
+    { id: 'granted', name: t(T + 'event.granted', 'Consent granted'), desc: 'Records all schema fields' },
+    { id: 'refused', name: t(T + 'event.refused', 'Consent refused'), desc: 'Records refusal + offers alternative' },
+    { id: 'withdrawn', name: t(T + 'event.withdrawn', 'Consent withdrawn'), desc: 'Records withdrawal + ceases processing + handles data' },
+    { id: 'purpose_change', name: t(T + 'event.purposeChange', 'Purpose change'), desc: 'Requests new consent + pauses processing' },
+    { id: 'expires', name: t(T + 'event.expires', 'Consent expires'), desc: 'Sends renewal notice + logs expiration' },
+    { id: 'reconfirmed', name: t(T + 'event.reconfirmed', 'Consent re-confirmed'), desc: 'Updates record with new timestamp' }
   ];
 
   var JURISDICTIONS_MAP = {
@@ -253,8 +258,8 @@
 
   // --- Wizard ---
   var wizard = createWizard({
-    title: 'Consent Records Audit Tool',
-    subtitle: 'Template 10 \u2014 Validates consent record completeness against GDPR, UK GDPR, DPDPA, LGPD, POPIA, PIPEDA, PIPA, APPI, PDPA (16+ laws)',
+    title: t(T + 'title', 'Consent Records Audit Tool'),
+    subtitle: t(T + 'subtitle', 'Template 10 \u2014 Validates consent record completeness against GDPR, UK GDPR, DPDPA, LGPD, POPIA, PIPEDA, PIPA, APPI, PDPA (16+ laws)'),
     totalSteps: 7,
     stepLabels: ['Schema Validation', 'Collection Audit', 'Withdrawal Audit', 'Lifecycle Events', "Children's Consent", 'Audit Evidence', 'Summary'],
     renderStep: function(step, container) {
@@ -981,6 +986,7 @@
 
   // Init
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

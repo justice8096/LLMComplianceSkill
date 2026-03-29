@@ -10,38 +10,46 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.disclosureToolkit.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
-  var disclosureTypes = [
-    { id: 'aiInteraction', label: 'AI Interaction Notice', badges: [
-      { text: 'EU Art. 50(1)', cls: 'enacted' }, { text: 'South Korea', cls: 'enacted' }, { text: 'Colorado', cls: 'active-sector' }, { text: 'Illinois AIVIA', cls: 'active-sector' }
-    ]},
-    { id: 'contentLabel', label: 'AI-Generated Content Label', badges: [
-      { text: 'EU Art. 50(2)', cls: 'enacted' }, { text: 'China GenAI', cls: 'enacted' }, { text: 'California SB 942', cls: 'active-sector' }
-    ]},
-    { id: 'metadataWatermark', label: 'Metadata / Watermark', badges: [
-      { text: 'EU Art. 50(2)', cls: 'enacted' }, { text: 'China Deep Synthesis', cls: 'enacted' }, { text: 'California SB 942', cls: 'active-sector' }
-    ]},
-    { id: 'automatedDecision', label: 'Automated Decision Notice', badges: [
-      { text: 'Colorado', cls: 'active-sector' }, { text: 'NYC LL 144', cls: 'enacted' }, { text: 'Illinois AIVIA', cls: 'active-sector' }
-    ]},
-    { id: 'emotionRecognition', label: 'Emotion Recognition Notice', badges: [
-      { text: 'EU Art. 50(3)', cls: 'enacted' }, { text: 'Illinois BIPA', cls: 'enacted' }
-    ]},
-    { id: 'aiVideoInterview', label: 'AI Video Interview Notice', badges: [
-      { text: 'Illinois AIPA', cls: 'enacted' }, { text: 'NYC LL 144', cls: 'enacted' }
-    ]},
-    { id: 'deepfakeSynthetic', label: 'Deepfake / Synthetic Media Label', badges: [
-      { text: 'EU Art. 50(4)', cls: 'enacted' }, { text: 'China Deep Synthesis', cls: 'enacted' }, { text: 'California SB 942', cls: 'active-sector' }
-    ]},
-    { id: 'optOutHuman', label: 'Opt-Out / Human Alternative', badges: [
-      { text: 'Colorado', cls: 'active-sector' }, { text: 'Illinois AIVIA', cls: 'active-sector' }, { text: 'South Korea', cls: 'enacted' }
-    ]},
-    { id: 'appealContest', label: 'Appeal / Contest Mechanism', badges: [
-      { text: 'EU AI Act', cls: 'enacted' }, { text: 'Colorado', cls: 'active-sector' }, { text: 'NYC LL 144', cls: 'enacted' }
-    ]}
-  ];
+  function getDisclosureTypes() {
+    return [
+      { id: 'aiInteraction', label: t(T + 'type.aiInteractionNotice', 'AI Interaction Notice'), badges: [
+        { text: 'EU Art. 50(1)', cls: 'enacted' }, { text: 'South Korea', cls: 'enacted' }, { text: 'Colorado', cls: 'active-sector' }, { text: 'Illinois AIVIA', cls: 'active-sector' }
+      ]},
+      { id: 'contentLabel', label: t(T + 'type.contentLabel', 'AI-Generated Content Label'), badges: [
+        { text: 'EU Art. 50(2)', cls: 'enacted' }, { text: 'China GenAI', cls: 'enacted' }, { text: 'California SB 942', cls: 'active-sector' }
+      ]},
+      { id: 'metadataWatermark', label: t(T + 'type.metadata', 'Metadata / Watermark'), badges: [
+        { text: 'EU Art. 50(2)', cls: 'enacted' }, { text: 'China Deep Synthesis', cls: 'enacted' }, { text: 'California SB 942', cls: 'active-sector' }
+      ]},
+      { id: 'automatedDecision', label: t(T + 'type.automatedDecision', 'Automated Decision Notice'), badges: [
+        { text: 'Colorado', cls: 'active-sector' }, { text: 'NYC LL 144', cls: 'enacted' }, { text: 'Illinois AIVIA', cls: 'active-sector' }
+      ]},
+      { id: 'emotionRecognition', label: t(T + 'type.emotionRecognition', 'Emotion Recognition Notice'), badges: [
+        { text: 'EU Art. 50(3)', cls: 'enacted' }, { text: 'Illinois BIPA', cls: 'enacted' }
+      ]},
+      { id: 'aiVideoInterview', label: t(T + 'type.videoInterview', 'AI Video Interview Notice'), badges: [
+        { text: 'Illinois AIPA', cls: 'enacted' }, { text: 'NYC LL 144', cls: 'enacted' }
+      ]},
+      { id: 'deepfakeSynthetic', label: t(T + 'type.deepfake', 'Deepfake / Synthetic Media Label'), badges: [
+        { text: 'EU Art. 50(4)', cls: 'enacted' }, { text: 'China Deep Synthesis', cls: 'enacted' }, { text: 'California SB 942', cls: 'active-sector' }
+      ]},
+      { id: 'optOutHuman', label: t(T + 'type.optOut', 'Opt-Out / Human Alternative'), badges: [
+        { text: 'Colorado', cls: 'active-sector' }, { text: 'Illinois AIVIA', cls: 'active-sector' }, { text: 'South Korea', cls: 'enacted' }
+      ]},
+      { id: 'appealContest', label: t(T + 'type.appeal', 'Appeal / Contest Mechanism'), badges: [
+        { text: 'EU AI Act', cls: 'enacted' }, { text: 'Colorado', cls: 'active-sector' }, { text: 'NYC LL 144', cls: 'enacted' }
+      ]}
+    ];
+  }
+  var disclosureTypes = getDisclosureTypes();
 
   var defaultCopy = {
     aiInteraction: { short: 'You are interacting with an AI system.', standard: 'This service is powered by artificial intelligence. A human agent is available upon request.', detailed: 'This interaction is conducted by an AI system developed by [Company]. The system processes your inputs to generate responses. You may request a human agent at any time by [method].' },
@@ -97,10 +105,10 @@
   initState();
 
   var wizard = createWizard({
-    title: 'User-Facing Disclosure Toolkit',
-    subtitle: 'Template 02 \u2014 EU Art. 50; South Korea; China GenAI; Utah; California SB 942; Colorado; NYC LL 144; Illinois AIVIA',
+    title: t(T + 'title', 'User-Facing Disclosure Toolkit'),
+    subtitle: t(T + 'subtitle', 'Template 02 \u2014 EU Art. 50; South Korea; China GenAI; Utah; California SB 942; Colorado; NYC LL 144; Illinois AIVIA'),
     totalSteps: 5,
-    stepLabels: ['Requirements', 'Copy Design', 'Checklist', 'Evidence Log', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Requirements'), t(T + 'step2', 'Copy Design'), t(T + 'step3', 'Checklist'), t(T + 'step4', 'Evidence Log'), t(T + 'step5', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -126,7 +134,7 @@
 
   function renderStep1(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 1: Disclosure Requirements Matrix']));
+    section.appendChild(el('h2', {}, [t(T + 'step1', 'Step 1: Disclosure Requirements Matrix')]));
     section.appendChild(createAlert('info', 'Identify which disclosure types apply to your system and whether they have been implemented.'));
     for (var i = 0; i < disclosureTypes.length; i++) {
       (function(dt) {
@@ -148,7 +156,7 @@
 
   function renderStep2(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 2: Disclosure Copy Design']));
+    section.appendChild(el('h2', {}, [t(T + 'step2', 'Step 2: Disclosure Copy Design')]));
     section.appendChild(createAlert('info', 'For each applicable disclosure, design the user-facing copy. Select a variation to pre-populate a suggestion.'));
     var anyApplicable = false;
     for (var i = 0; i < disclosureTypes.length; i++) {
@@ -183,7 +191,7 @@
 
   function renderStep3(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 3: Implementation Checklist']));
+    section.appendChild(el('h2', {}, [t(T + 'step3', 'Step 3: Implementation Checklist')]));
     section.appendChild(createAlert('info', 'Track implementation progress across design, coding, and testing phases.'));
     var phases = [
       { id: 'design', label: 'Design Phase', items: checklistPhases.design },
@@ -215,7 +223,7 @@
 
   function renderStep4(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 4: Evidence Log']));
+    section.appendChild(el('h2', {}, [t(T + 'step4', 'Step 4: Evidence Log')]));
     section.appendChild(createAlert('info', 'Document evidence of each disclosure implementation for audit purposes.'));
     for (var i = 0; i < state.evidenceLog.length; i++) {
       (function(idx) {
@@ -252,7 +260,7 @@
 
   function renderSummary(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 5: Summary']));
+    section.appendChild(el('h2', {}, [t(T + 'step5', 'Step 5: Summary')]));
     var applicableCount = 0; var implementedCount = 0;
     for (var i = 0; i < disclosureTypes.length; i++) {
       var req = state.requirements[disclosureTypes[i].id];
@@ -407,6 +415,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

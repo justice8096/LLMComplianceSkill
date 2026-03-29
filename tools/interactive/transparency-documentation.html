@@ -10,17 +10,22 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.transparencyDocumentation.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
   var limitationCategories = [
-    { id: 'accuracy', label: 'Accuracy boundaries' },
-    { id: 'bias', label: 'Bias risks' },
-    { id: 'hallucination', label: 'Hallucination / confabulation' },
-    { id: 'adversarial', label: 'Adversarial vulnerability' },
-    { id: 'dataCurrency', label: 'Data currency' },
-    { id: 'ood', label: 'Out-of-distribution behavior' },
-    { id: 'environmental', label: 'Environmental dependencies' }
+    { id: 'accuracy', label: t(T + 'limitation.accuracy', 'Accuracy boundaries') },
+    { id: 'bias', label: t(T + 'limitation.bias', 'Bias risks') },
+    { id: 'hallucination', label: t(T + 'limitation.hallucination', 'Hallucination / confabulation') },
+    { id: 'adversarial', label: t(T + 'limitation.adversarial', 'Adversarial vulnerability') },
+    { id: 'dataCurrency', label: t(T + 'limitation.dataCurrency', 'Data currency') },
+    { id: 'ood', label: t(T + 'limitation.ood', 'Out-of-distribution behavior') },
+    { id: 'environmental', label: t(T + 'limitation.environmental', 'Environmental dependencies') }
   ];
 
   var metricDefs = [
@@ -78,10 +83,10 @@
   initState();
 
   var wizard = createWizard({
-    title: 'System Transparency Documentation',
-    subtitle: 'Template 01 \u2014 EU AI Act Arts. 11-14, 50; Colorado SB 24-205; UK DUA Act; South Korea AI Basic Act',
+    title: t(T + 'title', 'System Transparency Documentation'),
+    subtitle: t(T + 'subtitle', 'Template 01 \u2014 EU AI Act Arts. 11-14, 50; Colorado SB 24-205; UK DUA Act; South Korea AI Basic Act'),
     totalSteps: 7,
-    stepLabels: ['Purpose & Scope', 'Architecture', 'Limitations', 'Metrics', 'Oversight', 'Disclosures', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Purpose & Scope'), t(T + 'step2', 'Architecture'), t(T + 'step3', 'Limitations'), t(T + 'step4', 'Metrics'), t(T + 'step5', 'Oversight'), t(T + 'step6', 'Disclosures'), t(T + 'step7', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -410,6 +415,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

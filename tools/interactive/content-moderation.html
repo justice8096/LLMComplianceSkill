@@ -10,40 +10,62 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.contentModeration.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
-  var stepLabels = ['System Info', 'Content Policy', 'Moderation Mechanisms', 'China GenAI Compliance', 'EU DSA Compliance', 'Review & Export'];
+  function getStepLabels() {
+    return [
+      t(T + 'step1', 'System Info'),
+      t(T + 'step2', 'Content Policy'),
+      t(T + 'step3', 'Moderation Mechanisms'),
+      t(T + 'step4', 'China GenAI Compliance'),
+      t(T + 'step5', 'EU DSA Compliance'),
+      t(T + 'step6', 'Review & Export')
+    ];
+  }
 
-  var prohibitedCategories = [
-    { id: 'violence', label: 'Violence & graphic content' },
-    { id: 'csam', label: 'Child sexual abuse material (CSAM)' },
-    { id: 'hate', label: 'Hate speech & discrimination' },
-    { id: 'terrorism', label: 'Terrorism & extremism' },
-    { id: 'selfHarm', label: 'Self-harm & suicide promotion' },
-    { id: 'harassment', label: 'Harassment & bullying' },
-    { id: 'sexualExplicit', label: 'Sexually explicit content' },
-    { id: 'misinformation', label: 'Misinformation & disinformation' },
-    { id: 'illegalActivity', label: 'Illegal activity promotion' },
-    { id: 'pii', label: 'Personal data / PII exposure' },
-    { id: 'copyrightViolation', label: 'Copyright-infringing content' },
-    { id: 'politicalManipulation', label: 'Political manipulation / deepfakes' }
-  ];
+  function getProhibitedCategories() {
+    return [
+      { id: 'violence', label: t(T + 'prohibited.violence', 'Violence & graphic content') },
+      { id: 'csam', label: t(T + 'prohibited.csam', 'Child sexual abuse material (CSAM)') },
+      { id: 'hate', label: t(T + 'prohibited.hateSpeech', 'Hate speech & discrimination') },
+      { id: 'terrorism', label: t(T + 'prohibited.terrorism', 'Terrorism & extremism') },
+      { id: 'selfHarm', label: t(T + 'prohibited.selfHarm', 'Self-harm & suicide promotion') },
+      { id: 'harassment', label: t(T + 'prohibited.harassment', 'Harassment & bullying') },
+      { id: 'sexualExplicit', label: t(T + 'prohibited.explicit', 'Sexually explicit content') },
+      { id: 'misinformation', label: t(T + 'prohibited.misinformation', 'Misinformation & disinformation') },
+      { id: 'illegalActivity', label: t(T + 'prohibited.illegalActivity', 'Illegal activity promotion') },
+      { id: 'pii', label: t(T + 'prohibited.pii', 'Personal data / PII exposure') },
+      { id: 'copyrightViolation', label: t(T + 'prohibited.copyright', 'Copyright-infringing content') },
+      { id: 'politicalManipulation', label: t(T + 'prohibited.deepfakes', 'Political manipulation / deepfakes') }
+    ];
+  }
 
-  var moderationMechanisms = [
-    { id: 'inputFilter', label: 'Pre-generation input filter' },
-    { id: 'promptInjectionDetection', label: 'Prompt injection detection' },
-    { id: 'outputFilter', label: 'Post-generation output filter' },
-    { id: 'toxicityClassifier', label: 'Toxicity classifier' },
-    { id: 'nsfwDetector', label: 'NSFW image/video detector' },
-    { id: 'factCheckIntegration', label: 'Fact-checking integration' },
-    { id: 'watermarking', label: 'AI content watermarking' },
-    { id: 'humanReviewQueue', label: 'Human review queue' },
-    { id: 'userReporting', label: 'User reporting mechanism' },
-    { id: 'appealProcess', label: 'Appeal / re-review process' },
-    { id: 'auditLogging', label: 'Moderation audit logging' },
-    { id: 'rateLimit', label: 'Rate limiting / abuse prevention' }
-  ];
+  var prohibitedCategories = getProhibitedCategories();
+
+  function getModerationMechanisms() {
+    return [
+      { id: 'inputFilter', label: t(T + 'mechanism.inputFilter', 'Pre-generation input filter') },
+      { id: 'promptInjectionDetection', label: t(T + 'mechanism.promptInjection', 'Prompt injection detection') },
+      { id: 'outputFilter', label: t(T + 'mechanism.outputFilter', 'Post-generation output filter') },
+      { id: 'toxicityClassifier', label: t(T + 'mechanism.toxicity', 'Toxicity classifier') },
+      { id: 'nsfwDetector', label: t(T + 'mechanism.nsfw', 'NSFW image/video detector') },
+      { id: 'factCheckIntegration', label: t(T + 'mechanism.factChecking', 'Fact-checking integration') },
+      { id: 'watermarking', label: t(T + 'mechanism.watermarking', 'AI content watermarking') },
+      { id: 'humanReviewQueue', label: t(T + 'mechanism.humanReview', 'Human review queue') },
+      { id: 'userReporting', label: t(T + 'mechanism.userReporting', 'User reporting mechanism') },
+      { id: 'appealProcess', label: t(T + 'mechanism.appeal', 'Appeal / re-review process') },
+      { id: 'auditLogging', label: t(T + 'mechanism.auditLogging', 'Moderation audit logging') },
+      { id: 'rateLimit', label: t(T + 'mechanism.rateLimiting', 'Rate limiting / abuse prevention') }
+    ];
+  }
+
+  var moderationMechanisms = getModerationMechanisms();
 
   var chinaRequirements = [
     { id: 'contentSafetyReview', label: 'Content safety review mechanism (Art. 8)' },
@@ -113,10 +135,10 @@
   initState();
 
   var wizard = createWizard({
-    title: 'Content Moderation Evidence',
+    title: t(T + 'title', 'Content Moderation Evidence'),
     subtitle: 'Template 16 \u2014 China GenAI Measures; EU Digital Services Act; EU AI Act Art. 50; Platform Safety Laws',
     totalSteps: 6,
-    stepLabels: stepLabels,
+    stepLabels: getStepLabels(),
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -223,6 +245,7 @@
     section.appendChild(policyFields);
 
     section.appendChild(el('h3', {}, ['Prohibited Content Categories']));
+    var prohibitedCategories = getProhibitedCategories();
     for (var i = 0; i < prohibitedCategories.length; i++) {
       (function(cat) {
         var c = state.contentPolicy.categories[cat.id];
@@ -254,6 +277,7 @@
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 3: Moderation Mechanisms']));
     section.appendChild(createAlert('info', 'Document which moderation mechanisms are implemented and their effectiveness.'));
+    var moderationMechanisms = getModerationMechanisms();
     for (var i = 0; i < moderationMechanisms.length; i++) {
       (function(mech) {
         var m = state.mechanisms[mech.id];
@@ -341,6 +365,8 @@
 
   function calcSectionScore(sectionId) {
     var filled = 0; var total = 0;
+    var prohibitedCategories = getProhibitedCategories();
+    var moderationMechanisms = getModerationMechanisms();
     if (sectionId === 'systemInfo') {
       var s = state.systemInfo; total = 4;
       if (s.systemName) filled++; if (s.version) filled++; if (s.contentTypes) filled++; if (s.targetMarkets) filled++;
@@ -369,6 +395,8 @@
   }
 
   function renderSummary(container) {
+    var prohibitedCategories = getProhibitedCategories();
+    var moderationMechanisms = getModerationMechanisms();
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 6: Review & Export']));
     var sections = [
@@ -440,6 +468,8 @@
   }
 
   function buildResults() {
+    var prohibitedCategories = getProhibitedCategories();
+    var moderationMechanisms = getModerationMechanisms();
     var sectionIds = ['systemInfo','contentPolicy','mechanisms','china','dsa'];
     var scores = {}; var totalFilled = 0; var totalAll = 0;
     for (var i = 0; i < sectionIds.length; i++) {
@@ -466,6 +496,8 @@
   }
 
   function doExport() {
+    var prohibitedCategories = getProhibitedCategories();
+    var moderationMechanisms = getModerationMechanisms();
     var r = buildResults(); var lines = [];
     lines.push('# Content Moderation Evidence (Template 16)'); lines.push('');
     lines.push('**Date:** ' + r.completedDate);
@@ -558,6 +590,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.supplyChainRisk.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var extraStyle = document.createElement('style');
   extraStyle.textContent = [
@@ -54,22 +59,26 @@
 
   // --- Data definitions ---
 
-  var componentTypes = [
-    { value: '', label: '-- Select Type --' },
-    { value: 'Model', label: 'Model' },
-    { value: 'Software', label: 'Software' },
-    { value: 'Data', label: 'Data' },
-    { value: 'Framework', label: 'Framework' },
-    { value: 'Library', label: 'Library' }
-  ];
+  function getComponentTypes() {
+    return [
+      { value: '', label: '-- Select Type --' },
+      { value: 'Model', label: t(T + 'componentType.model', 'Model') },
+      { value: 'Software', label: t(T + 'componentType.software', 'Software') },
+      { value: 'Data', label: t(T + 'componentType.data', 'Data') },
+      { value: 'Framework', label: t(T + 'componentType.framework', 'Framework') },
+      { value: 'Library', label: t(T + 'componentType.library', 'Library') }
+    ];
+  }
 
-  var riskTiers = [
-    { value: '', label: '-- Risk Tier --' },
-    { value: 'Critical', label: 'Critical' },
-    { value: 'High', label: 'High' },
-    { value: 'Medium', label: 'Medium' },
-    { value: 'Low', label: 'Low' }
-  ];
+  function getRiskTiers() {
+    return [
+      { value: '', label: '-- Risk Tier --' },
+      { value: 'Critical', label: t(T + 'riskTier.critical', 'Critical') },
+      { value: 'High', label: t(T + 'riskTier.high', 'High') },
+      { value: 'Medium', label: t(T + 'riskTier.medium', 'Medium') },
+      { value: 'Low', label: t(T + 'riskTier.low', 'Low') }
+    ];
+  }
 
   var likelihoodOptions = [
     { value: '', label: '-- Likelihood --' },
@@ -80,14 +89,16 @@
     { value: 'Almost Certain', label: 'Almost Certain' }
   ];
 
-  var impactOptions = [
-    { value: '', label: '-- Impact --' },
-    { value: 'Negligible', label: 'Negligible' },
-    { value: 'Minor', label: 'Minor' },
-    { value: 'Moderate', label: 'Moderate' },
-    { value: 'Major', label: 'Major' },
-    { value: 'Severe', label: 'Severe' }
-  ];
+  function getImpactOptions() {
+    return [
+      { value: '', label: '-- Impact --' },
+      { value: 'Negligible', label: t(T + 'impact.negligible', 'Negligible') },
+      { value: 'Minor', label: t(T + 'impact.minor', 'Minor') },
+      { value: 'Moderate', label: t(T + 'impact.moderate', 'Moderate') },
+      { value: 'Major', label: t(T + 'impact.major', 'Major') },
+      { value: 'Severe', label: t(T + 'impact.severe', 'Severe') }
+    ];
+  }
 
   var frequencyOptions = [
     { value: '', label: '-- Frequency --' },
@@ -390,8 +401,8 @@
   // --- Wizard ---
 
   var wizard = createWizard({
-    title: 'AI/LLM Supply Chain Risk Assessment',
-    subtitle: 'Template 23 \u2014 EU AI Act Art. 25, NIST AI RMF, OWASP LLM Top 10, MITRE ATLAS, ISO/IEC 42001',
+    title: t(T + 'title', 'AI/LLM Supply Chain Risk Assessment'),
+    subtitle: t(T + 'subtitle', 'Template 23 \u2014 EU AI Act Art. 25, NIST AI RMF, OWASP LLM Top 10, MITRE ATLAS, ISO/IEC 42001'),
     totalSteps: 8,
     stepLabels: [
       'AI Component Inventory',
@@ -475,7 +486,7 @@
     fields.appendChild(createSelect('Likelihood', likelihoodOptions, threatState.likelihood, function(v) {
       threatState.likelihood = v; updateScore(); wizard.saveNow();
     }));
-    fields.appendChild(createSelect('Impact', impactOptions, threatState.impact, function(v) {
+    fields.appendChild(createSelect('Impact', getImpactOptions(), threatState.impact, function(v) {
       threatState.impact = v; updateScore(); wizard.saveNow();
     }));
     detailWrap.appendChild(fields);
@@ -536,12 +547,12 @@
           }
           row.appendChild(header);
           row.appendChild(createTextInput('Name', comp.name, function(v) { comp.name = v; }, 'Component name'));
-          row.appendChild(createSelect('Type', componentTypes, comp.type, function(v) { comp.type = v; wizard.saveNow(); }));
+          row.appendChild(createSelect('Type', getComponentTypes(), comp.type, function(v) { comp.type = v; wizard.saveNow(); }));
           row.appendChild(createTextInput('Provider', comp.provider, function(v) { comp.provider = v; }, 'Provider/vendor'));
           row.appendChild(createTextInput('Version', comp.version, function(v) { comp.version = v; }, 'Version'));
           row.appendChild(createTextInput('Country of Origin', comp.countryOfOrigin, function(v) { comp.countryOfOrigin = v; }, 'Country'));
           row.appendChild(createTextInput('License', comp.license, function(v) { comp.license = v; }, 'License type'));
-          row.appendChild(createSelect('Risk Tier', riskTiers, comp.riskTier, function(v) { comp.riskTier = v; wizard.saveNow(); }));
+          row.appendChild(createSelect('Risk Tier', getRiskTiers(), comp.riskTier, function(v) { comp.riskTier = v; wizard.saveNow(); }));
           compWrap.appendChild(row);
         })(ci);
       }
@@ -1450,6 +1461,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

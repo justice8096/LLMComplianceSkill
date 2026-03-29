@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.contentLabeling.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
@@ -43,27 +48,49 @@
     code: 'Code output should include AI-generation comment header'
   };
 
-  var placementOptions = [
-    { value: '', label: '-- Select --' }, { value: 'onContent', label: 'On content' },
-    { value: 'adjacent', label: 'Adjacent' }, { value: 'header', label: 'Header' },
-    { value: 'footer', label: 'Footer' }, { value: 'overlay', label: 'Overlay' }
-  ];
+  function getPlacementOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'onContent', label: t(T + 'placement.onContent', 'On content') },
+      { value: 'adjacent', label: t(T + 'placement.adjacent', 'Adjacent') },
+      { value: 'header', label: t(T + 'placement.header', 'Header') },
+      { value: 'footer', label: t(T + 'placement.footer', 'Footer') },
+      { value: 'overlay', label: t(T + 'placement.overlay', 'Overlay') }
+    ];
+  }
+  var placementOptions = getPlacementOptions();
 
-  var persistenceOptions = [
-    { value: '', label: '-- Select --' }, { value: 'alwaysVisible', label: 'Always visible' },
-    { value: 'onHover', label: 'On hover' }, { value: 'inProperties', label: 'In properties' }
-  ];
+  function getPersistenceOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'alwaysVisible', label: t(T + 'persistence.alwaysVisible', 'Always visible') },
+      { value: 'onHover', label: t(T + 'persistence.onHover', 'On hover') },
+      { value: 'inProperties', label: t(T + 'persistence.inProperties', 'In properties') }
+    ];
+  }
+  var persistenceOptions = getPersistenceOptions();
 
-  var watermarkOptions = [
-    { value: '', label: '-- Select --' }, { value: 'visible', label: 'Visible watermark' },
-    { value: 'invisible', label: 'Invisible watermark' }, { value: 'steganographic', label: 'Steganographic' },
-    { value: 'spectral', label: 'Spectral embedding' }, { value: 'other', label: 'Other' }
-  ];
+  function getWatermarkOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'visible', label: t(T + 'watermark.visible', 'Visible watermark') },
+      { value: 'invisible', label: t(T + 'watermark.invisible', 'Invisible watermark') },
+      { value: 'steganographic', label: t(T + 'watermark.steganographic', 'Steganographic') },
+      { value: 'spectral', label: t(T + 'watermark.spectral', 'Spectral embedding') },
+      { value: 'other', label: 'Other' }
+    ];
+  }
+  var watermarkOptions = getWatermarkOptions();
 
-  var machineReadableOptions = [
-    { value: '', label: '-- Select --' }, { value: 'c2pa', label: 'C2PA' },
-    { value: 'iptc', label: 'IPTC' }, { value: 'custom', label: 'Custom' }
-  ];
+  function getMachineReadableOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'c2pa', label: t(T + 'machineReadable.c2pa', 'C2PA') },
+      { value: 'iptc', label: t(T + 'machineReadable.iptc', 'IPTC') },
+      { value: 'custom', label: t(T + 'machineReadable.custom', 'Custom') }
+    ];
+  }
+  var machineReadableOptions = getMachineReadableOptions();
 
   var checklistPhases = {
     design: [
@@ -112,7 +139,7 @@
   initState();
 
   var wizard = createWizard({
-    title: 'Content Labeling Specification',
+    title: t(T + 'title', 'Content Labeling Specification'),
     subtitle: 'Template 03 \u2014 EU AI Act Art. 50; China Labeling Measures; China Deep Synthesis; South Korea; California SB 942',
     totalSteps: 6,
     stepLabels: ['Content Types', 'Explicit Labeling', 'Metadata Labeling', 'Checklist', 'Evidence Log', 'Summary'],
@@ -525,6 +552,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

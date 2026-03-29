@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.biasTesting.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   // Additional CSS for this tool
   var style = document.createElement('style');
@@ -53,15 +58,13 @@
     remediations: []
   };
 
-  var DOMAINS = [
-    { value: 'employment', label: 'Employment' },
-    { value: 'credit', label: 'Credit' },
-    { value: 'insurance', label: 'Insurance' },
-    { value: 'healthcare', label: 'Healthcare' },
-    { value: 'education', label: 'Education' },
-    { value: 'housing', label: 'Housing' },
-    { value: 'general', label: 'General' }
-  ];
+  var DOMAIN_IDS = ['employment', 'credit', 'insurance', 'healthcare', 'education', 'housing', 'general'];
+
+  function getDomains() {
+    return DOMAIN_IDS.map(function(id) {
+      return { value: id, label: t(T + 'domain.' + id, id) };
+    });
+  }
 
   var ALL_JURISDICTIONS = [
     { code: 'EU', label: 'European Union' },
@@ -79,27 +82,46 @@
     { code: 'BR', label: 'Brazil' }
   ];
 
-  var CHARACTERISTICS = [
-    { id: 'race', label: 'Race/Ethnicity', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'BR'] },
-    { id: 'gender', label: 'Gender/Sex', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'JP', 'KR', 'IN', 'BR', 'MX'] },
-    { id: 'age', label: 'Age', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'KR'] },
-    { id: 'disability', label: 'Disability', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'JP'] },
-    { id: 'religion', label: 'Religion', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'IN'] },
-    { id: 'national_origin', label: 'National Origin', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU'] },
-    { id: 'sexual_orientation', label: 'Sexual Orientation', jurisdictions: ['UK', 'EU', 'CA', 'AU', 'NZ', 'BR'] },
-    { id: 'pregnancy', label: 'Pregnancy/Family', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ'] },
-    { id: 'veteran', label: 'Veteran Status', jurisdictions: ['US'] },
-    { id: 'socioeconomic', label: 'Socioeconomic Status', jurisdictions: ['EU', 'FR', 'BR'] }
+  var CHARACTERISTIC_IDS = [
+    { id: 'race', key: 'race', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'BR'] },
+    { id: 'gender', key: 'gender', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'JP', 'KR', 'IN', 'BR', 'MX'] },
+    { id: 'age', key: 'age', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'KR'] },
+    { id: 'disability', key: 'disability', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'JP'] },
+    { id: 'religion', key: 'religion', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ', 'IN'] },
+    { id: 'national_origin', key: 'nationalOrigin', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU'] },
+    { id: 'sexual_orientation', key: 'sexualOrientation', jurisdictions: ['UK', 'EU', 'CA', 'AU', 'NZ', 'BR'] },
+    { id: 'pregnancy', key: 'pregnancy', jurisdictions: ['US', 'UK', 'EU', 'CA', 'AU', 'NZ'] },
+    { id: 'veteran', key: 'veteran', jurisdictions: ['US'] },
+    { id: 'socioeconomic', key: 'socioeconomic', jurisdictions: ['EU', 'FR', 'BR'] }
   ];
 
-  var SEVERITY_OPTIONS = [
-    { value: 'critical', label: 'Critical' },
-    { value: 'high', label: 'High' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'low', label: 'Low' }
-  ];
+  function getCharacteristics() {
+    return CHARACTERISTIC_IDS.map(function(c) {
+      return { id: c.id, label: t(T + 'characteristic.' + c.key, c.id), jurisdictions: c.jurisdictions };
+    });
+  }
+
+  var SEVERITY_IDS = ['critical', 'high', 'medium', 'low'];
+
+  function getSeverityOptions() {
+    return SEVERITY_IDS.map(function(id) {
+      return { value: id, label: t('common.severity.' + id, id.charAt(0).toUpperCase() + id.slice(1)) };
+    });
+  }
+
+  var METRIC_IDS = ['disparateImpact', 'statisticalParity', 'equalOpportunity', 'predictiveParity'];
+
+  function getMetricsData() {
+    return [
+      { key: 'disparateImpact', label: t(T + 'metric.disparateImpact', 'Disparate Impact Ratio'), threshold: 'Threshold: 0.8 (Four-Fifths Rule)', desc: 'Ratio of selection rates between groups. Values below 0.8 indicate potential disparate impact.' },
+      { key: 'statisticalParity', label: t(T + 'metric.statisticalParity', 'Statistical Parity'), threshold: 'Threshold: varies', desc: 'Difference in positive outcome rates across groups should be minimized.' },
+      { key: 'equalOpportunity', label: t(T + 'metric.equalOpportunity', 'Equal Opportunity'), threshold: 'Threshold: varies', desc: 'True positive rates should be equal across groups.' },
+      { key: 'predictiveParity', label: t(T + 'metric.predictiveParity', 'Predictive Parity'), threshold: 'Threshold: varies', desc: 'Positive predictive values should be equal across groups.' }
+    ];
+  }
 
   // Init characteristics state
+  var CHARACTERISTICS = getCharacteristics();
   CHARACTERISTICS.forEach(function(c) {
     state.characteristics[c.id] = { enabled: false, groups: [], metricValue: '', result: '' };
   });
@@ -128,10 +150,10 @@
   }
 
   var wizard = createWizard({
-    title: 'Bias Testing Evidence Gatherer',
-    subtitle: 'Structured entry for Template 08 - AI Bias Testing and Fairness Assessment',
+    title: t(T + 'title', 'Bias Testing Evidence Gatherer'),
+    subtitle: t(T + 'subtitle', 'Structured entry for Template 08 - AI Bias Testing and Fairness Assessment'),
     totalSteps: 7,
-    stepLabels: ['Domain', 'Jurisdictions', 'Characteristics', 'Metrics', 'Findings', 'Remediation', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Domain'), t(T + 'step2', 'Jurisdictions'), t(T + 'step3', 'Characteristics'), t(T + 'step4', 'Metrics'), t(T + 'step5', 'Findings'), t(T + 'step6', 'Remediation'), t(T + 'step7', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderDomainStep(container);
       else if (step === 1) renderJurisdictionStep(container);
@@ -176,7 +198,7 @@
   function renderDomainStep(container) {
     container.appendChild(el('h2', {}, ['Step 1: Select Decision Domain']));
     container.appendChild(el('p', { className: 'subtitle' }, ['Choose the domain where AI-assisted decisions are being made. This determines applicable regulations.']));
-    container.appendChild(createSelect('Decision Domain', DOMAINS, state.domain, function(v) { state.domain = v; }));
+    container.appendChild(createSelect('Decision Domain', getDomains(), state.domain, function(v) { state.domain = v; }));
 
     var domainInfo = {
       employment: 'Employment decisions are subject to Title VII (US), Equality Act (UK), EU AI Act high-risk classification, and provincial human rights codes (CA).',
@@ -227,7 +249,8 @@
     container.appendChild(el('h2', {}, ['Step 3: Protected Characteristics Matrix']));
     container.appendChild(el('p', { className: 'subtitle' }, ['For each required characteristic, enter group sizes, metric values, and pass/fail results.']));
 
-    CHARACTERISTICS.forEach(function(ch) {
+    var characteristics = getCharacteristics();
+    characteristics.forEach(function(ch) {
       var relevant = ch.jurisdictions.filter(function(j) { return state.jurisdictions.indexOf(j) >= 0; });
       if (relevant.length === 0 && state.jurisdictions.length > 0) return;
 
@@ -272,12 +295,12 @@
         // Pass/fail buttons
         var passBtn = el('button', {
           className: 'pass-fail-btn' + (chState.result === 'pass' ? ' pass' : ''),
-          textContent: 'Pass',
+          textContent: t('common.status.pass', 'Pass'),
           onClick: function() { chState.result = 'pass'; wizard.refreshStep(); }
         });
         var failBtn = el('button', {
           className: 'pass-fail-btn' + (chState.result === 'fail' ? ' fail' : ''),
-          textContent: 'Fail',
+          textContent: t('common.status.fail', 'Fail'),
           onClick: function() { chState.result = 'fail'; wizard.refreshStep(); }
         });
         metricRow.appendChild(passBtn);
@@ -302,13 +325,7 @@
     container.appendChild(el('h2', {}, ['Step 4: Fairness Metrics Selection']));
     container.appendChild(el('p', { className: 'subtitle' }, ['Select which fairness metrics to apply.']));
 
-    var metricsData = [
-      { key: 'disparateImpact', label: 'Disparate Impact Ratio', threshold: 'Threshold: 0.8 (Four-Fifths Rule)', desc: 'Ratio of selection rates between groups. Values below 0.8 indicate potential disparate impact.' },
-      { key: 'statisticalParity', label: 'Statistical Parity', threshold: 'Threshold: varies', desc: 'Difference in positive outcome rates across groups should be minimized.' },
-      { key: 'equalOpportunity', label: 'Equal Opportunity', threshold: 'Threshold: varies', desc: 'True positive rates should be equal across groups.' },
-      { key: 'predictiveParity', label: 'Predictive Parity', threshold: 'Threshold: varies', desc: 'Positive predictive values should be equal across groups.' }
-    ];
-
+    var metricsData = getMetricsData();
     metricsData.forEach(function(m) {
       var card = el('div', { className: 'metric-card' });
       var left = el('div');
@@ -339,15 +356,18 @@
     container.appendChild(el('h2', {}, ['Step 5: Findings Entry']));
     container.appendChild(el('p', { className: 'subtitle' }, ['Document any bias findings with severity ratings.']));
 
+    var severityOptions = getSeverityOptions();
+    var characteristics = getCharacteristics();
+
     state.findings.forEach(function(f, idx) {
       var card = el('div', { className: 'finding-card severity-' + (f.severity || 'low') });
       card.appendChild(createTextInput('Finding Title', f.title, function(v) { f.title = v; }, 'Brief description'));
-      card.appendChild(createSelect('Severity', SEVERITY_OPTIONS, f.severity || 'low', function(v) {
+      card.appendChild(createSelect('Severity', severityOptions, f.severity || 'low', function(v) {
         f.severity = v;
         wizard.refreshStep();
       }));
       card.appendChild(createSelect('Characteristic', [{ value: '', label: '-- Select --' }].concat(
-        CHARACTERISTICS.map(function(c) { return { value: c.id, label: c.label }; })
+        characteristics.map(function(c) { return { value: c.id, label: c.label }; })
       ), f.characteristic || '', function(v) { f.characteristic = v; }));
       card.appendChild(createTextArea('Description', f.description, function(v) { f.description = v; }, 'Detailed finding description'));
       card.appendChild(createTextInput('Impact', f.impact, function(v) { f.impact = v; }, 'Who is affected and how'));
@@ -370,10 +390,12 @@
     container.appendChild(el('h2', {}, ['Step 6: Remediation Plan']));
     container.appendChild(el('p', { className: 'subtitle' }, ['Build a remediation plan for identified bias issues.']));
 
+    var severityOptions = getSeverityOptions();
+
     state.remediations.forEach(function(r, idx) {
       var card = el('div', { className: 'finding-card' });
       card.appendChild(createTextInput('Action Item', r.action, function(v) { r.action = v; }, 'What needs to be done'));
-      card.appendChild(createSelect('Priority', SEVERITY_OPTIONS, r.priority || 'medium', function(v) { r.priority = v; }));
+      card.appendChild(createSelect('Priority', severityOptions, r.priority || 'medium', function(v) { r.priority = v; }));
       card.appendChild(createTextInput('Owner', r.owner, function(v) { r.owner = v; }, 'Responsible person/team'));
       card.appendChild(createTextInput('Target Date', r.targetDate, function(v) { r.targetDate = v; }, 'YYYY-MM-DD'));
       card.appendChild(createSelect('Status', [
@@ -404,7 +426,8 @@
     // Stats
     var statsDiv = el('div', { style: 'margin: 16px 0;' });
 
-    var enabledChars = CHARACTERISTICS.filter(function(c) { return state.characteristics[c.id].enabled; });
+    var characteristics = getCharacteristics();
+    var enabledChars = characteristics.filter(function(c) { return state.characteristics[c.id] && state.characteristics[c.id].enabled; });
     var passCount = enabledChars.filter(function(c) { return state.characteristics[c.id].result === 'pass'; }).length;
     var failCount = enabledChars.filter(function(c) { return state.characteristics[c.id].result === 'fail'; }).length;
     var criticalFindings = state.findings.filter(function(f) { return f.severity === 'critical'; }).length;
@@ -418,16 +441,16 @@
     }
 
     addStat(enabledChars.length, 'Characteristics Tested');
-    addStat(passCount, 'Passed', 'score-low');
-    addStat(failCount, 'Failed', 'score-high');
+    addStat(passCount, t('common.status.pass', 'Passed'), 'score-low');
+    addStat(failCount, t('common.status.fail', 'Failed'), 'score-high');
     addStat(state.findings.length, 'Findings');
-    addStat(criticalFindings + highFindings, 'Critical/High', criticalFindings + highFindings > 0 ? 'score-high' : 'score-low');
+    addStat(criticalFindings + highFindings, t('common.severity.critical', 'Critical') + '/' + t('common.severity.high', 'High'), criticalFindings + highFindings > 0 ? 'score-high' : 'score-low');
     addStat(state.remediations.length, 'Remediations');
     container.appendChild(statsDiv);
 
     // Overall result
-    var overall = (failCount === 0 && criticalFindings === 0) ? 'PASS' : 'FAIL';
-    var alertType = overall === 'PASS' ? 'success' : 'danger';
+    var overall = (failCount === 0 && criticalFindings === 0) ? t('common.status.pass', 'PASS') : t('common.status.fail', 'FAIL');
+    var alertType = (failCount === 0 && criticalFindings === 0) ? 'success' : 'danger';
     container.appendChild(createAlert(alertType, 'Overall Result: ' + overall + ' | Domain: ' + state.domain + ' | Jurisdictions: ' + state.jurisdictions.join(', ')));
 
     // Characteristics table
@@ -473,11 +496,12 @@
       fHead.appendChild(fHRow);
       fTable.appendChild(fHead);
       var fBody = el('tbody');
+      var allCharacteristics = getCharacteristics();
       state.findings.forEach(function(f) {
         var row = el('tr');
         row.appendChild(el('td', {}, [f.title || '-']));
         row.appendChild(el('td', {}, [f.severity || '-']));
-        var charLabel = CHARACTERISTICS.find(function(c) { return c.id === f.characteristic; });
+        var charLabel = allCharacteristics.find(function(c) { return c.id === f.characteristic; });
         row.appendChild(el('td', {}, [charLabel ? charLabel.label : '-']));
         row.appendChild(el('td', {}, [f.impact || '-']));
         fBody.appendChild(row);
@@ -496,8 +520,8 @@
     lines.push('**Jurisdictions:** ' + state.jurisdictions.join(', '));
     lines.push('');
 
-    var enabledChars = CHARACTERISTICS.filter(function(c) { return state.characteristics[c.id].enabled; });
-    var passCount = enabledChars.filter(function(c) { return state.characteristics[c.id].result === 'pass'; }).length;
+    var characteristics = getCharacteristics();
+    var enabledChars = characteristics.filter(function(c) { return state.characteristics[c.id] && state.characteristics[c.id].enabled; });
     var failCount = enabledChars.filter(function(c) { return state.characteristics[c.id].result === 'fail'; }).length;
     var overall = (failCount === 0 && state.findings.filter(function(f) { return f.severity === 'critical'; }).length === 0) ? 'PASS' : 'FAIL';
 
@@ -527,7 +551,7 @@
       state.findings.forEach(function(f, i) {
         lines.push('### Finding ' + (i + 1) + ': ' + (f.title || 'Untitled'));
         lines.push('- **Severity:** ' + (f.severity || '-'));
-        var charLabel = CHARACTERISTICS.find(function(c) { return c.id === f.characteristic; });
+        var charLabel = characteristics.find(function(c) { return c.id === f.characteristic; });
         lines.push('- **Characteristic:** ' + (charLabel ? charLabel.label : '-'));
         lines.push('- **Impact:** ' + (f.impact || '-'));
         lines.push('- **Description:** ' + (f.description || '-'));
@@ -553,6 +577,7 @@
 
   // Initial render
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

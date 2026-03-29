@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.llmSelector.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var extraStyle = document.createElement('style');
   extraStyle.textContent = [
@@ -82,9 +87,9 @@
   ];
 
   var usesLlmOptions = [
-    { id: 'third-party', label: 'Yes \u2014 we use a pre-trained LLM we did not develop', desc: 'Most common for deployer-side compliance. This tool will guide you through model selection, deployment, and deployer obligations.' },
-    { id: 'own', label: 'Yes \u2014 we developed our own LLM', desc: 'Provider obligations are much heavier than deployer obligations. This tool focuses on deployer obligations but will flag provider-specific requirements.' },
-    { id: 'no', label: 'No \u2014 this project does not use an LLM', desc: 'Many evidence templates may not apply. A subset of templates still apply for general AI systems.' }
+    { id: 'third-party', label: t(T + 'usage.thirdParty', 'Yes \u2014 third-party LLM'), desc: 'Most common for deployer-side compliance. This tool will guide you through model selection, deployment, and deployer obligations.' },
+    { id: 'own', label: t(T + 'usage.ownDeveloped', 'Yes \u2014 developed our own LLM'), desc: 'Provider obligations are much heavier than deployer obligations. This tool focuses on deployer obligations but will flag provider-specific requirements.' },
+    { id: 'no', label: t(T + 'usage.none', 'No \u2014 does not use LLM'), desc: 'Many evidence templates may not apply. A subset of templates still apply for general AI systems.' }
   ];
 
   var state = {
@@ -235,8 +240,8 @@
   // --- Wizard ---
 
   var wizard = createWizard({
-    title: 'LLM Selector & Compliance Tool',
-    subtitle: 'Identify which LLM(s) your project uses, configure deployment, and review compliance implications.',
+    title: t(T + 'title', 'LLM Selector & Compliance Tool'),
+    subtitle: t(T + 'subtitle', 'Identify which LLM(s) your project uses, configure deployment, and review compliance implications.'),
     totalSteps: 5,
     stepLabels: ['LLM Usage', 'Select Models', 'Deployment', 'Compliance', 'Summary'],
     renderStep: function(step, container) {
@@ -1229,6 +1234,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

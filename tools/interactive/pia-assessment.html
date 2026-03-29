@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.piaAssessment.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var extraStyle = document.createElement('style');
   extraStyle.textContent = [
@@ -60,7 +65,20 @@
 
   var config = {};
 
-  var personalDataTypes = ['Identity', 'Contact', 'Financial', 'Health', 'Biometric', 'Behavioral', 'Location', "Children's", 'Criminal'];
+  function getPersonalDataTypes() {
+    return [
+      t(T + 'dataType.identity', 'Identity'),
+      t(T + 'dataType.contact', 'Contact'),
+      t(T + 'dataType.financial', 'Financial'),
+      t(T + 'dataType.health', 'Health'),
+      t(T + 'dataType.biometric', 'Biometric'),
+      t(T + 'dataType.behavioral', 'Behavioral'),
+      t(T + 'dataType.location', 'Location'),
+      t(T + 'dataType.children', "Children's"),
+      t(T + 'dataType.criminal', 'Criminal')
+    ];
+  }
+  var personalDataTypes = getPersonalDataTypes();
   var legalBasisOptions = [
     { value: '', label: '-- Select Legal Basis --' },
     { value: 'consent', label: 'Consent' },
@@ -84,14 +102,17 @@
     { value: 'public_health', label: 'Public health' },
     { value: 'archiving', label: 'Archiving / research / statistics' }
   ];
-  var transferMechanisms = [
-    { value: '', label: '-- Select Mechanism --' },
-    { value: 'sccs', label: 'Standard Contractual Clauses (SCCs)' },
-    { value: 'bcrs', label: 'Binding Corporate Rules (BCRs)' },
-    { value: 'adequacy', label: 'Adequacy Decision' },
-    { value: 'consent', label: 'Explicit Consent' },
-    { value: 'derogation', label: 'Derogation' }
-  ];
+  function getTransferMechanisms() {
+    return [
+      { value: '', label: '-- Select Mechanism --' },
+      { value: 'sccs', label: t(T + 'transferMechanism.sccs', 'Standard Contractual Clauses (SCCs)') },
+      { value: 'bcrs', label: t(T + 'transferMechanism.bcrs', 'Binding Corporate Rules (BCRs)') },
+      { value: 'adequacy', label: t(T + 'transferMechanism.adequacy', 'Adequacy Decision') },
+      { value: 'consent', label: t(T + 'transferMechanism.consent', 'Explicit Consent') },
+      { value: 'derogation', label: t(T + 'transferMechanism.derogation', 'Derogation') }
+    ];
+  }
+  var transferMechanisms = getTransferMechanisms();
 
   var necessityQuestions = [
     'Is processing necessary for the stated purpose?',
@@ -332,7 +353,7 @@
   }
 
   var wizard = createWizard({
-    title: 'Privacy Impact Assessment Tool',
+    title: t(T + 'title', 'Privacy Impact Assessment Tool'),
     subtitle: 'Template 07 \u2014 Serves EU GDPR Art. 35, UK GDPR/DUA Act, India DPDPA, Brazil LGPD, Australia Privacy Act, 17 jurisdictions',
     totalSteps: 8,
     stepLabels: [
@@ -1105,6 +1126,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>
