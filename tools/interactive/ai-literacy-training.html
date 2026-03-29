@@ -10,46 +10,53 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.aiLiteracyTraining.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
-  var stepLabels = ['System Info', 'Training Audiences', 'Curriculum Design', 'Competency Assessment', 'EU AI Act Art. 4', 'Review & Export'];
+  function getStepLabels() {
+    return [t(T + 'step1', 'System Info'), t(T + 'step2', 'Training Audiences'), t(T + 'step3', 'Curriculum Design'), t(T + 'step4', 'Competency Assessment'), t(T + 'step5', 'EU AI Act Art. 4'), t(T + 'step6', 'Review & Export')];
+  }
 
   var audienceTypes = [
-    { id: 'operators', label: 'Operators (day-to-day users of the AI system)' },
-    { id: 'deployers', label: 'Deployers (organizations deploying the AI system)' },
-    { id: 'developers', label: 'Developers (technical staff building/maintaining the system)' },
-    { id: 'affectedPersons', label: 'Affected persons (individuals subject to AI decisions)' },
-    { id: 'executives', label: 'Executives & board members' },
-    { id: 'compliance', label: 'Compliance & legal staff' },
-    { id: 'support', label: 'Customer support / front-line staff' },
-    { id: 'dataProtection', label: 'Data protection officers (DPOs)' }
+    { id: 'operators', label: t(T + 'audience.operators', 'Operators (day-to-day users)') },
+    { id: 'deployers', label: t(T + 'audience.deployers', 'Deployers (organizations)') },
+    { id: 'developers', label: t(T + 'audience.developers', 'Developers (technical staff)') },
+    { id: 'affectedPersons', label: t(T + 'audience.affectedPersons', 'Affected persons (individuals subject to AI decisions)') },
+    { id: 'executives', label: t(T + 'audience.executives', 'Executives & board members') },
+    { id: 'compliance', label: t(T + 'audience.compliance', 'Compliance & legal staff') },
+    { id: 'support', label: t(T + 'audience.support', 'Customer support / front-line staff') },
+    { id: 'dataProtection', label: t(T + 'audience.dpos', 'Data protection officers (DPOs)') }
   ];
 
   var topicCategories = [
-    { id: 'aiBasics', label: 'AI fundamentals & terminology' },
-    { id: 'systemCapabilities', label: 'System capabilities & limitations' },
-    { id: 'biasRisks', label: 'Bias, fairness, and discrimination risks' },
-    { id: 'dataPrivacy', label: 'Data privacy & protection (GDPR, etc.)' },
-    { id: 'ethicalUse', label: 'Ethical AI use principles' },
-    { id: 'regulatoryObligations', label: 'Regulatory obligations & compliance' },
-    { id: 'incidentResponse', label: 'Incident reporting & response' },
-    { id: 'humanOversight', label: 'Human oversight procedures' },
-    { id: 'outputInterpretation', label: 'Interpreting AI outputs & confidence scores' },
-    { id: 'overrideEscalation', label: 'Override & escalation procedures' },
-    { id: 'contentModeration', label: 'Content moderation & safety' },
-    { id: 'transparencyDisclosure', label: 'Transparency & disclosure requirements' }
+    { id: 'aiBasics', label: t(T + 'topic.fundamentals', 'AI fundamentals & terminology') },
+    { id: 'systemCapabilities', label: t(T + 'topic.capabilities', 'System capabilities & limitations') },
+    { id: 'biasRisks', label: t(T + 'topic.bias', 'Bias, fairness, and discrimination risks') },
+    { id: 'dataPrivacy', label: t(T + 'topic.privacy', 'Data privacy & protection (GDPR, etc.)') },
+    { id: 'ethicalUse', label: t(T + 'topic.ethics', 'Ethical AI use principles') },
+    { id: 'regulatoryObligations', label: t(T + 'topic.regulatory', 'Regulatory obligations & compliance') },
+    { id: 'incidentResponse', label: t(T + 'topic.incident', 'Incident reporting & response') },
+    { id: 'humanOversight', label: t(T + 'topic.oversight', 'Human oversight procedures') },
+    { id: 'outputInterpretation', label: t(T + 'topic.interpreting', 'Interpreting AI outputs & confidence scores') },
+    { id: 'overrideEscalation', label: t(T + 'topic.override', 'Override & escalation procedures') },
+    { id: 'contentModeration', label: t(T + 'topic.moderation', 'Content moderation & safety') },
+    { id: 'transparencyDisclosure', label: t(T + 'topic.transparency', 'Transparency & disclosure requirements') }
   ];
 
   var assessmentMethods = [
-    { id: 'quiz', label: 'Knowledge quiz / test' },
-    { id: 'practicalExercise', label: 'Practical exercise / simulation' },
-    { id: 'caseStudy', label: 'Case study analysis' },
-    { id: 'certification', label: 'Formal certification exam' },
-    { id: 'selfAssessment', label: 'Self-assessment checklist' },
-    { id: 'peerReview', label: 'Peer review / observation' },
-    { id: 'scenarioTest', label: 'Scenario-based testing' },
-    { id: 'ongoingMonitoring', label: 'Ongoing performance monitoring' }
+    { id: 'quiz', label: t(T + 'assessment.quiz', 'Knowledge quiz / test') },
+    { id: 'practicalExercise', label: t(T + 'assessment.practical', 'Practical exercise / simulation') },
+    { id: 'caseStudy', label: t(T + 'assessment.caseStudy', 'Case study analysis') },
+    { id: 'certification', label: t(T + 'assessment.certification', 'Formal certification exam') },
+    { id: 'selfAssessment', label: t(T + 'assessment.selfAssessment', 'Self-assessment checklist') },
+    { id: 'peerReview', label: t(T + 'assessment.peerReview', 'Peer review / observation') },
+    { id: 'scenarioTest', label: t(T + 'assessment.scenario', 'Scenario-based testing') },
+    { id: 'ongoingMonitoring', label: t(T + 'assessment.monitoring', 'Ongoing performance monitoring') }
   ];
 
   var state = {
@@ -109,10 +116,10 @@
   initState();
 
   var wizard = createWizard({
-    title: 'AI Literacy & Training Records',
-    subtitle: 'Template 18 \u2014 EU AI Act Art. 4 (AI Literacy); EU AI Act Art. 9 (Risk Management Training); ISO/IEC 42001 Annex A',
+    title: t(T + 'title', 'AI Literacy & Training Records'),
+    subtitle: t(T + 'subtitle', 'Template 18 \u2014 EU AI Act Art. 4 (AI Literacy); EU AI Act Art. 9 (Risk Management Training); ISO/IEC 42001 Annex A'),
     totalSteps: 6,
-    stepLabels: stepLabels,
+    stepLabels: getStepLabels(),
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -575,6 +582,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

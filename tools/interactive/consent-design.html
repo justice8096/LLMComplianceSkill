@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.consentDesign.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var style = document.createElement('style');
   style.textContent = [
@@ -31,14 +36,17 @@
 
   var config = {};
 
-  var PURPOSES = [
-    { id: 'aiTraining', label: 'AI model training' },
-    { id: 'personalization', label: 'Personalization' },
-    { id: 'analytics', label: 'Analytics' },
-    { id: 'profiling', label: 'Profiling' },
-    { id: 'automatedDecision', label: 'Automated decision-making' },
-    { id: 'thirdPartySharing', label: 'Data sharing with third parties' }
-  ];
+  function getPURPOSES() {
+    return [
+      { id: 'aiTraining', label: t(T + 'purpose.modelTraining', 'AI model training') },
+      { id: 'personalization', label: t(T + 'purpose.personalization', 'Personalization') },
+      { id: 'analytics', label: t(T + 'purpose.analytics', 'Analytics') },
+      { id: 'profiling', label: t(T + 'purpose.profiling', 'Profiling') },
+      { id: 'automatedDecision', label: t(T + 'purpose.automatedDecision', 'Automated decision-making') },
+      { id: 'thirdPartySharing', label: t(T + 'purpose.dataSharing', 'Data sharing with third parties') }
+    ];
+  }
+  var PURPOSES = getPURPOSES();
 
   var LEGAL_BASIS_OPTIONS = [
     { value: '', label: '-- Select --' },
@@ -80,28 +88,37 @@
     ]
   };
 
-  var COLLECTION_METHODS = [
-    { value: '', label: '-- Select --' },
-    { value: 'checkbox', label: 'Checkbox' },
-    { value: 'click_through', label: 'Click-through' },
-    { value: 'verbal', label: 'Verbal' },
-    { value: 'written', label: 'Written' },
-    { value: 'double_opt_in', label: 'Double opt-in' }
-  ];
+  function getCollectionMethods() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'checkbox', label: t(T + 'method.checkbox', 'Checkbox') },
+      { value: 'click_through', label: t(T + 'method.clickThrough', 'Click-through') },
+      { value: 'verbal', label: t(T + 'method.verbal', 'Verbal') },
+      { value: 'written', label: t(T + 'method.written', 'Written') },
+      { value: 'double_opt_in', label: t(T + 'method.doubleOptIn', 'Double opt-in') }
+    ];
+  }
+  var COLLECTION_METHODS = getCollectionMethods();
 
-  var GRANULARITY_OPTIONS = [
-    { value: '', label: '-- Select --' },
-    { value: 'bundled', label: 'Bundled' },
-    { value: 'purpose_specific', label: 'Purpose-specific' },
-    { value: 'granular', label: 'Granular per data type' }
-  ];
+  function getGranularityOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'bundled', label: t(T + 'granularity.bundled', 'Bundled') },
+      { value: 'purpose_specific', label: t(T + 'granularity.purposeSpecific', 'Purpose-specific') },
+      { value: 'granular', label: t(T + 'granularity.granular', 'Granular per data type') }
+    ];
+  }
+  var GRANULARITY_OPTIONS = getGranularityOptions();
 
-  var WITHDRAWAL_EASE_OPTIONS = [
-    { value: '', label: '-- Select --' },
-    { value: 'same_as_giving', label: 'Same as giving' },
-    { value: 'one_click', label: 'One-click' },
-    { value: 'contact_required', label: 'Contact required' }
-  ];
+  function getWithdrawalEaseOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'same_as_giving', label: t(T + 'withdrawal.sameAsGiving', 'Same as giving') },
+      { value: 'one_click', label: t(T + 'withdrawal.oneClick', 'One-click') },
+      { value: 'contact_required', label: t(T + 'withdrawal.contactRequired', 'Contact required') }
+    ];
+  }
+  var WITHDRAWAL_EASE_OPTIONS = getWithdrawalEaseOptions();
 
   var REFRESH_OPTIONS = [
     { value: '', label: '-- Select --' },
@@ -163,10 +180,10 @@
   }
 
   var wizard = createWizard({
-    title: 'Consent Collection Design Tool',
-    subtitle: 'Template 10 -- Serves EU GDPR Arts. 6-7, UK GDPR, Australia Privacy Act, South Korea PIPA',
+    title: t(T + 'title', 'Consent Collection Design Tool'),
+    subtitle: t(T + 'subtitle', 'Template 10 -- Serves EU GDPR Arts. 6-7, UK GDPR, Australia Privacy Act, South Korea PIPA'),
     totalSteps: 5,
-    stepLabels: ['Legal Basis', 'Consent Mechanisms', 'Record Schema', 'Lifecycle', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Legal Basis'), t(T + 'step2', 'Consent Mechanisms'), t(T + 'step3', 'Record Schema'), t(T + 'step4', 'Lifecycle'), t(T + 'step5', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -192,7 +209,7 @@
   // Step 1: Legal Basis Selection
   function renderStep1(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 1: Legal Basis Selection']));
+    section.appendChild(el('h2', {}, [t(T + 'step1', 'Step 1: Legal Basis Selection')]));
     section.appendChild(createAlert('info', 'For each data processing purpose, select the legal basis under which processing will occur. Selecting "Consent" will activate consent mechanism design in Step 2.'));
 
     PURPOSES.forEach(function(p) {
@@ -228,7 +245,7 @@
   // Step 2: Consent Mechanism Design
   function renderStep2(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 2: Consent Mechanism Design']));
+    section.appendChild(el('h2', {}, [t(T + 'step2', 'Step 2: Consent Mechanism Design')]));
 
     var consentPurposes = getPurposesRequiringConsent();
 
@@ -291,7 +308,7 @@
   // Step 3: Record Schema
   function renderStep3(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 3: Consent Record Schema']));
+    section.appendChild(el('h2', {}, [t(T + 'step3', 'Step 3: Consent Record Schema')]));
     section.appendChild(createAlert('info', 'Define what data is captured for each consent event. GDPR Art. 7(1) requires controllers to demonstrate that consent was given.'));
 
     var fields = [
@@ -337,7 +354,7 @@
   // Step 4: Lifecycle Management
   function renderStep4(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 4: Lifecycle Management']));
+    section.appendChild(el('h2', {}, [t(T + 'step4', 'Step 4: Lifecycle Management')]));
     section.appendChild(createAlert('info', 'Configure how consent is maintained, refreshed, and handled throughout its lifecycle.'));
 
     section.appendChild(createSelect('Consent Refresh Frequency', REFRESH_OPTIONS, state.lifecycle.refreshFrequency, function(v) {
@@ -368,7 +385,7 @@
   // Step 5: Summary
   function renderSummary(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 5: Summary']));
+    section.appendChild(el('h2', {}, [t(T + 'step5', 'Step 5: Summary')]));
 
     // Purpose x Legal Basis table
     section.appendChild(el('h3', {}, ['Purposes and Legal Basis']));
@@ -591,6 +608,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

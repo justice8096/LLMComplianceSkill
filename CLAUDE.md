@@ -32,9 +32,10 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 
 ## Evidence Collection Kit
 
-### Templates (23)
-- `templates/` — 23 evidence templates (00–23) covering all compliance categories
+### Templates (25)
+- `templates/` — 25 evidence templates (00–24) covering all compliance categories
 - Includes supply chain risk (23) with MITRE ATLAS, OWASP LLM03, NIST SP 800-218A, EU AI Act Art. 25
+- Includes SAST/DAST scan validation (24) with CWE mapping and 9 test suite frameworks
 
 ### Interactive Tools (21)
 - `tools/interactive/` — 21 browser-based HTML wizard tools for human-judgment fields
@@ -61,16 +62,27 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - Integrates LLM registry data, extracted evidence, and manual config
 - `tools/compliance-config.example.json` — Example configuration
 
+### i18n (Internationalization)
+- `tools/i18n/index.js` — Node.js i18n module: `load()`, `t()`, `fieldName()`, `fieldKey()`, `checkboxKey()`, `listLocales()`
+- `tools/i18n/locales/` — 7 locale files: en, zh-CN, ko, ja, pt-BR, es, fr (692 keys each)
+- `tools/i18n/generate-templates.js` — Translates English markdown templates to target locale: `node generate-templates.js --locale zh-CN`
+- `tools/interactive/shared.js` — Browser-side i18n: `t()`, `i18nLoad()`, `i18nDetectLocale()`, `createLocaleSwitcher()`
+- All 21 interactive tools use `i18nLoad(i18nDetectLocale(), boot)` pattern with locale switcher in toolbar
+- `autofill.js --locale <code>` fills translated templates using i18n reverse-lookups
+- Locale files have `_note: "Machine-stub"` — require human/LLM review for legal terminology
+- Dot-path resolver handles flat keys containing dots (e.g., `common.severity.critical` resolves `common["severity.critical"]`)
+
 ### Data Files
-- `tools/data/jurisdiction-matrix.json` — Jurisdiction comparison data
-- `tools/data/deadline-data.json` — Compliance deadline tracking data
+- `tools/data/jurisdiction-matrix.json` — Jurisdiction comparison data (includes `nameKey` for i18n)
+- `tools/data/deadline-data.json` — Compliance deadline tracking data (includes `lawKey` for i18n)
 
 ### Workflow
 1. Run `node extract-evidence.js --repo /path/to/repo` to auto-extract evidence
 2. Open interactive tools in browser for human-judgment fields
 3. Edit `compliance-config.json` for remaining manual fields
-4. Run `node autofill.js` to fill templates
-5. Review output and hand to legal/compliance team
+4. Run `node autofill.js` to fill templates (add `--locale zh-CN` for translated output)
+5. For translated templates: run `node i18n/generate-templates.js --locale zh-CN` first, then autofill with `--locale`
+6. Review output and hand to legal/compliance team
 
 ## Technical Conventions
 - Security pre-commit hook flags unsafe shell patterns even in comments/docs/markdown — avoid trigger words like `exec()` in generated text
@@ -95,3 +107,5 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - When adding templates, create a matching interactive tool and update autofill.js
 - When exporting to Obsidian, update the corresponding vault notes (pipeline architecture, lessons learned)
 - New templates should be copied to `D:/SecondBrainData/SoftwarePractices/AI-Compliance-Templates/`
+- When adding i18n keys (new fields, checkboxes, tool strings), add to en.json first, then all 6 locale stubs
+- When adding a new interactive tool, include `i18nLoad(i18nDetectLocale(), boot)` pattern and add tool keys to locale files

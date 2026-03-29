@@ -10,10 +10,16 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.trainingDataDisclosure.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
+
   var config = {};
-  var stepLabels = ["Data Inventory","Characteristics","Copyright Audit","Quality","GPAI Summary","Jurisdiction","Summary"];
-  var acquisitionMethods = [{value:"",label:"-- Select --"},{value:"scraped",label:"Scraped"},{value:"licensed",label:"Licensed"},{value:"open",label:"Open"},{value:"proprietary",label:"Proprietary"},{value:"user-contributed",label:"User-contributed"}];
-  var dataPhases = [{value:"",label:"-- Select --"},{value:"pre-training",label:"Pre-training"},{value:"fine-tuning",label:"Fine-tuning"},{value:"evaluation",label:"Evaluation"}];
+  var stepLabels = [t(T+'step1','Data Inventory'),t(T+'step2','Characteristics'),t(T+'step3','Copyright Audit'),t(T+'step4','Quality'),t(T+'step5','GPAI Summary'),t(T+'step6','Jurisdiction'),t(T+'step7','Summary')];
+  var acquisitionMethods = [{value:"",label:"-- Select --"},{value:"scraped",label:t(T+'acquisition.scraped','Scraped')},{value:"licensed",label:t(T+'acquisition.licensed','Licensed')},{value:"open",label:t(T+'acquisition.open','Open')},{value:"proprietary",label:t(T+'acquisition.proprietary','Proprietary')},{value:"user-contributed",label:t(T+'acquisition.userContributed','User-contributed')}];
+  var dataPhases = [{value:"",label:"-- Select --"},{value:"pre-training",label:t(T+'phase.preTraining','Pre-training')},{value:"fine-tuning",label:t(T+'phase.fineTuning','Fine-tuning')},{value:"evaluation",label:t(T+'phase.evaluation','Evaluation')}];
   var copyrightStatuses = [{value:"",label:"-- Select --"},{value:"public-domain",label:"Public domain"},{value:"creative-commons",label:"Creative Commons"},{value:"licensed",label:"Licensed"},{value:"unknown",label:"Unknown"},{value:"copyrighted",label:"Copyrighted"}];
   var licenseTypes = [{value:"",label:"-- Select --"},{value:"cc-by",label:"CC-BY"},{value:"cc-by-sa",label:"CC-BY-SA"},{value:"mit",label:"MIT"},{value:"proprietary",label:"Proprietary"},{value:"fair-use",label:"Fair use claim"}];
   var qualityRatings = [{value:"",label:"-- Select --"},{value:"high",label:"High"},{value:"medium",label:"Medium"},{value:"low",label:"Low"},{value:"not-assessed",label:"Not assessed"}];
@@ -27,8 +33,8 @@
   function mergeDeep(t,s){var r=JSON.parse(JSON.stringify(t));var k=Object.keys(s);for(var i=0;i<k.length;i++){if(s[k[i]]!==null&&typeof s[k[i]]==="object"&&!Array.isArray(s[k[i]])&&r[k[i]]&&typeof r[k[i]]==="object"){r[k[i]]=mergeDeep(r[k[i]],s[k[i]]);}else{r[k[i]]=s[k[i]];}}return r;}
 
   var wizard = createWizard({
-    title: 'Training Data Disclosure',
-    subtitle: 'Template 05 \u2014 EU AI Act Art. 53 (GPAI); California AB 2013; China Data Security Specs; EU Art. 10; Australia Copyright',
+    title: t(T + 'title', 'Training Data Disclosure'),
+    subtitle: t(T + 'subtitle', 'Template 05 \u2014 EU AI Act Art. 53 (GPAI); California AB 2013; China Data Security Specs; EU Art. 10; Australia Copyright'),
     totalSteps: 7,
     stepLabels: stepLabels,
     renderStep: function(step, container) {
@@ -82,10 +88,10 @@
     s.appendChild(createTextInput("Geographic coverage",ch.geographicCoverage,function(v){ch.geographicCoverage=v;}));
     s.appendChild(createTextInput("Temporal range",ch.temporalRange,function(v){ch.temporalRange=v;}));
     s.appendChild(el("h3",{},["Data Modalities"]));
-    var mk=["text","image","audio","video","code","structured"],ml=["Text","Image","Audio","Video","Code","Structured"];
+    var mk=["text","image","audio","video","code","structured"],ml=[t(T+'modality.text','Text'),t(T+'modality.image','Image'),t(T+'modality.audio','Audio'),t(T+'modality.video','Video'),t(T+'modality.code','Code'),t(T+'modality.structured','Structured')];
     for(var i=0;i<mk.length;i++){(function(k,l){s.appendChild(createToggle(l,ch.modalities[k],function(v){ch.modalities[k]=v;wizard.saveNow();}));})(mk[i],ml[i]);}
     s.appendChild(el("h3",{},["Data Domains"]));
-    var dk=["web","books","academic","socialMedia","enterprise","government"],dl=["Web","Books","Academic","Social media","Enterprise","Government"];
+    var dk=["web","books","academic","socialMedia","enterprise","government"],dl=[t(T+'domain.web','Web'),t(T+'domain.books','Books'),t(T+'domain.academic','Academic'),t(T+'domain.socialMedia','Social media'),t(T+'domain.enterprise','Enterprise'),t(T+'domain.government','Government')];
     for(var i=0;i<dk.length;i++){(function(k,l){s.appendChild(createToggle(l,ch.domains[k],function(v){ch.domains[k]=v;wizard.saveNow();}));})(dk[i],dl[i]);}
     s.appendChild(el("h3",{},["Personal & Sensitive Data"]));
     s.appendChild(createToggle("Personal data included?",ch.personalData,function(v){ch.personalData=v;wizard.refreshStep();}));
@@ -192,6 +198,7 @@
     exportMarkdown("training-data-disclosure-report.md",l.join("\n"));
   }
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

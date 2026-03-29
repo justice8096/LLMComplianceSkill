@@ -10,6 +10,12 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.securityAssessment.';
+
+  // Boot: detect locale, load i18n, then build the UI
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var style = document.createElement('style');
   style.textContent = [
@@ -39,52 +45,59 @@
 
   var config = {};
 
-  var THREATS = [
-    { id: 'promptInjectionDirect', label: 'Prompt injection (direct)' },
-    { id: 'promptInjectionIndirect', label: 'Prompt injection (indirect)' },
-    { id: 'dataPoisoningTraining', label: 'Data poisoning (training)' },
-    { id: 'dataPoisoningFineTuning', label: 'Data poisoning (fine-tuning)' },
-    { id: 'modelExtraction', label: 'Model extraction/stealing' },
-    { id: 'membershipInference', label: 'Membership inference' },
-    { id: 'adversarialExamples', label: 'Adversarial examples' },
-    { id: 'outputManipulation', label: 'Output manipulation' },
-    { id: 'piiLeakage', label: 'PII leakage from training data' },
-    { id: 'denialOfService', label: 'Denial of service' },
-    { id: 'supplyChainCompromise', label: 'Supply chain compromise (model/data)' },
-    { id: 'unauthorizedAccess', label: 'Unauthorized access to model weights' }
+  var THREAT_IDS = [
+    'promptInjectionDirect', 'promptInjectionIndirect',
+    'dataPoisoningTraining', 'dataPoisoningFineTuning',
+    'modelExtraction', 'membershipInference',
+    'adversarialExamples', 'outputManipulation',
+    'piiLeakage', 'denialOfService',
+    'supplyChainCompromise', 'unauthorizedAccess'
   ];
 
-  var SEVERITY_OPTIONS = [
-    { value: 'low', label: 'Low' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'high', label: 'High' },
-    { value: 'critical', label: 'Critical' }
+  function getThreats() {
+    return THREAT_IDS.map(function(id) {
+      return { id: id, label: t(T + 'threat.' + id, id) };
+    });
+  }
+
+  function getSeverityOptions() {
+    return [
+      { value: 'low', label: t('common.severity.low', 'Low') },
+      { value: 'medium', label: t('common.severity.medium', 'Medium') },
+      { value: 'high', label: t('common.severity.high', 'High') },
+      { value: 'critical', label: t('common.severity.critical', 'Critical') }
+    ];
+  }
+
+  function getControlTypeOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'preventive', label: t(T + 'controlType.preventive', 'Preventive') },
+      { value: 'detective', label: t(T + 'controlType.detective', 'Detective') },
+      { value: 'corrective', label: t(T + 'controlType.corrective', 'Corrective') }
+    ];
+  }
+
+  function getImplStatusOptions() {
+    return [
+      { value: '', label: '-- Select --' },
+      { value: 'planned', label: t(T + 'implStatus.planned', 'Planned') },
+      { value: 'in_progress', label: t(T + 'implStatus.inProgress', 'In progress') },
+      { value: 'implemented', label: t(T + 'implStatus.implemented', 'Implemented') },
+      { value: 'tested', label: t(T + 'implStatus.tested', 'Tested') }
+    ];
+  }
+
+  var INFRA_IDS = [
+    'modelAccessAuth', 'apiRateLimiting', 'inputValidation',
+    'outputFiltering', 'encryptionAtRest', 'encryptionInTransit', 'auditLogging'
   ];
 
-  var CONTROL_TYPE_OPTIONS = [
-    { value: '', label: '-- Select --' },
-    { value: 'preventive', label: 'Preventive' },
-    { value: 'detective', label: 'Detective' },
-    { value: 'corrective', label: 'Corrective' }
-  ];
-
-  var IMPL_STATUS_OPTIONS = [
-    { value: '', label: '-- Select --' },
-    { value: 'planned', label: 'Planned' },
-    { value: 'in_progress', label: 'In progress' },
-    { value: 'implemented', label: 'Implemented' },
-    { value: 'tested', label: 'Tested' }
-  ];
-
-  var INFRA_ITEMS = [
-    { id: 'modelAccessAuth', label: 'Model access authentication' },
-    { id: 'apiRateLimiting', label: 'API rate limiting' },
-    { id: 'inputValidation', label: 'Input validation/sanitization' },
-    { id: 'outputFiltering', label: 'Output filtering' },
-    { id: 'encryptionAtRest', label: 'Encryption at rest' },
-    { id: 'encryptionInTransit', label: 'Encryption in transit' },
-    { id: 'auditLogging', label: 'Audit logging' }
-  ];
+  function getInfraItems() {
+    return INFRA_IDS.map(function(id) {
+      return { id: id, label: t(T + 'infra.' + id, id) };
+    });
+  }
 
   var state = {
     threats: {},
@@ -103,24 +116,24 @@
   };
 
   // Initialize threat and control states
-  THREATS.forEach(function(t) {
-    state.threats[t.id] = { applicable: false, severity: 'medium' };
-    state.controls[t.id] = { controlType: '', description: '', status: '', evidence: '' };
+  THREAT_IDS.forEach(function(id) {
+    state.threats[id] = { applicable: false, severity: 'medium' };
+    state.controls[id] = { controlType: '', description: '', status: '', evidence: '' };
   });
 
-  INFRA_ITEMS.forEach(function(item) {
-    state.infrastructure[item.id] = { enabled: false, details: '' };
+  INFRA_IDS.forEach(function(id) {
+    state.infrastructure[id] = { enabled: false, details: '' };
   });
 
   function getIdentifiedThreats() {
-    return THREATS.filter(function(t) { return state.threats[t.id].applicable; });
+    return getThreats().filter(function(th) { return state.threats[th.id].applicable; });
   }
 
   var wizard = createWizard({
-    title: 'AI Security Assessment Tool',
-    subtitle: 'Template 15 -- Serves EU AI Act Art. 15, UK DUA Act, China GenAI Security Specs',
+    title: t(T + 'title', 'AI Security Assessment Tool'),
+    subtitle: t(T + 'subtitle', 'Template 15 -- Serves EU AI Act Art. 15, UK DUA Act, China GenAI Security Specs'),
     totalSteps: 5,
-    stepLabels: ['Threat Model', 'Security Controls', 'China Requirements', 'Infrastructure', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Threat Model'), t(T + 'step2', 'Security Controls'), t(T + 'step3', 'China Requirements'), t(T + 'step4', 'Infrastructure'), t(T + 'step5', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -148,14 +161,14 @@
   // Step 1: Threat Model
   function renderStep1(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 1: Threat Model']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle1', 'Step 1: Threat Model')]));
     section.appendChild(createAlert('info', 'Identify applicable threats to your AI system. For each applicable threat, set the severity level. EU AI Act Art. 15 requires AI systems to be resilient against attempts by unauthorized third parties.'));
 
-    THREATS.forEach(function(t) {
-      var tState = state.threats[t.id];
+    getThreats().forEach(function(th) {
+      var tState = state.threats[th.id];
       var card = el('div', { className: 'threat-card' });
       var header = el('div', { className: 'threat-header' });
-      header.appendChild(el('span', { className: 'threat-title' }, [t.label]));
+      header.appendChild(el('span', { className: 'threat-title' }, [th.label]));
 
       if (tState.applicable) {
         var badgeCls = 'severity-badge severity-' + tState.severity;
@@ -163,13 +176,13 @@
       }
       card.appendChild(header);
 
-      card.appendChild(createToggle('Applicable', tState.applicable, function(v) {
+      card.appendChild(createToggle(t(T + 'label.applicable', 'Applicable'), tState.applicable, function(v) {
         tState.applicable = v;
         wizard.refreshStep();
       }));
 
       if (tState.applicable) {
-        card.appendChild(createSelect('Severity', SEVERITY_OPTIONS, tState.severity, function(v) {
+        card.appendChild(createSelect(t(T + 'label.severity', 'Severity'), getSeverityOptions(), tState.severity, function(v) {
           tState.severity = v;
           wizard.refreshStep();
         }));
@@ -181,12 +194,12 @@
     var identified = getIdentifiedThreats();
     if (identified.length > 0) {
       var bySeverity = { critical: 0, high: 0, medium: 0, low: 0 };
-      identified.forEach(function(t) { bySeverity[state.threats[t.id].severity]++; });
+      identified.forEach(function(th) { bySeverity[state.threats[th.id].severity]++; });
       var parts = [];
-      if (bySeverity.critical) parts.push(bySeverity.critical + ' critical');
-      if (bySeverity.high) parts.push(bySeverity.high + ' high');
-      if (bySeverity.medium) parts.push(bySeverity.medium + ' medium');
-      if (bySeverity.low) parts.push(bySeverity.low + ' low');
+      if (bySeverity.critical) parts.push(bySeverity.critical + ' ' + t('common.severity.critical', 'critical').toLowerCase());
+      if (bySeverity.high) parts.push(bySeverity.high + ' ' + t('common.severity.high', 'high').toLowerCase());
+      if (bySeverity.medium) parts.push(bySeverity.medium + ' ' + t('common.severity.medium', 'medium').toLowerCase());
+      if (bySeverity.low) parts.push(bySeverity.low + ' ' + t('common.severity.low', 'low').toLowerCase());
       var summaryText = identified.length + ' threat(s) identified: ' + parts.join(', ');
       var alertType = bySeverity.critical > 0 ? 'danger' : bySeverity.high > 0 ? 'warning' : 'info';
       section.appendChild(createAlert(alertType, summaryText));
@@ -198,7 +211,7 @@
   // Step 2: Security Controls
   function renderStep2(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 2: Security Controls']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle2', 'Step 2: Security Controls')]));
 
     var identified = getIdentifiedThreats();
 
@@ -210,30 +223,30 @@
 
     section.appendChild(createAlert('info', 'For each identified threat, define the security control(s) in place or planned.'));
 
-    identified.forEach(function(t) {
-      var ctrl = state.controls[t.id];
+    identified.forEach(function(th) {
+      var ctrl = state.controls[th.id];
       var hasContent = ctrl.controlType || ctrl.description || ctrl.status;
       var card = el('div', { className: 'control-card' + (hasContent ? ' has-control' : '') });
 
       var header = el('div', { className: 'threat-header' });
-      header.appendChild(el('span', { className: 'threat-title' }, [t.label]));
-      var badgeCls = 'severity-badge severity-' + state.threats[t.id].severity;
-      header.appendChild(el('span', { className: badgeCls }, [state.threats[t.id].severity.toUpperCase()]));
+      header.appendChild(el('span', { className: 'threat-title' }, [th.label]));
+      var badgeCls = 'severity-badge severity-' + state.threats[th.id].severity;
+      header.appendChild(el('span', { className: badgeCls }, [state.threats[th.id].severity.toUpperCase()]));
       card.appendChild(header);
 
-      card.appendChild(createSelect('Control Type', CONTROL_TYPE_OPTIONS, ctrl.controlType, function(v) {
+      card.appendChild(createSelect(t(T + 'label.controlType', 'Control Type'), getControlTypeOptions(), ctrl.controlType, function(v) {
         ctrl.controlType = v;
       }));
 
-      card.appendChild(createTextArea('Control Description', ctrl.description, function(v) {
+      card.appendChild(createTextArea(t(T + 'label.controlDescription', 'Control Description'), ctrl.description, function(v) {
         ctrl.description = v;
       }, 'Describe the security control, mitigation strategy, or safeguard...'));
 
-      card.appendChild(createSelect('Implementation Status', IMPL_STATUS_OPTIONS, ctrl.status, function(v) {
+      card.appendChild(createSelect(t(T + 'label.implementationStatus', 'Implementation Status'), getImplStatusOptions(), ctrl.status, function(v) {
         ctrl.status = v;
       }));
 
-      card.appendChild(createTextInput('Testing Evidence', ctrl.evidence, function(v) {
+      card.appendChild(createTextInput(t(T + 'label.testingEvidence', 'Testing Evidence'), ctrl.evidence, function(v) {
         ctrl.evidence = v;
       }, 'Reference to test report, link, or document...'));
 
@@ -246,10 +259,10 @@
   // Step 3: China-Specific Requirements
   function renderStep3(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 3: China-Specific Requirements']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle3', 'Step 3: China-Specific Requirements')]));
     section.appendChild(createAlert('info', 'Skip this step if China is not in your target jurisdictions. These requirements apply under China GenAI Measures and related security specifications.'));
 
-    section.appendChild(createToggle('China is a target jurisdiction', state.china.applicable, function(v) {
+    section.appendChild(createToggle(t(T + 'china.applicable', 'China is a target jurisdiction'), state.china.applicable, function(v) {
       state.china.applicable = v;
       wizard.refreshStep();
     }));
@@ -261,29 +274,29 @@
     }
 
     var chinaDiv = el('div', { className: 'china-section' });
-    chinaDiv.appendChild(el('h3', {}, ['GenAI Security Compliance']));
+    chinaDiv.appendChild(el('h3', {}, [t(T + 'china.title', 'GenAI Security Compliance')]));
 
-    chinaDiv.appendChild(createToggle('Pre-training data security assessment completed', state.china.preTrainingAssessment, function(v) {
+    chinaDiv.appendChild(createToggle(t(T + 'china.preTrainingAssessment', 'Pre-training data security assessment completed'), state.china.preTrainingAssessment, function(v) {
       state.china.preTrainingAssessment = v;
       wizard.saveNow();
     }));
 
-    chinaDiv.appendChild(createToggle('GenAI safety evaluation passed', state.china.safetyEvaluation, function(v) {
+    chinaDiv.appendChild(createToggle(t(T + 'china.safetyEvaluation', 'GenAI safety evaluation passed'), state.china.safetyEvaluation, function(v) {
       state.china.safetyEvaluation = v;
       wizard.saveNow();
     }));
 
-    chinaDiv.appendChild(createToggle('Content security mechanisms in place', state.china.contentSecurity, function(v) {
+    chinaDiv.appendChild(createToggle(t(T + 'china.contentSecurity', 'Content security mechanisms in place'), state.china.contentSecurity, function(v) {
       state.china.contentSecurity = v;
       wizard.saveNow();
     }));
 
-    chinaDiv.appendChild(createToggle('Algorithm filing completed', state.china.algorithmFiling, function(v) {
+    chinaDiv.appendChild(createToggle(t(T + 'china.algorithmFiling', 'Algorithm filing completed'), state.china.algorithmFiling, function(v) {
       state.china.algorithmFiling = v;
       wizard.saveNow();
     }));
 
-    chinaDiv.appendChild(createToggle('Data annotation management documented', state.china.dataAnnotation, function(v) {
+    chinaDiv.appendChild(createToggle(t(T + 'china.dataAnnotation', 'Data annotation management documented'), state.china.dataAnnotation, function(v) {
       state.china.dataAnnotation = v;
       wizard.saveNow();
     }));
@@ -305,10 +318,11 @@
   // Step 4: Infrastructure Security
   function renderStep4(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 4: Infrastructure Security']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle4', 'Step 4: Infrastructure Security')]));
     section.appendChild(createAlert('info', 'Assess the security posture of your AI infrastructure. EU AI Act Art. 15 requires appropriate levels of accuracy, robustness, and cybersecurity.'));
 
-    INFRA_ITEMS.forEach(function(item) {
+    var infraItems = getInfraItems();
+    infraItems.forEach(function(item) {
       var iState = state.infrastructure[item.id];
 
       section.appendChild(createToggle(item.label, iState.enabled, function(v) {
@@ -325,18 +339,18 @@
       }
     });
 
-    section.appendChild(createTextInput('Penetration Testing Schedule', state.penTestSchedule, function(v) {
+    section.appendChild(createTextInput(t(T + 'label.penTestSchedule', 'Penetration Testing Schedule'), state.penTestSchedule, function(v) {
       state.penTestSchedule = v;
     }, 'e.g., Quarterly, Semi-annual, Annual, Ad-hoc'));
 
-    section.appendChild(createTextInput('Incident Response Plan Reference', state.incidentResponseRef, function(v) {
+    section.appendChild(createTextInput(t(T + 'label.incidentResponseRef', 'Incident Response Plan Reference'), state.incidentResponseRef, function(v) {
       state.incidentResponseRef = v;
     }, 'e.g., Document ID, link, or file path'));
 
-    var infraComplete = INFRA_ITEMS.filter(function(item) { return state.infrastructure[item.id].enabled; }).length;
-    var infraPct = Math.round((infraComplete / INFRA_ITEMS.length) * 100);
+    var infraComplete = infraItems.filter(function(item) { return state.infrastructure[item.id].enabled; }).length;
+    var infraPct = Math.round((infraComplete / infraItems.length) * 100);
     var alertType = infraPct >= 80 ? 'success' : infraPct >= 50 ? 'warning' : 'danger';
-    section.appendChild(createAlert(alertType, 'Infrastructure checklist: ' + infraComplete + '/' + INFRA_ITEMS.length + ' controls enabled (' + infraPct + '%).'));
+    section.appendChild(createAlert(alertType, 'Infrastructure checklist: ' + infraComplete + '/' + infraItems.length + ' controls enabled (' + infraPct + '%).'));
 
     container.appendChild(section);
   }
@@ -344,20 +358,20 @@
   // Step 5: Summary
   function renderSummary(container) {
     var section = el('div', { className: 'section' });
-    section.appendChild(el('h2', {}, ['Step 5: Security Assessment Summary']));
+    section.appendChild(el('h2', {}, [t(T + 'stepTitle5', 'Step 5: Security Assessment Summary')]));
 
     // Threat count by severity
     var identified = getIdentifiedThreats();
     var bySeverity = { critical: 0, high: 0, medium: 0, low: 0 };
-    identified.forEach(function(t) { bySeverity[state.threats[t.id].severity]++; });
+    identified.forEach(function(th) { bySeverity[state.threats[th.id].severity]++; });
 
-    section.appendChild(el('h3', {}, ['Threat Overview']));
+    section.appendChild(el('h3', {}, [t(T + 'label.threatOverview', 'Threat Overview')]));
     var statsDiv = el('div', { className: 'stat-row' });
     addStat(statsDiv, identified.length, 'Total Threats');
-    addStat(statsDiv, bySeverity.critical, 'Critical', 'score-high');
-    addStat(statsDiv, bySeverity.high, 'High', 'score-med');
-    addStat(statsDiv, bySeverity.medium, 'Medium', 'score-med');
-    addStat(statsDiv, bySeverity.low, 'Low', 'score-low');
+    addStat(statsDiv, bySeverity.critical, t('common.severity.critical', 'Critical'), 'score-high');
+    addStat(statsDiv, bySeverity.high, t('common.severity.high', 'High'), 'score-med');
+    addStat(statsDiv, bySeverity.medium, t('common.severity.medium', 'Medium'), 'score-med');
+    addStat(statsDiv, bySeverity.low, t('common.severity.low', 'Low'), 'score-low');
     section.appendChild(statsDiv);
 
     // Threat table
@@ -366,23 +380,23 @@
       var thead = el('thead');
       var headerRow = el('tr');
       headerRow.appendChild(el('th', {}, ['Threat']));
-      headerRow.appendChild(el('th', {}, ['Severity']));
-      headerRow.appendChild(el('th', {}, ['Control Type']));
+      headerRow.appendChild(el('th', {}, [t(T + 'label.severity', 'Severity')]));
+      headerRow.appendChild(el('th', {}, [t(T + 'label.controlType', 'Control Type')]));
       headerRow.appendChild(el('th', {}, ['Status']));
       thead.appendChild(headerRow);
       table.appendChild(thead);
 
       var tbody = el('tbody');
-      identified.forEach(function(t) {
-        var ctrl = state.controls[t.id];
+      identified.forEach(function(th) {
+        var ctrl = state.controls[th.id];
         var row = el('tr');
-        row.appendChild(el('td', {}, [t.label]));
+        row.appendChild(el('td', {}, [th.label]));
         var sevCell = el('td');
-        var sevCls = 'severity-badge severity-' + state.threats[t.id].severity;
-        sevCell.appendChild(el('span', { className: sevCls }, [state.threats[t.id].severity.toUpperCase()]));
+        var sevCls = 'severity-badge severity-' + state.threats[th.id].severity;
+        sevCell.appendChild(el('span', { className: sevCls }, [state.threats[th.id].severity.toUpperCase()]));
         row.appendChild(sevCell);
-        row.appendChild(el('td', {}, [findLabel(CONTROL_TYPE_OPTIONS, ctrl.controlType)]));
-        row.appendChild(el('td', {}, [findLabel(IMPL_STATUS_OPTIONS, ctrl.status)]));
+        row.appendChild(el('td', {}, [findLabel(getControlTypeOptions(), ctrl.controlType)]));
+        row.appendChild(el('td', {}, [findLabel(getImplStatusOptions(), ctrl.status)]));
         tbody.appendChild(row);
       });
       table.appendChild(tbody);
@@ -390,10 +404,10 @@
     }
 
     // Controls coverage
-    section.appendChild(el('h3', {}, ['Controls Coverage']));
+    section.appendChild(el('h3', {}, [t(T + 'label.controlsCoverage', 'Controls Coverage')]));
     var controlledCount = 0;
-    identified.forEach(function(t) {
-      var ctrl = state.controls[t.id];
+    identified.forEach(function(th) {
+      var ctrl = state.controls[th.id];
       if (ctrl.controlType && ctrl.description && ctrl.status) controlledCount++;
     });
     var coveragePct = identified.length > 0 ? Math.round((controlledCount / identified.length) * 100) : 100;
@@ -411,22 +425,15 @@
 
     // China compliance
     if (state.china.applicable) {
-      section.appendChild(el('h3', {}, ['China GenAI Compliance']));
+      section.appendChild(el('h3', {}, [t(T + 'label.chinaCompliance', 'China GenAI Compliance')]));
       var chinaFields = ['preTrainingAssessment', 'safetyEvaluation', 'contentSecurity', 'algorithmFiling', 'dataAnnotation'];
-      var chinaLabels = {
-        preTrainingAssessment: 'Pre-training data security assessment',
-        safetyEvaluation: 'GenAI safety evaluation',
-        contentSecurity: 'Content security mechanisms',
-        algorithmFiling: 'Algorithm filing',
-        dataAnnotation: 'Data annotation management'
-      };
       var chinaComplete = 0;
       chinaFields.forEach(function(f) {
         if (state.china[f]) chinaComplete++;
-        var status = state.china[f] ? 'Complete' : 'Incomplete';
+        var status = state.china[f] ? t('common.status.complete', 'Complete') : t('common.status.incomplete', 'Incomplete');
         var statusCls = state.china[f] ? 'score-low' : 'score-high';
         var row = el('div', { style: 'display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85em;' });
-        row.appendChild(el('span', { style: 'color: #9AACBA;' }, [chinaLabels[f]]));
+        row.appendChild(el('span', { style: 'color: #9AACBA;' }, [t(T + 'china.' + f, f)]));
         row.appendChild(el('span', { className: statusCls }, [status]));
         section.appendChild(row);
       });
@@ -436,29 +443,30 @@
     }
 
     // Infrastructure checklist
-    section.appendChild(el('h3', {}, ['Infrastructure Security']));
+    section.appendChild(el('h3', {}, [t(T + 'label.infraSecurity', 'Infrastructure Security')]));
+    var infraItems = getInfraItems();
     var infraComplete = 0;
-    INFRA_ITEMS.forEach(function(item) {
+    infraItems.forEach(function(item) {
       var iState = state.infrastructure[item.id];
       if (iState.enabled) infraComplete++;
       var row = el('div', { style: 'display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85em;' });
       row.appendChild(el('span', { style: 'color: #9AACBA;' }, [item.label]));
-      row.appendChild(el('span', { className: iState.enabled ? 'score-low' : 'score-high' }, [iState.enabled ? 'Enabled' : 'Not enabled']));
+      row.appendChild(el('span', { className: iState.enabled ? 'score-low' : 'score-high' }, [iState.enabled ? t('common.status.enabled', 'Enabled') : t('common.status.notEnabled', 'Not enabled')]));
       section.appendChild(row);
     });
-    var infraPct = Math.round((infraComplete / INFRA_ITEMS.length) * 100);
+    var infraPct = Math.round((infraComplete / infraItems.length) * 100);
 
     if (state.penTestSchedule) {
-      section.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 8px;' }, ['Penetration testing: ' + state.penTestSchedule]));
+      section.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 8px;' }, [t(T + 'label.penTestSchedule', 'Penetration testing') + ': ' + state.penTestSchedule]));
     }
     if (state.incidentResponseRef) {
-      section.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 4px;' }, ['Incident response plan: ' + state.incidentResponseRef]));
+      section.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 4px;' }, [t(T + 'label.incidentResponseRef', 'Incident response plan') + ': ' + state.incidentResponseRef]));
     }
 
     // Overall security posture
-    section.appendChild(el('h3', {}, ['Overall Security Posture']));
+    section.appendChild(el('h3', {}, [t(T + 'label.overallPosture', 'Overall Security Posture')]));
     var postureScore = computePostureScore(coveragePct, infraPct, bySeverity);
-    var postureLabel = postureScore >= 80 ? 'STRONG' : postureScore >= 60 ? 'MODERATE' : postureScore >= 40 ? 'DEVELOPING' : 'INSUFFICIENT';
+    var postureLabel = postureScore >= 80 ? t(T + 'posture.strong', 'STRONG') : postureScore >= 60 ? t(T + 'posture.moderate', 'MODERATE') : postureScore >= 40 ? t(T + 'posture.developing', 'DEVELOPING') : t(T + 'posture.insufficient', 'INSUFFICIENT');
     var postureCls = postureScore >= 80 ? 'score-low' : postureScore >= 60 ? 'score-med' : 'score-high';
 
     var gauge = el('div', { className: 'posture-gauge' });
@@ -557,9 +565,9 @@
         var ctrl = state.controls[t.id];
         lines.push('### ' + t.label + ' (' + state.threats[t.id].severity.toUpperCase() + ')');
         lines.push('');
-        lines.push('- **Control Type:** ' + findLabel(CONTROL_TYPE_OPTIONS, ctrl.controlType));
+        lines.push('- **Control Type:** ' + findLabel(getControlTypeOptions(), ctrl.controlType));
         lines.push('- **Description:** ' + (ctrl.description || 'Not provided'));
-        lines.push('- **Status:** ' + findLabel(IMPL_STATUS_OPTIONS, ctrl.status));
+        lines.push('- **Status:** ' + findLabel(getImplStatusOptions(), ctrl.status));
         lines.push('- **Evidence:** ' + (ctrl.evidence || 'Not provided'));
         lines.push('');
       });
@@ -585,7 +593,8 @@
     // Infrastructure
     lines.push('## 4. Infrastructure Security');
     lines.push('');
-    INFRA_ITEMS.forEach(function(item) {
+    var exportInfra = getInfraItems();
+    exportInfra.forEach(function(item) {
       var iState = state.infrastructure[item.id];
       lines.push('- [' + (iState.enabled ? 'x' : ' ') + '] ' + item.label + (iState.enabled && iState.details ? ' -- ' + iState.details : ''));
     });
@@ -598,20 +607,20 @@
     lines.push('## 5. Summary');
     lines.push('');
     var bySeverity = { critical: 0, high: 0, medium: 0, low: 0 };
-    identified.forEach(function(t) { bySeverity[state.threats[t.id].severity]++; });
+    identified.forEach(function(th) { bySeverity[state.threats[th.id].severity]++; });
     lines.push('- **Total threats:** ' + identified.length);
     lines.push('- **Critical:** ' + bySeverity.critical + ', **High:** ' + bySeverity.high + ', **Medium:** ' + bySeverity.medium + ', **Low:** ' + bySeverity.low);
 
     var controlledCount = 0;
-    identified.forEach(function(t) {
-      var ctrl = state.controls[t.id];
+    identified.forEach(function(th) {
+      var ctrl = state.controls[th.id];
       if (ctrl.controlType && ctrl.description && ctrl.status) controlledCount++;
     });
     var coveragePct = identified.length > 0 ? Math.round((controlledCount / identified.length) * 100) : 100;
     lines.push('- **Controls coverage:** ' + coveragePct + '%');
 
-    var infraComplete = INFRA_ITEMS.filter(function(item) { return state.infrastructure[item.id].enabled; }).length;
-    var infraPct = Math.round((infraComplete / INFRA_ITEMS.length) * 100);
+    var infraComplete = exportInfra.filter(function(item) { return state.infrastructure[item.id].enabled; }).length;
+    var infraPct = Math.round((infraComplete / exportInfra.length) * 100);
     lines.push('- **Infrastructure completion:** ' + infraPct + '%');
 
     var postureScore = computePostureScore(coveragePct, infraPct, bySeverity);
@@ -626,6 +635,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

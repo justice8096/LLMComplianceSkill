@@ -10,10 +10,15 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.conformityAssessment.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var config = {};
 
-  var stepLabels = ['System Info', 'Standards Mapping', 'Assessment Type', 'Evidence Cross-Reference', 'Outcome & Gaps', 'Review & Export'];
+  var stepLabels = [t(T+'step1','System Info'), t(T+'step2','Standards Mapping'), t(T+'step3','Assessment Type'), t(T+'step4','Evidence Cross-Reference'), t(T+'step5','Outcome & Gaps'), t(T+'step6','Review & Export')];
 
   var standardCategories = [
     { id: 'iso42001', label: 'ISO/IEC 42001 — AI Management System' },
@@ -93,8 +98,8 @@
   initState();
 
   var wizard = createWizard({
-    title: 'Conformity Assessment',
-    subtitle: 'Template 19 \u2014 EU AI Act Arts. 40-49, Annex VI-VII; ISO/IEC 42001; Sector-Specific Standards',
+    title: t(T + 'title', 'Conformity Assessment'),
+    subtitle: t(T + 'subtitle', 'Template 19 \u2014 EU AI Act Arts. 40-49, Annex VI-VII; ISO/IEC 42001; Sector-Specific Standards'),
     totalSteps: 6,
     stepLabels: stepLabels,
     renderStep: function(step, container) {
@@ -191,9 +196,9 @@
     items.push(createAlert('warning', 'EU AI Act requires third-party conformity assessment for high-risk biometric and critical infrastructure systems (Annex III). Self-assessment is permitted for other high-risk categories if harmonised standards are followed.'));
     items.push(createSelect('Assessment approach', [
       { value: '', label: '-- Select --' },
-      { value: 'self-assessment', label: 'Self-assessment (internal conformity — Annex VI)' },
-      { value: 'third-party', label: 'Third-party assessment (Notified Body — Annex VII)' },
-      { value: 'hybrid', label: 'Hybrid (self + third-party for specific areas)' }
+      { value: 'self-assessment', label: t(T + 'approach.self', 'Self-assessment (internal conformity — Annex VI)') },
+      { value: 'third-party', label: t(T + 'approach.thirdParty', 'Third-party assessment (Notified Body — Annex VII)') },
+      { value: 'hybrid', label: t(T + 'approach.hybrid', 'Hybrid (self + third-party for specific areas)') }
     ], state.assessmentType.approach, function(v) { state.assessmentType.approach = v; }));
     items.push(createSelect('Risk classification', [
       { value: '', label: '-- Select --' },
@@ -243,10 +248,10 @@
     items.push(createAlert('info', 'Document the overall assessment result. Identify any gaps requiring remediation before the EU AI Act compliance deadline (August 2, 2026 for high-risk systems).'));
     items.push(createSelect('Overall assessment result', [
       { value: '', label: '-- Select --' },
-      { value: 'conformant', label: 'Conformant' },
-      { value: 'conditionally-conformant', label: 'Conditionally conformant (gaps identified)' },
-      { value: 'non-conformant', label: 'Non-conformant' },
-      { value: 'in-progress', label: 'Assessment in progress' }
+      { value: 'conformant', label: t(T + 'result.conformant', 'Conformant') },
+      { value: 'conditionally-conformant', label: t(T + 'result.conditionallyConformant', 'Conditionally conformant (gaps identified)') },
+      { value: 'non-conformant', label: t(T + 'result.nonConformant', 'Non-conformant') },
+      { value: 'in-progress', label: t(T + 'result.inProgress', 'Assessment in progress') }
     ], state.outcome.overallResult, function(v) { state.outcome.overallResult = v; }));
     items.push(createTextArea('Summary of findings', state.outcome.summaryFindings, function(v) { state.outcome.summaryFindings = v; }, 'High-level summary of the conformity assessment findings'));
     items.push(createToggle('Declaration of Conformity drafted?', state.outcome.declarationOfConformity, function(v) { state.outcome.declarationOfConformity = v; wizard.saveNow(); }));
@@ -267,10 +272,10 @@
         group.appendChild(createTextArea('Description', gap.description, function(v) { gap.description = v; }, 'Describe the gap or non-conformance'));
         group.appendChild(createSelect('Severity', [
           { value: '', label: '-- Select --' },
-          { value: 'critical', label: 'Critical (blocks conformity)' },
-          { value: 'major', label: 'Major (significant risk)' },
-          { value: 'minor', label: 'Minor (low risk, improvement needed)' },
-          { value: 'observation', label: 'Observation (recommendation only)' }
+          { value: 'critical', label: t(T + 'gapSeverity.critical', 'Critical (blocks conformity)') },
+          { value: 'major', label: t(T + 'gapSeverity.major', 'Major (significant risk)') },
+          { value: 'minor', label: t(T + 'gapSeverity.minor', 'Minor (low risk, improvement needed)') },
+          { value: 'observation', label: t(T + 'gapSeverity.observation', 'Observation (recommendation only)') }
         ], gap.severity, function(v) { gap.severity = v; }));
         group.appendChild(createTextArea('Remediation plan', gap.remediation, function(v) { gap.remediation = v; }, 'Steps to close this gap'));
         var dlRow = el('div', { className: 'field-row' });
@@ -493,6 +498,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>

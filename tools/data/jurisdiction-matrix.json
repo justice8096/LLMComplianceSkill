@@ -1,27 +1,27 @@
 {
   "jurisdictions": {
-    "EU": { "name": "European Union", "status": "enacted", "keyDeadline": "2026-08-02" },
-    "CN": { "name": "China", "status": "enacted", "keyDeadline": "now" },
-    "KR": { "name": "South Korea", "status": "enacted", "keyDeadline": "2026-01-22" },
-    "UK": { "name": "United Kingdom", "status": "active-sector", "keyDeadline": "2026-02-05" },
-    "US-CO": { "name": "United States — Colorado", "status": "enacted", "keyDeadline": "2026-06-30" },
-    "US-CA": { "name": "United States — California", "status": "active-sector", "keyDeadline": "2026-08-02" },
-    "US-NYC": { "name": "United States — New York City", "status": "enacted", "keyDeadline": "now" },
-    "US-IL": { "name": "United States — Illinois", "status": "enacted", "keyDeadline": "now" },
-    "US-TX": { "name": "United States — Texas", "status": "enacted", "keyDeadline": "now" },
-    "US-UT": { "name": "United States — Utah", "status": "enacted", "keyDeadline": "now" },
-    "CA": { "name": "Canada", "status": "active-sector", "keyDeadline": "2026" },
-    "BR": { "name": "Brazil", "status": "proposed", "keyDeadline": "upon-passage" },
-    "IN": { "name": "India", "status": "active-sector", "keyDeadline": "now" },
-    "JP": { "name": "Japan", "status": "voluntary", "keyDeadline": "now" },
-    "SG": { "name": "Singapore", "status": "voluntary", "keyDeadline": "now" },
-    "AU": { "name": "Australia", "status": "voluntary", "keyDeadline": "2026-12" },
-    "NZ": { "name": "New Zealand", "status": "voluntary", "keyDeadline": "now" },
-    "PE": { "name": "Peru", "status": "enacted", "keyDeadline": "now" },
-    "NG": { "name": "Nigeria", "status": "proposed", "keyDeadline": "2026-03" },
-    "ZA": { "name": "South Africa", "status": "active-sector", "keyDeadline": "now" },
-    "MX": { "name": "Mexico", "status": "proposed", "keyDeadline": "2026" },
-    "VN": { "name": "Vietnam", "status": "enacted", "keyDeadline": "2026-03" }
+    "EU": { "name": "European Union", "nameKey": "EU", "status": "enacted", "keyDeadline": "2026-08-02" },
+    "CN": { "name": "China", "nameKey": "CN", "status": "enacted", "keyDeadline": "now" },
+    "KR": { "name": "South Korea", "nameKey": "KR", "status": "enacted", "keyDeadline": "2026-01-22" },
+    "UK": { "name": "United Kingdom", "nameKey": "UK", "status": "active-sector", "keyDeadline": "2026-02-05" },
+    "US-CO": { "name": "United States — Colorado", "nameKey": "US-CO", "status": "enacted", "keyDeadline": "2026-06-30" },
+    "US-CA": { "name": "United States — California", "nameKey": "US-CA", "status": "active-sector", "keyDeadline": "2026-08-02" },
+    "US-NYC": { "name": "United States — New York City", "nameKey": "US-NYC", "status": "enacted", "keyDeadline": "now" },
+    "US-IL": { "name": "United States — Illinois", "nameKey": "US-IL", "status": "enacted", "keyDeadline": "now" },
+    "US-TX": { "name": "United States — Texas", "nameKey": "US-TX", "status": "enacted", "keyDeadline": "now" },
+    "US-UT": { "name": "United States — Utah", "nameKey": "US-UT", "status": "enacted", "keyDeadline": "now" },
+    "CA": { "name": "Canada", "nameKey": "CA", "status": "active-sector", "keyDeadline": "2026" },
+    "BR": { "name": "Brazil", "nameKey": "BR", "status": "proposed", "keyDeadline": "upon-passage" },
+    "IN": { "name": "India", "nameKey": "IN", "status": "active-sector", "keyDeadline": "now" },
+    "JP": { "name": "Japan", "nameKey": "JP", "status": "voluntary", "keyDeadline": "now" },
+    "SG": { "name": "Singapore", "nameKey": "SG", "status": "voluntary", "keyDeadline": "now" },
+    "AU": { "name": "Australia", "nameKey": "AU", "status": "voluntary", "keyDeadline": "2026-12" },
+    "NZ": { "name": "New Zealand", "nameKey": "NZ", "status": "voluntary", "keyDeadline": "now" },
+    "PE": { "name": "Peru", "nameKey": "PE", "status": "enacted", "keyDeadline": "now" },
+    "NG": { "name": "Nigeria", "nameKey": "NG", "status": "proposed", "keyDeadline": "2026-03" },
+    "ZA": { "name": "South Africa", "nameKey": "ZA", "status": "active-sector", "keyDeadline": "now" },
+    "MX": { "name": "Mexico", "nameKey": "MX", "status": "proposed", "keyDeadline": "2026" },
+    "VN": { "name": "Vietnam", "nameKey": "VN", "status": "enacted", "keyDeadline": "2026-03" }
   },
   "templateRequirements": {
     "01": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "BR": true, "PE": true, "NG": true, "MX": true, "VN": true },
@@ -43,7 +43,11 @@
     "17": { "EU": true, "KR": true, "US-CO": true, "BR": true, "PE": true, "NG": true, "MX": true, "VN": true },
     "18": { "EU": true },
     "19": { "EU": true },
-    "20": { "EU": true, "UK": true, "KR": true, "US-NYC": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "ZA": true }
+    "20": { "EU": true, "UK": true, "KR": true, "US-NYC": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "ZA": true },
+    "21": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "US-TX": true, "US-UT": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "PE": true, "NG": true, "ZA": true, "MX": true, "VN": true },
+    "22": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "US-TX": true, "US-UT": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "PE": true, "NG": true, "ZA": true, "MX": true, "VN": true },
+    "23": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "CA": true, "SG": true, "AU": true, "JP": true },
+    "24": { "EU": true, "CN": true, "KR": true, "UK": true }
   },
   "templateNames": {
     "01": "System Transparency Document",
@@ -65,6 +69,10 @@
     "17": "Risk Classification",
     "18": "AI Literacy Training Record",
     "19": "Conformity Assessment",
-    "20": "Sector-Specific Matrix"
+    "20": "Sector-Specific Matrix",
+    "21": "Jurisdiction Selector",
+    "22": "Compliance Deadline Tracker",
+    "23": "Supply Chain Risk",
+    "24": "SAST/DAST Scan Validation"
   }
 }

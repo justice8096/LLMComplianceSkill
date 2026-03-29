@@ -10,6 +10,11 @@
 <script>
 (function() {
   injectCSS();
+  var T = 'tools.impactRiskScoring.';
+
+  i18nLoad(i18nDetectLocale(), function() { boot(); });
+
+  function boot() {
 
   var extraStyle = document.createElement('style');
   extraStyle.textContent = [
@@ -27,57 +32,77 @@
 
   var config = {};
 
-  var fundamentalRights = [
-    { id: 'dignity', text: 'Right to dignity' },
-    { id: 'privacy', text: 'Right to privacy' },
-    { id: 'dataProtection', text: 'Right to data protection' },
-    { id: 'nonDiscrimination', text: 'Right to non-discrimination' },
-    { id: 'genderEquality', text: 'Right to gender equality' },
-    { id: 'childRights', text: 'Rights of the child' },
-    { id: 'disabilityRights', text: 'Rights of persons with disabilities' },
-    { id: 'workerRights', text: 'Worker rights' },
-    { id: 'consumerProtection', text: 'Consumer protection' },
-    { id: 'freedomOfExpression', text: 'Freedom of expression' },
-    { id: 'accessToJustice', text: 'Access to justice' },
-    { id: 'goodAdministration', text: 'Right to good administration' }
+  var RIGHTS_IDS = [
+    { id: 'dignity',            key: 'dignity' },
+    { id: 'privacy',            key: 'privacy' },
+    { id: 'dataProtection',     key: 'dataProtection' },
+    { id: 'nonDiscrimination',  key: 'nonDiscrimination' },
+    { id: 'genderEquality',     key: 'genderEquality' },
+    { id: 'childRights',        key: 'child' },
+    { id: 'disabilityRights',   key: 'disability' },
+    { id: 'workerRights',       key: 'worker' },
+    { id: 'consumerProtection', key: 'consumer' },
+    { id: 'freedomOfExpression',key: 'expression' },
+    { id: 'accessToJustice',    key: 'justice' },
+    { id: 'goodAdministration', key: 'goodAdministration' }
   ];
 
-  var riskDimensions = [
-    { id: 'safety', text: 'Safety risk' },
-    { id: 'fundamentalRights', text: 'Fundamental rights risk' },
-    { id: 'discrimination', text: 'Discrimination/bias risk' },
-    { id: 'privacyRisk', text: 'Privacy risk' },
-    { id: 'environmental', text: 'Environmental risk' },
-    { id: 'societal', text: 'Societal impact risk' },
-    { id: 'security', text: 'Security/cyber risk' }
+  var DIMENSION_IDS = [
+    { id: 'safety',            key: 'safety' },
+    { id: 'fundamentalRights', key: 'fundamentalRights' },
+    { id: 'discrimination',    key: 'discrimination' },
+    { id: 'privacyRisk',       key: 'privacy' },
+    { id: 'environmental',     key: 'environmental' },
+    { id: 'societal',          key: 'societal' },
+    { id: 'security',          key: 'security' }
   ];
 
-  var severityOptions = [
-    { value: '', label: '-- Select Severity --' },
-    { value: 'negligible', label: 'Negligible' },
-    { value: 'low', label: 'Low' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'high', label: 'High' },
-    { value: 'critical', label: 'Critical' }
-  ];
+  var LIKELIHOOD_IDS = ['rare', 'unlikely', 'possible', 'likely', 'almostCertain'];
 
-  var likelihoodOptions = [
-    { value: '', label: '-- Select Likelihood --' },
-    { value: 'rare', label: 'Rare' },
-    { value: 'unlikely', label: 'Unlikely' },
-    { value: 'possible', label: 'Possible' },
-    { value: 'likely', label: 'Likely' },
-    { value: 'almostCertain', label: 'Almost Certain' }
-  ];
+  function getFundamentalRights() {
+    return RIGHTS_IDS.map(function(r) {
+      return { id: r.id, text: t(T + 'right.' + r.key, r.id) };
+    });
+  }
 
-  var residualRiskOptions = [
-    { value: '', label: '-- Select Residual Risk --' },
-    { value: 'negligible', label: 'Negligible' },
-    { value: 'low', label: 'Low' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'high', label: 'High' },
-    { value: 'critical', label: 'Critical' }
-  ];
+  function getRiskDimensions() {
+    return DIMENSION_IDS.map(function(d) {
+      return { id: d.id, text: t(T + 'dimension.' + d.key, d.id) };
+    });
+  }
+
+  function getSeverityOptions() {
+    return [
+      { value: '', label: '-- Select Severity --' },
+      { value: 'negligible', label: 'Negligible' },
+      { value: 'low', label: t('common.severity.low', 'Low') },
+      { value: 'medium', label: t('common.severity.medium', 'Medium') },
+      { value: 'high', label: t('common.severity.high', 'High') },
+      { value: 'critical', label: t('common.severity.critical', 'Critical') }
+    ];
+  }
+
+  function getLikelihoodOptions() {
+    return [
+      { value: '', label: '-- Select Likelihood --' },
+      { value: 'rare', label: t(T + 'likelihood.rare', 'Rare') },
+      { value: 'unlikely', label: t(T + 'likelihood.unlikely', 'Unlikely') },
+      { value: 'possible', label: t(T + 'likelihood.possible', 'Possible') },
+      { value: 'likely', label: t(T + 'likelihood.likely', 'Likely') },
+      { value: 'almostCertain', label: t(T + 'likelihood.almostCertain', 'Almost Certain') }
+    ];
+  }
+
+  function getResidualRiskOptions() {
+    return [
+      { value: '', label: '-- Select Residual Risk --' },
+      { value: 'negligible', label: 'Negligible' },
+      { value: 'low', label: t('common.severity.low', 'Low') },
+      { value: 'medium', label: t('common.severity.medium', 'Medium') },
+      { value: 'high', label: t('common.severity.high', 'High') },
+      { value: 'critical', label: t('common.severity.critical', 'Critical') }
+    ];
+  }
 
   var sevScores = { negligible: 1, low: 2, medium: 3, high: 4, critical: 5 };
   var likScores = { rare: 1, unlikely: 2, possible: 3, likely: 4, almostCertain: 5 };
@@ -93,6 +118,8 @@
   };
 
   function initState() {
+    var fundamentalRights = getFundamentalRights();
+    var riskDimensions = getRiskDimensions();
     for (var i = 0; i < fundamentalRights.length; i++) {
       if (!state.rights[fundamentalRights[i].id]) {
         state.rights[fundamentalRights[i].id] = { impacted: null, description: '' };
@@ -135,10 +162,11 @@
   }
 
   function getMediumOrAbove() {
+    var riskDimensions = getRiskDimensions();
     var result = [];
     for (var i = 0; i < riskDimensions.length; i++) {
       var d = riskDimensions[i];
-      var sev = state.dimensions[d.id].severity;
+      var sev = state.dimensions[d.id] ? state.dimensions[d.id].severity : '';
       if (sev === 'medium' || sev === 'high' || sev === 'critical') {
         result.push(d);
       }
@@ -147,10 +175,10 @@
   }
 
   var wizard = createWizard({
-    title: 'Impact & Risk Assessment Scoring Tool',
-    subtitle: 'Template 06 \u2014 Serves EU AI Act Art. 9, Colorado SB 24-205, South Korea AI Basic Act',
+    title: t(T + 'title', 'Impact & Risk Assessment Scoring Tool'),
+    subtitle: t(T + 'subtitle', 'Template 06 \u2014 Serves EU AI Act Art. 9, Colorado SB 24-205, South Korea AI Basic Act'),
     totalSteps: 4,
-    stepLabels: ['Fundamental Rights', 'Risk Dimensions', 'Mitigation', 'Summary'],
+    stepLabels: [t(T + 'step1', 'Fundamental Rights'), t(T + 'step2', 'Risk Dimensions'), t(T + 'step3', 'Mitigation'), t(T + 'step4', 'Summary')],
     renderStep: function(step, container) {
       if (step === 0) renderStep1(container);
       else if (step === 1) renderStep2(container);
@@ -177,6 +205,7 @@
     section.appendChild(el('h2', {}, ['Step 1: Fundamental Rights Impact Assessment']));
     section.appendChild(createAlert('info', 'For each fundamental right, indicate whether the AI system impacts it and describe the nature of the impact.'));
 
+    var fundamentalRights = getFundamentalRights();
     for (var i = 0; i < fundamentalRights.length; i++) {
       (function(right) {
         var rs = state.rights[right.id];
@@ -198,7 +227,7 @@
 
     var impactedCount = 0;
     for (var i = 0; i < fundamentalRights.length; i++) {
-      if (state.rights[fundamentalRights[i].id].impacted === true) impactedCount++;
+      if (state.rights[fundamentalRights[i].id] && state.rights[fundamentalRights[i].id].impacted === true) impactedCount++;
     }
     if (impactedCount > 0) {
       section.appendChild(createAlert('warning', impactedCount + ' fundamental right(s) identified as impacted. Detailed risk assessment and mitigation planning recommended.'));
@@ -212,9 +241,10 @@
     section.appendChild(el('h2', {}, ['Step 2: Risk Dimensions']));
     section.appendChild(createAlert('info', 'Assess severity and likelihood for each risk dimension. Dimensions rated Medium severity or above will require mitigation planning in the next step.'));
 
+    var riskDimensions = getRiskDimensions();
     for (var i = 0; i < riskDimensions.length; i++) {
       (function(dim) {
-        var dd = state.dimensions[dim.id];
+        var dd = state.dimensions[dim.id] || { severity: '', likelihood: '' };
         var card = el('div', { className: 'risk-card' });
 
         var header = el('div', { className: 'risk-card-header' });
@@ -225,11 +255,11 @@
         }
         card.appendChild(header);
 
-        card.appendChild(createSelect('Severity', severityOptions, dd.severity, function(v) {
+        card.appendChild(createSelect('Severity', getSeverityOptions(), dd.severity, function(v) {
           state.dimensions[dim.id].severity = v;
           wizard.refreshStep();
         }));
-        card.appendChild(createSelect('Likelihood', likelihoodOptions, dd.likelihood, function(v) {
+        card.appendChild(createSelect('Likelihood', getLikelihoodOptions(), dd.likelihood, function(v) {
           state.dimensions[dim.id].likelihood = v;
           wizard.refreshStep();
         }));
@@ -271,7 +301,7 @@
           state.mitigations[dim.id].measures = v;
         }, 'Describe specific mitigation measures to reduce this risk...'));
 
-        card.appendChild(createSelect('Residual risk level (after mitigation)', residualRiskOptions, mit.residualRisk, function(v) {
+        card.appendChild(createSelect('Residual risk level (after mitigation)', getResidualRiskOptions(), mit.residualRisk, function(v) {
           state.mitigations[dim.id].residualRisk = v;
         }));
 
@@ -290,10 +320,13 @@
     var section = el('div', { className: 'section' });
     section.appendChild(el('h2', {}, ['Step 4: Assessment Summary']));
 
+    var fundamentalRights = getFundamentalRights();
+    var riskDimensions = getRiskDimensions();
+
     // Impacted rights
     var impactedRights = [];
     for (var i = 0; i < fundamentalRights.length; i++) {
-      if (state.rights[fundamentalRights[i].id].impacted === true) {
+      if (state.rights[fundamentalRights[i].id] && state.rights[fundamentalRights[i].id].impacted === true) {
         impactedRights.push(fundamentalRights[i]);
       }
     }
@@ -339,7 +372,7 @@
         // Find dimensions in this cell
         for (var d = 0; d < riskDimensions.length; d++) {
           var dd = state.dimensions[riskDimensions[d].id];
-          if (dd.severity === sevKeys[s] && dd.likelihood === likKeys[l]) {
+          if (dd && dd.severity === sevKeys[s] && dd.likelihood === likKeys[l]) {
             cell.appendChild(el('div', { style: 'font-size: 0.65em; color: #F0EBE0; margin-top: 2px;' }, [riskDimensions[d].text.replace(' risk', '')]));
           }
         }
@@ -357,11 +390,13 @@
     var maxScore = 0;
     for (var i = 0; i < riskDimensions.length; i++) {
       var dd = state.dimensions[riskDimensions[i].id];
-      var sc = getRiskScore(dd.severity, dd.likelihood);
-      if (sc > 0) {
-        totalScore += sc;
-        assessedCount++;
-        if (sc > maxScore) maxScore = sc;
+      if (dd) {
+        var sc = getRiskScore(dd.severity, dd.likelihood);
+        if (sc > 0) {
+          totalScore += sc;
+          assessedCount++;
+          if (sc > maxScore) maxScore = sc;
+        }
       }
     }
     var avgScore = assessedCount > 0 ? Math.round(totalScore / assessedCount * 10) / 10 : 0;
@@ -434,19 +469,21 @@
 
     for (var i = 0; i < riskDimensions.length; i++) {
       var dd = state.dimensions[riskDimensions[i].id];
-      var sc = getRiskScore(dd.severity, dd.likelihood);
-      if (sc >= 9) {
-        var kriText = '';
-        switch (riskDimensions[i].id) {
-          case 'safety': kriText = 'KRI: Monitor safety incident rate and mean time to resolution'; break;
-          case 'fundamentalRights': kriText = 'KRI: Track rights impact assessment completion rate and remediation time'; break;
-          case 'discrimination': kriText = 'KRI: Measure disparate impact ratios across protected groups monthly'; break;
-          case 'privacyRisk': kriText = 'KRI: Track data breach incidents, DSAR response times, consent withdrawal rates'; break;
-          case 'environmental': kriText = 'KRI: Monitor energy consumption per inference and carbon footprint metrics'; break;
-          case 'societal': kriText = 'KRI: Track societal impact reports, public complaints, and media sentiment'; break;
-          case 'security': kriText = 'KRI: Monitor adversarial attack attempts, model integrity checks, and vulnerability scan results'; break;
+      if (dd) {
+        var sc = getRiskScore(dd.severity, dd.likelihood);
+        if (sc >= 9) {
+          var kriText = '';
+          switch (riskDimensions[i].id) {
+            case 'safety': kriText = 'KRI: Monitor safety incident rate and mean time to resolution'; break;
+            case 'fundamentalRights': kriText = 'KRI: Track rights impact assessment completion rate and remediation time'; break;
+            case 'discrimination': kriText = 'KRI: Measure disparate impact ratios across protected groups monthly'; break;
+            case 'privacyRisk': kriText = 'KRI: Track data breach incidents, DSAR response times, consent withdrawal rates'; break;
+            case 'environmental': kriText = 'KRI: Monitor energy consumption per inference and carbon footprint metrics'; break;
+            case 'societal': kriText = 'KRI: Track societal impact reports, public complaints, and media sentiment'; break;
+            case 'security': kriText = 'KRI: Monitor adversarial attack attempts, model integrity checks, and vulnerability scan results'; break;
+          }
+          if (kriText) { kriBox.appendChild(createAlert('info', kriText)); kriAdded = true; }
         }
-        if (kriText) { kriBox.appendChild(createAlert('info', kriText)); kriAdded = true; }
       }
     }
     if (!kriAdded) {
@@ -486,9 +523,11 @@
   }
 
   function buildResults() {
+    var fundamentalRights = getFundamentalRights();
+    var riskDimensions = getRiskDimensions();
     var impactedList = [];
     for (var i = 0; i < fundamentalRights.length; i++) {
-      if (state.rights[fundamentalRights[i].id].impacted === true) {
+      if (state.rights[fundamentalRights[i].id] && state.rights[fundamentalRights[i].id].impacted === true) {
         impactedList.push(fundamentalRights[i].id);
       }
     }
@@ -497,9 +536,11 @@
     var dimScores = {};
     for (var i = 0; i < riskDimensions.length; i++) {
       var dd = state.dimensions[riskDimensions[i].id];
-      var sc = getRiskScore(dd.severity, dd.likelihood);
-      dimScores[riskDimensions[i].id] = { severity: dd.severity, likelihood: dd.likelihood, score: sc, level: getRiskLevel(sc) };
-      if (sc > maxScore) maxScore = sc;
+      if (dd) {
+        var sc = getRiskScore(dd.severity, dd.likelihood);
+        dimScores[riskDimensions[i].id] = { severity: dd.severity, likelihood: dd.likelihood, score: sc, level: getRiskLevel(sc) };
+        if (sc > maxScore) maxScore = sc;
+      }
     }
 
     return {
@@ -525,6 +566,8 @@
 
   function doExport() {
     var results = buildResults();
+    var fundamentalRights = getFundamentalRights();
+    var riskDimensions = getRiskDimensions();
     var lines = [];
     lines.push('# Impact & Risk Assessment Report (Template 06)');
     lines.push('');
@@ -537,9 +580,9 @@
     for (var i = 0; i < fundamentalRights.length; i++) {
       var r = fundamentalRights[i];
       var rs = state.rights[r.id];
-      var marker = rs.impacted === true ? 'x' : ' ';
+      var marker = rs && rs.impacted === true ? 'x' : ' ';
       lines.push('- [' + marker + '] **' + r.text + '**');
-      if (rs.impacted === true && rs.description) {
+      if (rs && rs.impacted === true && rs.description) {
         lines.push('  - Impact: ' + rs.description);
       }
     }
@@ -551,7 +594,7 @@
     lines.push('|-----------|----------|------------|-------|-------|');
     for (var i = 0; i < riskDimensions.length; i++) {
       var d = riskDimensions[i];
-      var dd = state.dimensions[d.id];
+      var dd = state.dimensions[d.id] || {};
       var sc = getRiskScore(dd.severity, dd.likelihood);
       lines.push('| ' + d.text + ' | ' + (dd.severity || 'N/A') + ' | ' + (dd.likelihood || 'N/A') + ' | ' + sc + '/25 | ' + getRiskLevel(sc) + ' |');
     }
@@ -588,6 +631,7 @@
   }
 
   wizard.render();
+  } // end boot()
 })();
 </script>
 </body>
