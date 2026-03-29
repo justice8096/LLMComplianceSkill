@@ -2,5 +2,12 @@
   "name": "ai-compliance",
   "version": "1.0.0",
   "description": "AI & LLM compliance evidence collection kit. Identifies applicable regulations, required disclosures, risk classifications, and compliance deadlines across 16+ jurisdictions.",
-  "author": "Justin"
+  "author": "Justin",
+  "skills": [
+    {
+      "id": "ai-compliance",
+      "name": "AI Compliance Evidence Collection",
+      "path": "skills/ai-compliance/SKILL.md"
+    }
+  ]
 }
