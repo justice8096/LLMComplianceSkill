@@ -17,7 +17,7 @@
  *   --days <N>       Number of days of history to scan (default: 365)
  */
 
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -47,15 +47,20 @@ function parseArgs() {
 /**
  * Run a git command in the given repository.
  *
- * Note: execSync is used intentionally here. All command strings are
- * constructed from hardcoded git sub-commands and the --repo path which
- * is supplied by the same user running this script. There is no
- * untrusted / remote input interpolated into the shell string.
+ * Uses execFileSync with an explicit argument array so that repoPath and
+ * all git sub-command tokens are passed directly to the OS without any
+ * shell expansion — eliminating CWE-78 shell-injection risk.
  */
 function git(cmd, repoPath) {
-  return execSync(`git -C "${repoPath}" ${cmd}`, {
+  // Split the flat command string into individual tokens so callers do not
+  // need to be refactored.  repoPath is never part of cmd; it is passed
+  // as the value of the -C flag, which execFileSync delivers as a discrete
+  // argv element with no shell involvement.
+  const args = ['-C', repoPath, ...cmd.split(/\s+/).filter(Boolean)];
+  return execFileSync('git', args, {
     encoding: 'utf8',
     maxBuffer: 50 * 1024 * 1024,
+    timeout: 60000,
     stdio: ['pipe', 'pipe', 'pipe']
   }).trim();
 }

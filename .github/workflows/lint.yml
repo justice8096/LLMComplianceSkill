@@ -1,0 +1,25 @@
+name: Lint
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  lint-js:
+    name: JavaScript syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: '20'
+
+      - name: Syntax-check all JavaScript files
+        run: |
+          find . -name "*.js" -not -path "./.git/*" -not -path "./docs/*" | sort | while read -r f; do
+            echo "Checking: $f"
+            node --check "$f" || exit 1
+          done

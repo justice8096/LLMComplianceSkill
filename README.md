@@ -1,5 +1,8 @@
 # AI Compliance Evidence Collection Kit
 
+![Lint](https://github.com/justice8096/LLMComplianceSkill/actions/workflows/lint.yml/badge.svg)
+![Release](https://img.shields.io/github/v/release/justice8096/LLMComplianceSkill)
+
 Open-source toolkit for gathering AI/LLM compliance evidence across 16+ jurisdictions. Built as a [Claude Code](https://claude.ai/claude-code) skill.
 
 **[View the site](https://justice8096.github.io/LLMComplianceSkill/)** | **[Templates](#templates)** | **[Interactive Tools](#interactive-tools)** | **[Quick Start](#quick-start)**
@@ -10,57 +13,80 @@ Open-source toolkit for gathering AI/LLM compliance evidence across 16+ jurisdic
 
 When you build an AI-powered application, you need evidence that it complies with applicable regulations. This toolkit provides:
 
-- **22 evidence templates** mapped to specific laws across 45+ regulations
-- **6 interactive HTML tools** for compliance areas requiring human judgment
+- **24 evidence templates** mapped to specific laws across 45+ regulations
+- **21 interactive HTML tools** for compliance areas requiring human judgment
 - **An autofill script** that populates templates from a single config file
+- **3 automated evidence extractors** for git, package, and CI/CD analysis
 - **Regulation research** covering 16 jurisdictions with specific provisions and deadlines
 
 The output is designed to be **handed to your legal or compliance team** to help prove compliance.
 
+## Installation
+
+```bash
+git clone git@github.com:justice8096/LLMComplianceSkill.git ~/.claude/plugins/LLMComplianceSkill
+```
+
+Or install alongside the full security audit suite:
+
+```bash
+git clone git@github.com:justice8096/sast-dast-scanner.git      ~/.claude/plugins/sast-dast-scanner
+git clone git@github.com:justice8096/supply-chain-security.git   ~/.claude/plugins/supply-chain-security
+git clone git@github.com:justice8096/cwe-mapper.git              ~/.claude/plugins/cwe-mapper
+git clone git@github.com:justice8096/post-commit-audit.git       ~/.claude/plugins/post-commit-audit
+git clone git@github.com:justice8096/LLMComplianceSkill.git      ~/.claude/plugins/LLMComplianceSkill
+```
+
+Claude Code auto-discovers skills in `~/.claude/plugins/`. No further configuration needed.
+
 ## Quick Start
 
 ```bash
-git clone https://github.com/justice8096/LLMComplianceSkill.git
+git clone git@github.com:justice8096/LLMComplianceSkill.git
 cd LLMComplianceSkill
 
 # 1. Create your project config
 cp tools/compliance-config.example.json tools/compliance-config.json
 # Edit compliance-config.json with your project details
 
-# 2. Open interactive tools in your browser
+# 2. (Optional) Extract evidence automatically from your repo
+node tools/extract-evidence.js --repo /path/to/your-repo --config tools/compliance-config.json
+
+# 3. Open interactive tools in your browser
 # Load compliance-config.json into each tool, make decisions, save results
 
-# 3. Run autofill
-node tools/autofill.js
+# 4. Run autofill
+node tools/autofill.js --config tools/compliance-config.json --output output/
 
-# 4. Evidence is in output/
+# 5. Validate completeness
+node tools/evidence-checker.js --config tools/compliance-config.json --output output/
+
+# 6. Evidence is in output/
 ls output/
 ```
 
 ## How It Works
 
-```
-compliance-config.json
-        │
-        ├──▶ Interactive HTML Tools (human judgment)
-        │     risk-classification.html
-        │     impact-risk-scoring.html
-        │     human-oversight.html
-        │     bias-testing.html
-        │     consent-design.html
-        │     security-assessment.html
-        │
-        ▼
-   autofill.js ──▶ 22 filled templates + MANIFEST.md
-                    in output/
+```mermaid
+flowchart TD
+    Input([AI Project + Target Jurisdictions])
+
+    Input --> Config[compliance-config.json\nSystem · Org · Jurisdiction · Dates]
+
+    Config --> IT[21 Interactive HTML Tools\nbrowser-based, zero dependencies\nhuman-judgment assessments]
+    Config --> EX[extract-evidence.js\ngit history · package deps\nCI/CD pipeline analysis]
+
+    IT --> AF[autofill.js\nPopulates 24 evidence templates\nfrom config + tool results]
+    EX --> AF
+
+    AF --> OUT[output/\n24 filled templates\nMANIFEST.md\ncompliance-config-snapshot.json]
+
+    OUT --> CHK[evidence-checker.js\nValidation · Gap analysis\nevidence-check-report.txt]
+
+    CHK --> Handoff([Compliance Package\nfor Legal Review])
 ```
 
-1. **Configure** — Fill `compliance-config.json` with your project metadata, jurisdictions, and system details
-2. **Assess** — Open the HTML tools in your browser, load your config, make human-judgment decisions, save results back
-3. **Autofill** — Run `node tools/autofill.js` to populate all templates
-4. **Handoff** — Give `output/` to your compliance team
-
-No server required. Everything runs locally with zero dependencies.
+No server required. Everything runs locally with zero external dependencies.
 
 ## Templates
 
@@ -88,6 +114,7 @@ No server required. Everything runs locally with zero dependencies.
 | 20 | Sector-Specific Matrix | Finance, healthcare, employment, education |
 | 21 | Jurisdiction Selector | Select countries → get required template list |
 | 22 | Compliance Deadline Tracker | All deadlines through 2027+ |
+| 23 | Supply Chain Risk | Foundation model provenance, vendor assessments |
 
 ## Interactive Tools
 
@@ -99,6 +126,21 @@ No server required. Everything runs locally with zero dependencies.
 | `bias-testing.html` | 08 | Protected characteristics, fairness metrics, findings |
 | `consent-design.html` | 10 | Legal basis selection, consent mechanisms, lifecycle |
 | `security-assessment.html` | 15 | Threat model, security controls, infrastructure audit |
+| `pia-assessment.html` | 07 | Privacy impact assessment workflow |
+| `transparency-documentation.html` | 01 | System transparency documentation |
+| `disclosure-toolkit.html` | 02 | User-facing disclosure design |
+| `content-labeling.html` | 03 | AI content labeling specification |
+| `automated-decision-logic.html` | 04 | Automated decision logic documentation |
+| `training-data-disclosure.html` | 05 | Training data provenance |
+| `governance-framework.html` | 12 | AI governance structure |
+| `incident-management.html` | 13 | Incident response plan |
+| `content-moderation.html` | 16 | Content moderation policy |
+| `conformity-assessment.html` | 19 | EU AI Act conformity assessment |
+| `ai-literacy-training.html` | 18 | AI literacy training records |
+| `consent-records-audit.html` | 10 | Consent records lifecycle audit |
+| `dsr-rights-implementation.html` | 11 | Data subject rights implementation |
+| `supply-chain-risk.html` | 23 | Supply chain risk assessment |
+| `llm-selector.html` | — | Select and document the foundation model used |
 
 ## Jurisdictions Covered
 
@@ -125,7 +167,7 @@ No server required. Everything runs locally with zero dependencies.
 
 Add this as a skill to your Claude Code sessions when building AI-powered applications:
 
-1. Add the skill to your project
+1. Install to `~/.claude/plugins/` (see [Installation](#installation))
 2. When planning features, Claude will reference applicable regulations
 3. Use the templates and tools to gather evidence alongside development
 4. The skill prioritizes actionable requirements and cites specific laws
