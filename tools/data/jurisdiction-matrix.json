@@ -44,6 +44,9 @@
     "18": { "EU": true },
     "19": { "EU": true },
     "20": { "EU": true, "UK": true, "KR": true, "US-NYC": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "ZA": true },
+    "21": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "US-TX": true, "US-UT": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "PE": true, "NG": true, "ZA": true, "MX": true, "VN": true },
+    "22": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "US-TX": true, "US-UT": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "PE": true, "NG": true, "ZA": true, "MX": true, "VN": true },
+    "23": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "CA": true, "SG": true, "AU": true, "JP": true },
     "24": { "EU": true, "CN": true, "KR": true, "UK": true }
   },
   "templateNames": {
@@ -67,6 +70,9 @@
     "18": "AI Literacy Training Record",
     "19": "Conformity Assessment",
     "20": "Sector-Specific Matrix",
+    "21": "Jurisdiction Selector",
+    "22": "Compliance Deadline Tracker",
+    "23": "Supply Chain Risk",
     "24": "SAST/DAST Scan Validation"
   }
 }
