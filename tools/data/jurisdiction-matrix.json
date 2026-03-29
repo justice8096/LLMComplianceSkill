@@ -43,7 +43,8 @@
     "17": { "EU": true, "KR": true, "US-CO": true, "BR": true, "PE": true, "NG": true, "MX": true, "VN": true },
     "18": { "EU": true },
     "19": { "EU": true },
-    "20": { "EU": true, "UK": true, "KR": true, "US-NYC": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "ZA": true }
+    "20": { "EU": true, "UK": true, "KR": true, "US-NYC": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "ZA": true },
+    "24": { "EU": true, "CN": true, "KR": true, "UK": true }
   },
   "templateNames": {
     "01": "System Transparency Document",
@@ -65,6 +66,7 @@
     "17": "Risk Classification",
     "18": "AI Literacy Training Record",
     "19": "Conformity Assessment",
-    "20": "Sector-Specific Matrix"
+    "20": "Sector-Specific Matrix",
+    "24": "SAST/DAST Scan Validation"
   }
 }

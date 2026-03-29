@@ -62,7 +62,8 @@ function main() {
   const extractors = [
     { name: 'git-evidence', file: 'git-evidence.js', extraArgs: ['--days', String(days)] },
     { name: 'package-evidence', file: 'package-evidence.js', extraArgs: [] },
-    { name: 'ci-evidence', file: 'ci-evidence.js', extraArgs: [] }
+    { name: 'ci-evidence', file: 'ci-evidence.js', extraArgs: [] },
+    { name: 'sast-dast-evidence', file: 'sast-dast-evidence.js', extraArgs: [] }
   ];
 
   for (const ext of extractors) {

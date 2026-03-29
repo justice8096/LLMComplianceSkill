@@ -488,11 +488,43 @@ function fillTemplate(templatePath, config, matrix, deadlines) {
     if (dsr.requestMethod) md = fillTableField(md, 'Request submission method', dsr.requestMethod);
   }
 
-  // Template 15: Security — from securityAssessment
+  // Template 15: Security — from securityAssessment + SAST/DAST evidence
   if (itr.securityAssessment && tplNum === '15') {
     const sa = itr.securityAssessment;
     if (sa.lastAssessmentDate) md = fillTableField(md, 'Last assessment date', sa.lastAssessmentDate);
     if (sa.overallSecurityLevel) md = fillTableField(md, 'Security posture', sa.overallSecurityLevel);
+  }
+  const sastEv = extracted['sast-dast-evidence'] || {};
+  if (sastEv.scanReport?.detected && tplNum === '15') {
+    const sr = sastEv.scanReport;
+    if (sr.scanDate) md = fillTableField(md, 'Last assessment date', sr.scanDate);
+    md = fillCheckbox(md, 'Vulnerability assessment completed');
+    if (sr.overallAssessment === 'PASS') md = fillCheckbox(md, 'Penetration testing completed');
+  }
+
+  // Template 24: SAST/DAST Scan — from sast-dast-evidence extractor
+  if (tplNum === '24' && sastEv.scanReport?.detected) {
+    const sr = sastEv.scanReport;
+    if (sr.scanner) md = fillTableField(md, 'Scan tool', sr.scanner);
+    if (sr.scanDate) md = fillTableField(md, 'Scan date', sr.scanDate);
+    if (sr.filesScanned) md = fillTableField(md, 'Files scanned', String(sr.filesScanned));
+    if (sr.overallAssessment) md = fillTableField(md, 'Overall assessment', sr.overallAssessment);
+    md = fillCheckbox(md, 'SAST scan completed');
+    if (sr.dastFindings) {
+      if (/N\/A/i.test(sr.dastFindings)) md = fillCheckbox(md, 'DAST scan completed (or N/A documented)');
+      else md = fillCheckbox(md, 'DAST scan completed (or N/A documented)');
+    }
+    if (sastEv.cweMapping?.detected) {
+      md = fillCheckbox(md, 'CWE inventory documented');
+      md = fillCheckbox(md, 'Compliance framework cross-references verified');
+    }
+    if (sastEv.testSuiteValidation) {
+      md = fillCheckbox(md, 'Test suite coverage matrix validated');
+      md = fillTableField(md, 'Test suite coverage', sastEv.autoFillFields.testSuiteCoverage);
+      if (sr.findings.critical === 0 && sr.findings.high === 0) {
+        md = fillCheckbox(md, 'No critical or high findings remain open');
+      }
+    }
   }
 
   // Template 02: Disclosure — from disclosureToolkit
