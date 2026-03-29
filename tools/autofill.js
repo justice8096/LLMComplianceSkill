@@ -20,8 +20,18 @@ function loadJSON(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+const REQUIRED_CONFIG_KEYS = ['organization', 'system', 'jurisdictions'];
+
 function loadConfig(configPath) {
   const cfg = loadJSON(configPath);
+  const missing = REQUIRED_CONFIG_KEYS.filter(k => !(k in cfg));
+  if (missing.length > 0) {
+    process.stderr.write(
+      `[autofill] ERROR: compliance-config.json is missing required top-level key(s): ${missing.join(', ')}\n` +
+      `[autofill] Please add the missing fields and retry.\n`
+    );
+    process.exit(1);
+  }
   return cfg;
 }
 
