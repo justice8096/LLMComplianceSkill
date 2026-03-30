@@ -1,47 +1,69 @@
 POST-COMMIT AUDIT SUMMARY
 ==========================
 Date:   2026-03-29
-Commit: ff26c8d
-Branch: master
+Commit: 1586ec7
+Branch: main
 Project: LLMComplianceSkill (AI Compliance Evidence Collection Kit)
-Audit Type: POST-FIX Re-audit (prior: CONDITIONAL PASS on 4dcdb1c)
+Audit Type: POST-MERGE Audit (3 commits since prior PASS on ff26c8d)
+Commits Covered: a15f82f, af8535f, 1586ec7
 
-1. SAST/DAST Scan:        PASS   -- 6 findings (0 critical, 0 high, 0 medium, 2 low, 4 info)
-2. Supply Chain Audit:    PASS   -- SLSA Level 1+, 2 issues (no SBOM, SLSA L2 provenance pending)
-3. CWE Mapping:           PASS   -- 6 CWEs mapped to 8 frameworks (4 fixed, 2 low active, 4 info)
-4. LLM Compliance:        88/100 -- EXCELLENT
-5. Contribution Analysis: 42% Human (Justice) / 58% AI (Claude) -- Overall Grade: A-
+1. ToS / Legal Compliance:  CLEAN  -- zero external API calls, zero scraping, zero ToS exposure
+2. SAST/DAST Scan:          PASS   -- 4 findings (0 critical, 0 high, 0 medium, 1 low, 3 info)
+3. Supply Chain Audit:      PASS   -- SLSA Level 1+, zero npm dependencies in package.json
+4. CWE Mapping:             PASS   -- 6 CWEs tracked (2 active low, 4 info); no new CWEs
+5. LLM Compliance:          92/100 -- EXCELLENT (up from 88; test suite added +4)
+6. Contribution Analysis:   38% Human / 62% AI -- Overall Grade: A-
+7. Competitive Landscape:   DIFFERENTIATED -- 3 closest competitors; strong unique value
 
 Overall: PASS
 
 Action Required: NO (informational items only)
-  - INFO: Generate CycloneDX SBOM and add slsa-github-generator for SLSA L2
+  - INFO: Generate CycloneDX SBOM -- package.json now present, enables cyclonedx-node-npm
+  - INFO: Add slsa-github-generator for SLSA L2 provenance
   - INFO: Add per-file @ai-generated attribution markers to source files
   - INFO: Document model version/provider (Claude Sonnet 4.6, Anthropic) in README
-  - INFO: Publish extractor accuracy/bias analysis to improve LLM Compliance Bias Assessment (58/100)
-  - INFO: Pin Node.js version in CI (change '20' to fully pinned version)
+  - INFO: Pin Node.js to fully-qualified version in CI (replace '20' with full semver)
+  - INFO: Locale stubs (zh-CN, ko, ja, pt-BR, es, fr) are LLM-reviewed; human legal review pending
 
-Fixed Since Prior Audit (CONDITIONAL PASS, 4dcdb1c):
-  + MEDIUM CWE-78:  Switched from execSync to execFileSync with argument arrays in git-evidence.js
-  + MEDIUM CWE-20:  Added REQUIRED_CONFIG_KEYS schema validation with explicit stderr + exit(1) in autofill.js
-  + LOW    CWE-400: Added timeout: 60000 to all execFileSync calls in git-evidence.js
-  + LOW    CWE-829: SHA-pinned actions/checkout and actions/setup-node in lint.yml
+New Since Prior Audit (ff26c8d to 1586ec7):
+  + 109 automated tests added across 4 spec files (node:test, zero external deps)
+  + i18n tools sections: zh-CN, ko, ja, pt-BR fully translated (502 keys each)
+  + package.json added with zero npm dependencies (scripts only)
+  + PR #4 merged: 25 templates, 21 interactive tools, 7 locales, 4 extractors
+  + ToS check: CLEAN -- no external network calls in any new code
+  + No new CWEs introduced in test suite, locale files, or package.json
 
-Compliance Score Delta:
-  Supply Chain Security: 72 -> 85 (+13)
-  Incident Response:     78 -> 92 (+14)
-  Risk Classification:   88 -> 90 (+2)
-  Bias Assessment:       55 -> 58 (+3)
-  Overall:               81 -> 88 (+7)
+Compliance Score Delta (ff26c8d to 1586ec7):
+  Testing Evidence:      65 -> 90 (+25)  -- 109 automated tests now passing
+  Transparency:          85 -> 87 (+2)   -- i18n multi-locale accessibility
+  Supply Chain:          85 -> 86 (+1)   -- package.json enables SBOM generation
+  Overall:               88 -> 92 (+4)
 
-Strengths (unchanged):
+Competitive Position:
+  Closest competitors: EuConform (EU-only, offline), VerifyWise (BSL 1.1, enterprise),
+                       COMPL-AI (model benchmarking, different scope)
+  Key differentiators: 22 jurisdictions, developer evidence extraction (git/pkg/CI),
+                       66-model LLM registry, 7-locale i18n, zero dependencies,
+                       Claude Code plugin native integration, 109-test suite
+  Position: DIFFERENTIATED -- no direct open-source equivalent
+
+Residual (carry-forward from ff26c8d):
+  LOW  CWE-88:   Partial token splitting for revert-commit grep regex in git-evidence.js
+  LOW  CWE-116:  Git author string treated as structured data in CSV export
+  INFO CWE-1333: ReDoS potential in package-evidence.js regex patterns
+  INFO CWE-312:  git log output may contain PII (author emails) in evidence JSON
+  INFO CWE-707:  Input canonicalization not applied to markdown template fields
+  INFO N/A:      Test glob "tests/**/*.test.js" may not expand on Windows without shell
+
+Strengths (unchanged + new):
   + Zero external runtime dependencies -- supply chain attack surface eliminated
-  + Full human oversight -- all tools are explicitly opt-in, no automatic destructive operations
+  + 109 automated tests passing -- first formal test coverage in project history
+  + Full human oversight -- all tools explicitly opt-in, no automatic destructive operations
   + Excellent sensitive data handling -- offline-only, no credentials, no PII collected
   + Formal SECURITY.md with 48h acknowledgement / 14d fix SLA
   + SSH commit signing in use
-  + PR-based development workflow (3 merged PRs across 9 commits)
-  + Remediation velocity: 4 CWEs fixed in same session as discovery (~0 days open)
+  + PR-based development workflow (4 merged PRs)
+  + 7-locale i18n with LLM review annotation on all stubs
 
 Next audit recommended: 2026-06-29 (90 days)
 
