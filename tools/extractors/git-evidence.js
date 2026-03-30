@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * Git Evidence Extractor for AI Compliance Evidence Collection Kit
  *
@@ -42,6 +43,30 @@ function parseArgs() {
     }
   }
   return opts;
+}
+
+/**
+ * Validate that a repository path is safe to pass to git.
+ * Rejects paths containing null bytes, which could cause argument injection
+ * in git's argument parsing (CWE-88 mitigation).
+ *
+ * @param {string} repoPath  Resolved absolute path to validate
+ * @throws {Error} if the path contains unsafe characters
+ */
+function validateRepoPath(repoPath) {
+  if (typeof repoPath !== 'string' || repoPath.length === 0) {
+    throw new Error('Repository path must be a non-empty string');
+  }
+  // Reject null bytes — these cannot appear in valid filesystem paths and
+  // could confuse git's argument parsing on some platforms.
+  if (repoPath.indexOf('\0') !== -1) {
+    throw new Error('Repository path contains a null byte and cannot be used');
+  }
+  // Reject paths that are not absolute (path.resolve should have handled this,
+  // but guard explicitly for defence-in-depth).
+  if (!path.isAbsolute(repoPath)) {
+    throw new Error('Repository path must be absolute: ' + repoPath);
+  }
 }
 
 /**
@@ -869,6 +894,14 @@ function computeAutoFillFields(evidence) {
 
 function main() {
   const opts = parseArgs();
+
+  // CWE-88: validate repo path before passing to git (null byte / non-absolute check)
+  try {
+    validateRepoPath(opts.repo);
+  } catch (e) {
+    process.stderr.write(`[git-evidence] Error: ${e.message}\n`);
+    process.exit(1);
+  }
 
   log(`Repository: ${opts.repo}`);
   log(`Days of history: ${opts.days}`);

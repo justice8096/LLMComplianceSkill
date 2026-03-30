@@ -1,3 +1,4 @@
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * Tests for locale file parity — all locales must mirror en.json structure exactly.
  * Catches: missing keys, extra keys, wrong key counts, missing metadata.

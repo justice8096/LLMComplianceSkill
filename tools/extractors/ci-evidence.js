@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * CI/CD Pipeline Compliance Evidence Extractor
  *

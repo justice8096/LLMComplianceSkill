@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * AI Compliance Evidence Checker - Comprehensive Edition
  * Validates evidence completeness across ALL 22 templates.

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * i18n Template Generator
  * Reads English templates from ../templates/, translates field names, checkbox labels,

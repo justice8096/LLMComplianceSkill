@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * Package Evidence Extractor — SBOM & Dependency Supply Chain Evidence
  *

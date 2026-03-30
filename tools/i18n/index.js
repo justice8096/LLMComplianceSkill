@@ -1,3 +1,4 @@
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * i18n module for LLMComplianceSkill
  * Node.js locale loading, lookup, and reverse-lookup for autofill and template generator.

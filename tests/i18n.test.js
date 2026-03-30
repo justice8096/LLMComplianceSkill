@@ -1,3 +1,4 @@
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * Tests for tools/i18n/index.js
  * Covers: load(), t(), fieldName(), fieldKey(), checkboxKey(), listLocales(), currentLocale()

@@ -172,6 +172,12 @@ Add this as a skill to your Claude Code sessions when building AI-powered applic
 3. Use the templates and tools to gather evidence alongside development
 4. The skill prioritizes actionable requirements and cites specific laws
 
+## AI Attribution
+
+This project was built with [Claude Sonnet 4.6](https://www.anthropic.com/claude) (Anthropic) as an implementation assistant. Approximately 62% of the source code and templates were AI-generated under human direction and review. All commits include `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>` attribution. AI-generated source files are marked with `@ai-generated` in their file headers.
+
+See [`audits/contribution-analysis.md`](audits/contribution-analysis.md) for the full collaboration breakdown per component.
+
 ## Disclaimer
 
 This toolkit supports compliance evidence gathering. **It is not legal advice.** Always have completed templates reviewed by qualified legal counsel. Regulations may have changed since the last research update (March 2026).

@@ -1,3 +1,4 @@
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * Tests for tools/extractors/*
  * Smoke tests: verify modules load without errors and handle edge cases gracefully.

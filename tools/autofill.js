@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * AI Compliance Evidence Collection Kit — Auto-Fill Script
  * Reads compliance-config.json, fills template fields that don't need human input,

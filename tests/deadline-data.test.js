@@ -1,3 +1,4 @@
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * Tests for tools/data/deadline-data.json
  * Validates structure, date formats, jurisdiction cross-references, and lawKey presence.

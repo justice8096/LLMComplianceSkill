@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ai-generated — Claude Sonnet 4.6 (Anthropic)
 /**
  * AI Compliance Evidence Collection Kit — Evidence Extractor Runner
  * Runs all three extractors against a target repo and merges results
