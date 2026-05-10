@@ -226,20 +226,45 @@ function createSection(title, contentArray) {
 }
 
 function createToggle(label, value, onChange) {
+  // F-001 (WCAG 2.1.1, 4.1.2): Yes/No toggle pair is a role="group" with the
+  // question text as aria-label. Each button carries aria-pressed for state.
+  // Arrow keys move focus between the two; native button keyboard semantics
+  // (Enter/Space) trigger onClick. type="button" prevents accidental form submit.
   const wrapper = el('div', { className: 'toggle-row' });
   wrapper.appendChild(el('label', { className: 'toggle-label' }, [label]));
-  const group = el('div', { className: 'toggle-group' });
+  const group = el('div', {
+    className: 'toggle-group',
+    role: 'group',
+    'aria-label': label
+  });
 
   const yesBtn = el('button', {
     className: 'toggle-btn' + (value === true ? ' active yes' : ''),
     textContent: t('ui.toggle.yes', 'Yes'),
+    type: 'button',
+    'aria-pressed': value === true ? 'true' : 'false',
     onClick: function() { onChange(true); updateToggle(wrapper, true); }
   });
   const noBtn = el('button', {
     className: 'toggle-btn' + (value === false ? ' active no' : ''),
     textContent: t('ui.toggle.no', 'No'),
+    type: 'button',
+    'aria-pressed': value === false ? 'true' : 'false',
     onClick: function() { onChange(false); updateToggle(wrapper, false); }
   });
+
+  function onGroupKeydown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      noBtn.focus();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      yesBtn.focus();
+    }
+  }
+  yesBtn.addEventListener('keydown', onGroupKeydown);
+  noBtn.addEventListener('keydown', onGroupKeydown);
+
   group.appendChild(yesBtn);
   group.appendChild(noBtn);
   wrapper.appendChild(group);
@@ -250,6 +275,9 @@ function updateToggle(wrapper, value) {
   const btns = wrapper.querySelectorAll('.toggle-btn');
   btns[0].className = 'toggle-btn' + (value === true ? ' active yes' : '');
   btns[1].className = 'toggle-btn' + (value === false ? ' active no' : '');
+  // F-001: Keep aria-pressed in sync with visual state for assistive tech.
+  btns[0].setAttribute('aria-pressed', value === true ? 'true' : 'false');
+  btns[1].setAttribute('aria-pressed', value === false ? 'true' : 'false');
 }
 
 function createSelect(label, options, value, onChange) {
@@ -342,7 +370,10 @@ var SHARED_CSS = [
   '.score-high { color: #e74c3c; font-weight: 600; }',
   '.score-med { color: #E8B96A; font-weight: 600; }',
   '.score-low { color: #4DBFBF; font-weight: 600; }',
-  '.hidden { display: none; }'
+  '.hidden { display: none; }',
+  // F-003: Visually-hidden but available to screen readers — standard pattern
+  // for aria-live regions and skip-nav links. WebAIM "sr-only" recipe.
+  '.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }'
 ].join('\n');
 
 function injectCSS() {
@@ -386,6 +417,8 @@ function createWizard(opts) {
   var _stepContainer = null;
   var _progressContainer = null;
   var _navContainer = null;
+  // F-003: aria-live region for announcing step transitions to screen readers.
+  var _announcer = null;
 
   function buildChrome() {
     document.body.textContent = '';
@@ -423,16 +456,46 @@ function createWizard(opts) {
     _navContainer = el('div', { className: 'step-nav' });
     document.body.appendChild(_navContainer);
 
+    // F-003 (WCAG 4.1.3): Visually-hidden live region that announces step
+    // transitions for screen readers. polite = wait for screen reader to
+    // finish current utterance before announcing; atomic = read the whole
+    // message as one chunk so partial updates don't fragment the announcement.
+    _announcer = el('div', {
+      'aria-live': 'polite',
+      'aria-atomic': 'true',
+      className: 'sr-only'
+    });
+    document.body.appendChild(_announcer);
+
     _built = true;
   }
 
   function updateProgress() {
+    // F-002 (WCAG 1.3.1): Progress dots are decorative spans without semantic
+    // meaning by default. Mark the container as navigation, label with current
+    // step count, and give each dot role="img" with a descriptive label so
+    // screen-reader users get the same status info sighted users see in color.
     _progressContainer.textContent = '';
+    _progressContainer.setAttribute('role', 'navigation');
+    _progressContainer.setAttribute(
+      'aria-label',
+      t('ui.progress.label', 'Wizard progress') + ' — ' +
+      t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ' ' +
+      t('ui.progress.of', 'of') + ' ' + opts.totalSteps
+    );
     for (var i = 0; i < opts.totalSteps; i++) {
       var cls = 'progress-dot';
-      if (i === _currentStep) cls += ' active';
-      else if (i < _currentStep) cls += ' done';
-      _progressContainer.appendChild(el('span', { className: cls, title: opts.stepLabels[i] }));
+      var status = t('ui.progress.upcoming', 'upcoming');
+      if (i === _currentStep) { cls += ' active'; status = t('ui.progress.current', 'current'); }
+      else if (i < _currentStep) { cls += ' done'; status = t('ui.progress.complete', 'complete'); }
+      var dotAttrs = {
+        className: cls,
+        title: opts.stepLabels[i],
+        role: 'img',
+        'aria-label': (i + 1) + ': ' + opts.stepLabels[i] + ' (' + status + ')'
+      };
+      if (i === _currentStep) dotAttrs['aria-current'] = 'step';
+      _progressContainer.appendChild(el('span', dotAttrs));
     }
   }
 
@@ -455,6 +518,23 @@ function createWizard(opts) {
     updateProgress();
     opts.renderStep(_currentStep, _stepContainer);
     updateNav();
+
+    // F-003 (WCAG 4.1.3): Announce step transition to screen readers.
+    // Setting textContent on the polite live region triggers the announcement.
+    if (_announcer) {
+      _announcer.textContent =
+        t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ' ' +
+        t('ui.progress.of', 'of') + ' ' + opts.totalSteps + ': ' +
+        opts.stepLabels[_currentStep];
+    }
+
+    // F-003: Move keyboard focus to the new step content so keyboard users
+    // don't get stranded on the Next/Prev button after navigation. tabindex=-1
+    // makes the container programmatically focusable without adding it to the
+    // tab order; the user can Tab from there to the first form control.
+    _stepContainer.setAttribute('tabindex', '-1');
+    _stepContainer.focus({ preventScroll: true });
+
     if (opts.stateKey) {
       persistStep(opts.stateKey, _currentStep);
       if (opts.getState) persistState(opts.stateKey, opts.getState());
