@@ -116,8 +116,12 @@ function createLocaleSwitcher(onChange) {
   ];
 
   var row = el('div', { className: 'field-row' });
-  row.appendChild(el('label', { className: 'field-label' }, [t('ui.locale.label', 'Language')]));
-  var select = el('select', { className: 'field-select' });
+  // F-009 (WCAG 4.1.2): The locale switcher needs an accessible name. The
+  // visible label exists, but aria-label gives screen readers the cleanest
+  // announcement regardless of label-for plumbing.
+  var localeLabel = t('ui.locale.label', 'Language');
+  row.appendChild(el('label', { className: 'field-label' }, [localeLabel]));
+  var select = el('select', { className: 'field-select', 'aria-label': localeLabel });
   for (var i = 0; i < locales.length; i++) {
     var opt = el('option', { value: locales[i].code, textContent: locales[i].name });
     if (locales[i].code === _i18nLocale) opt.selected = true;
@@ -226,20 +230,45 @@ function createSection(title, contentArray) {
 }
 
 function createToggle(label, value, onChange) {
+  // F-001 (WCAG 2.1.1, 4.1.2): Yes/No toggle pair is a role="group" with the
+  // question text as aria-label. Each button carries aria-pressed for state.
+  // Arrow keys move focus between the two; native button keyboard semantics
+  // (Enter/Space) trigger onClick. type="button" prevents accidental form submit.
   const wrapper = el('div', { className: 'toggle-row' });
   wrapper.appendChild(el('label', { className: 'toggle-label' }, [label]));
-  const group = el('div', { className: 'toggle-group' });
+  const group = el('div', {
+    className: 'toggle-group',
+    role: 'group',
+    'aria-label': label
+  });
 
   const yesBtn = el('button', {
     className: 'toggle-btn' + (value === true ? ' active yes' : ''),
     textContent: t('ui.toggle.yes', 'Yes'),
+    type: 'button',
+    'aria-pressed': value === true ? 'true' : 'false',
     onClick: function() { onChange(true); updateToggle(wrapper, true); }
   });
   const noBtn = el('button', {
     className: 'toggle-btn' + (value === false ? ' active no' : ''),
     textContent: t('ui.toggle.no', 'No'),
+    type: 'button',
+    'aria-pressed': value === false ? 'true' : 'false',
     onClick: function() { onChange(false); updateToggle(wrapper, false); }
   });
+
+  function onGroupKeydown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      noBtn.focus();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      yesBtn.focus();
+    }
+  }
+  yesBtn.addEventListener('keydown', onGroupKeydown);
+  noBtn.addEventListener('keydown', onGroupKeydown);
+
   group.appendChild(yesBtn);
   group.appendChild(noBtn);
   wrapper.appendChild(group);
@@ -250,10 +279,24 @@ function updateToggle(wrapper, value) {
   const btns = wrapper.querySelectorAll('.toggle-btn');
   btns[0].className = 'toggle-btn' + (value === true ? ' active yes' : '');
   btns[1].className = 'toggle-btn' + (value === false ? ' active no' : '');
+  // F-001: Keep aria-pressed in sync with visual state for assistive tech.
+  btns[0].setAttribute('aria-pressed', value === true ? 'true' : 'false');
+  btns[1].setAttribute('aria-pressed', value === false ? 'true' : 'false');
+}
+
+// F-008 (WCAG 1.3.1): Auto-incrementing id counter so every form control has
+// a unique id wired to its label's `for=`. Without this, clicking the label
+// doesn't focus the control and screen readers don't read the label when the
+// control receives focus.
+var _fieldIdCounter = 0;
+function _nextFieldId(prefix) {
+  return (prefix || 'field') + '-' + (++_fieldIdCounter);
 }
 
 function createSelect(label, options, value, onChange) {
-  const select = el('select', { className: 'field-select' });
+  // F-008: id on the control, for= on the label
+  const id = _nextFieldId('select');
+  const select = el('select', { id: id, className: 'field-select' });
   for (const opt of options) {
     const option = el('option', { value: opt.value, textContent: opt.label });
     if (opt.value === value) option.selected = true;
@@ -261,34 +304,44 @@ function createSelect(label, options, value, onChange) {
   }
   select.addEventListener('change', function() { onChange(select.value); });
   const row = el('div', { className: 'field-row' });
-  row.appendChild(el('label', { className: 'field-label' }, [label]));
+  row.appendChild(el('label', { className: 'field-label', 'for': id }, [label]));
   row.appendChild(select);
   return row;
 }
 
 function createTextInput(label, value, onChange, placeholder) {
+  // F-008: id on the control, for= on the label
+  const id = _nextFieldId('input');
   const input = el('input', {
-    type: 'text', className: 'field-input', value: value || '', placeholder: placeholder || ''
+    id: id, type: 'text', className: 'field-input', value: value || '', placeholder: placeholder || ''
   });
   input.addEventListener('input', function() { onChange(input.value); });
   const row = el('div', { className: 'field-row' });
-  row.appendChild(el('label', { className: 'field-label' }, [label]));
+  row.appendChild(el('label', { className: 'field-label', 'for': id }, [label]));
   row.appendChild(input);
   return row;
 }
 
 function createTextArea(label, value, onChange, placeholder) {
-  const ta = el('textarea', { className: 'field-textarea', placeholder: placeholder || '' });
+  // F-008: id on the control, for= on the label
+  const id = _nextFieldId('textarea');
+  const ta = el('textarea', { id: id, className: 'field-textarea', placeholder: placeholder || '' });
   ta.value = value || '';
   ta.addEventListener('input', function() { onChange(ta.value); });
   const row = el('div', { className: 'field-row' });
-  row.appendChild(el('label', { className: 'field-label' }, [label]));
+  row.appendChild(el('label', { className: 'field-label', 'for': id }, [label]));
   row.appendChild(ta);
   return row;
 }
 
 function createAlert(type, text) {
-  return el('div', { className: 'alert ' + type, textContent: text });
+  // F-007 (WCAG 1.4.1): Color is not the sole differentiator. Prefix the
+  // alert text with a non-color symbol that conveys severity, and set
+  // role="alert" for danger/warning (interrupts screen-reader output) or
+  // role="status" for info/success (announces politely).
+  var prefix = { danger: '⚠ ', warning: '⚠ ', success: '✓ ', info: 'ℹ ' }[type] || '';
+  var role = (type === 'danger' || type === 'warning') ? 'alert' : 'status';
+  return el('div', { className: 'alert ' + type, textContent: prefix + text, role: role });
 }
 
 // --- Common CSS ---
@@ -313,11 +366,20 @@ var SHARED_CSS = [
   '.toggle-btn { padding: 4px 16px; border: 1px solid #3A4A5A; border-radius: 3px; background: transparent; color: #6B7B8D; cursor: pointer; font-size: 0.8em; }',
   '.toggle-btn.active.yes { background: #c0392b; border-color: #c0392b; color: white; }',
   '.toggle-btn.active.no { background: #2A7B7B; border-color: #2A7B7B; color: white; }',
+  // F-007 (WCAG 1.4.1): A non-color visual indicator for the active state.
+  // Checkmark prefix renders identically in dark/light/forced-colors themes
+  // and remains visible to users who can't perceive the background change.
+  '.toggle-btn.active::before { content: "\\2713\\00a0"; font-weight: bold; }',
   '.field-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }',
   '.field-label { min-width: 200px; font-size: 0.85em; color: #9AACBA; }',
   '.field-input, .field-select, .field-textarea { flex: 1; padding: 6px 10px; background: #0D1830; border: 1px solid #3A4A5A; border-radius: 3px; color: #F0EBE0; font-size: 0.85em; font-family: inherit; }',
   '.field-textarea { min-height: 60px; resize: vertical; }',
-  '.field-input:focus, .field-select:focus, .field-textarea:focus { border-color: #D4943A; outline: none; }',
+  // F-004 (WCAG 2.4.7): Visible keyboard focus indicator. We keep the
+  // orange border-color highlight (improves perceived focus for all users)
+  // but DON'T strip outline anymore — :focus-visible adds a high-contrast
+  // ring for keyboard users only, while mouse-only focus stays minimal.
+  '.field-input:focus, .field-select:focus, .field-textarea:focus { border-color: #D4943A; }',
+  '.field-input:focus-visible, .field-select:focus-visible, .field-textarea:focus-visible, .btn:focus-visible, .toggle-btn:focus-visible, .skip-link:focus-visible { outline: 2px solid #E8B96A; outline-offset: 2px; }',
   '.badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.7em; margin: 2px; }',
   '.badge.enacted { background: #D4943A33; color: #E8B96A; border: 1px solid #D4943A55; }',
   '.badge.active-sector { background: #2A7B7B33; color: #4DBFBF; border: 1px solid #2A7B7B55; }',
@@ -342,7 +404,14 @@ var SHARED_CSS = [
   '.score-high { color: #e74c3c; font-weight: 600; }',
   '.score-med { color: #E8B96A; font-weight: 600; }',
   '.score-low { color: #4DBFBF; font-weight: 600; }',
-  '.hidden { display: none; }'
+  '.hidden { display: none; }',
+  // F-003: Visually-hidden but available to screen readers — standard pattern
+  // for aria-live regions and skip-nav links. WebAIM "sr-only" recipe.
+  '.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }',
+  // F-005: Skip-nav link — off-screen by default, slides into view on focus.
+  // Keyboard users see + activate it on first Tab; mouse/touch users never see it.
+  '.skip-link { position: absolute; left: -9999px; top: 0; z-index: 999; padding: 8px 16px; background: #D4943A; color: #0B1426; font-weight: 600; text-decoration: none; border-radius: 0 0 4px 0; }',
+  '.skip-link:focus { left: 0; }'
 ].join('\n');
 
 function injectCSS() {
@@ -386,20 +455,36 @@ function createWizard(opts) {
   var _stepContainer = null;
   var _progressContainer = null;
   var _navContainer = null;
+  // F-003: aria-live region for announcing step transitions to screen readers.
+  var _announcer = null;
 
   function buildChrome() {
     document.body.textContent = '';
+
+    // F-005 (WCAG 2.4.1): Skip-nav link — visually-hidden until focused,
+    // then jumps to the main content. Lets keyboard users bypass the
+    // load/save/export toolbar on every step transition.
+    var skipLink = el('a', {
+      href: '#step-container',
+      className: 'skip-link',
+      textContent: t('ui.skipNav', 'Skip to main content')
+    });
+    document.body.appendChild(skipLink);
+
     document.body.appendChild(el('h1', {}, [opts.title]));
     if (opts.subtitle) document.body.appendChild(el('p', { className: 'subtitle' }, [opts.subtitle]));
 
-    var toolbar = el('div', { className: 'toolbar' });
-    toolbar.appendChild(el('button', { className: 'btn', textContent: t('ui.btn.loadConfig', 'Load Config'), onClick: function() {
+    // F-006 (WCAG 1.3.1): Toolbar is a navigation landmark — distinct
+    // aria-label disambiguates it from the wizard-progress nav (F-002) and
+    // the step nav at the bottom.
+    var toolbar = el('nav', { className: 'toolbar', 'aria-label': t('ui.toolbar.label', 'Toolbar') });
+    toolbar.appendChild(el('button', { className: 'btn', type: 'button', textContent: t('ui.btn.loadConfig', 'Load Config'), onClick: function() {
       if (opts.onLoad) opts.onLoad();
     }}));
-    toolbar.appendChild(el('button', { className: 'btn', textContent: t('ui.btn.saveConfig', 'Save Config'), onClick: function() {
+    toolbar.appendChild(el('button', { className: 'btn', type: 'button', textContent: t('ui.btn.saveConfig', 'Save Config'), onClick: function() {
       if (opts.onSave) opts.onSave();
     }}));
-    toolbar.appendChild(el('button', { className: 'btn primary', textContent: t('ui.btn.exportMarkdown', 'Export Markdown'), onClick: function() {
+    toolbar.appendChild(el('button', { className: 'btn primary', type: 'button', textContent: t('ui.btn.exportMarkdown', 'Export Markdown'), onClick: function() {
       if (opts.onExport) opts.onExport();
     }}));
     toolbar.appendChild(createLocaleSwitcher(function() { refreshStep(); }));
@@ -408,7 +493,9 @@ function createWizard(opts) {
     _progressContainer = el('div', { className: 'progress' });
     document.body.appendChild(_progressContainer);
 
-    _stepContainer = el('div', { id: 'step-container' });
+    // F-006: Step container is the main landmark. role="main" makes it
+    // discoverable by assistive tech as "the primary content of this page."
+    _stepContainer = el('main', { id: 'step-container' });
     if (opts.stateKey && opts.getState) {
       var _saveTimer = null;
       _stepContainer.addEventListener('input', function() {
@@ -420,31 +507,63 @@ function createWizard(opts) {
     }
     document.body.appendChild(_stepContainer);
 
-    _navContainer = el('div', { className: 'step-nav' });
+    // F-006: Prev/Next pagination is a navigation landmark, separate from
+    // both the toolbar and the wizard progress nav.
+    _navContainer = el('nav', { className: 'step-nav', 'aria-label': t('ui.stepNav.label', 'Step navigation') });
     document.body.appendChild(_navContainer);
+
+    // F-003 (WCAG 4.1.3): Visually-hidden live region that announces step
+    // transitions for screen readers. polite = wait for screen reader to
+    // finish current utterance before announcing; atomic = read the whole
+    // message as one chunk so partial updates don't fragment the announcement.
+    _announcer = el('div', {
+      'aria-live': 'polite',
+      'aria-atomic': 'true',
+      className: 'sr-only'
+    });
+    document.body.appendChild(_announcer);
 
     _built = true;
   }
 
   function updateProgress() {
+    // F-002 (WCAG 1.3.1): Progress dots are decorative spans without semantic
+    // meaning by default. Mark the container as navigation, label with current
+    // step count, and give each dot role="img" with a descriptive label so
+    // screen-reader users get the same status info sighted users see in color.
     _progressContainer.textContent = '';
+    _progressContainer.setAttribute('role', 'navigation');
+    _progressContainer.setAttribute(
+      'aria-label',
+      t('ui.progress.label', 'Wizard progress') + ' — ' +
+      t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ' ' +
+      t('ui.progress.of', 'of') + ' ' + opts.totalSteps
+    );
     for (var i = 0; i < opts.totalSteps; i++) {
       var cls = 'progress-dot';
-      if (i === _currentStep) cls += ' active';
-      else if (i < _currentStep) cls += ' done';
-      _progressContainer.appendChild(el('span', { className: cls, title: opts.stepLabels[i] }));
+      var status = t('ui.progress.upcoming', 'upcoming');
+      if (i === _currentStep) { cls += ' active'; status = t('ui.progress.current', 'current'); }
+      else if (i < _currentStep) { cls += ' done'; status = t('ui.progress.complete', 'complete'); }
+      var dotAttrs = {
+        className: cls,
+        title: opts.stepLabels[i],
+        role: 'img',
+        'aria-label': (i + 1) + ': ' + opts.stepLabels[i] + ' (' + status + ')'
+      };
+      if (i === _currentStep) dotAttrs['aria-current'] = 'step';
+      _progressContainer.appendChild(el('span', dotAttrs));
     }
   }
 
   function updateNav() {
     _navContainer.textContent = '';
     if (_currentStep > 0) {
-      _navContainer.appendChild(el('button', { className: 'btn', textContent: t('ui.btn.previous', 'Previous'), onClick: function() { _currentStep--; refreshStep(); } }));
+      _navContainer.appendChild(el('button', { className: 'btn', type: 'button', textContent: t('ui.btn.previous', 'Previous'), onClick: function() { _currentStep--; refreshStep(); } }));
     } else {
       _navContainer.appendChild(el('span'));
     }
     if (_currentStep < opts.totalSteps - 1) {
-      _navContainer.appendChild(el('button', { className: 'btn primary', textContent: t('ui.btn.next', 'Next'), onClick: function() { _currentStep++; refreshStep(); } }));
+      _navContainer.appendChild(el('button', { className: 'btn primary', type: 'button', textContent: t('ui.btn.next', 'Next'), onClick: function() { _currentStep++; refreshStep(); } }));
     }
   }
 
@@ -455,6 +574,23 @@ function createWizard(opts) {
     updateProgress();
     opts.renderStep(_currentStep, _stepContainer);
     updateNav();
+
+    // F-003 (WCAG 4.1.3): Announce step transition to screen readers.
+    // Setting textContent on the polite live region triggers the announcement.
+    if (_announcer) {
+      _announcer.textContent =
+        t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ' ' +
+        t('ui.progress.of', 'of') + ' ' + opts.totalSteps + ': ' +
+        opts.stepLabels[_currentStep];
+    }
+
+    // F-003: Move keyboard focus to the new step content so keyboard users
+    // don't get stranded on the Next/Prev button after navigation. tabindex=-1
+    // makes the container programmatically focusable without adding it to the
+    // tab order; the user can Tab from there to the first form control.
+    _stepContainer.setAttribute('tabindex', '-1');
+    _stepContainer.focus({ preventScroll: true });
+
     if (opts.stateKey) {
       persistStep(opts.stateKey, _currentStep);
       if (opts.getState) persistState(opts.stateKey, opts.getState());
