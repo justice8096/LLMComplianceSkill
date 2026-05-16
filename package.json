@@ -1,6 +1,6 @@
 {
   "name": "llm-compliance-skill",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "AI/LLM compliance evidence collection toolkit",
   "author": "Justice",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "build:mcp": "tsx build.ts --format mcp",
     "build:prompts": "tsx build.ts --format prompts",
     "build:cli": "tsx build.ts --format cli",
+    "build:root-canonical": "tsx build.ts --format root-canonical",
     "build:watch": "tsx --watch build.ts",
     "clean": "rm -rf dist",
     "validate": "tsx build.ts --validate-only",

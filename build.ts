@@ -63,7 +63,7 @@ interface Manifest {
   templates: Template[];
 }
 
-type FormatName = "claude-plugin" | "openai" | "n8n" | "prompts" | "mcp" | "cli";
+type FormatName = "claude-plugin" | "openai" | "n8n" | "prompts" | "mcp" | "cli" | "root-canonical";
 
 // ============================================================================
 // CLI ARGUMENT PARSING
@@ -442,12 +442,85 @@ function generateCli(manifest: Manifest): void {
 }
 
 // ============================================================================
+// FORMAT 7: ROOT CANONICAL SYNC
+// ============================================================================
+
+function parseRootFrontmatter(text: string): { fm: string | null; body: string } {
+  const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!m) return { fm: null, body: text };
+  return { fm: m[1], body: m[2] };
+}
+
+function parseFmFields(fm: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  let current: string | null = null;
+  for (const line of fm.split(/\r?\n/)) {
+    const kv = line.match(/^([a-zA-Z0-9_-]+):\s*(.*)$/);
+    if (kv) {
+      current = kv[1];
+      out[current] = kv[2];
+    } else if (current && /^\s+/.test(line)) {
+      out[current] += "\n" + line;
+    }
+  }
+  return out;
+}
+
+function renderFm(fields: Record<string, string>, order: string[]): string {
+  const lines = ["---"];
+  for (const k of order) {
+    if (fields[k] !== undefined) lines.push(k + ": " + fields[k]);
+  }
+  lines.push("---");
+  return lines.join("\n");
+}
+
+function syncRootCanonical(manifest: Manifest): void {
+  log("Syncing root canonical from source...");
+  for (const cmd of manifest.commands) {
+    const srcPath = resolve(__dirname, "source/commands/" + cmd.name + ".md");
+    const rootPath = resolve(__dirname, "commands/" + cmd.name + ".md");
+    if (!existsSync(srcPath)) continue;
+    const srcBody = readMarkdown(srcPath);
+    const existing = existsSync(rootPath) ? readMarkdown(rootPath) : "";
+    const { fm } = parseRootFrontmatter(existing);
+    const fields = fm ? parseFmFields(fm) : {};
+    fields.description = cmd.description;
+    const order = ["description", "argument-hint", "allowed-tools"];
+    const newFm = renderFm(fields, order);
+    ensureDir(dirname(rootPath));
+    const newContent = newFm + "\n" + srcBody.replace(/^\n+/, "");
+    writeFileSync(rootPath, newContent);
+  }
+
+  for (const skill of manifest.skills) {
+    const srcPath = resolve(__dirname, "source/skills/" + skill.name + ".md");
+    const rootPath = resolve(__dirname, "skills/" + skill.name + "/SKILL.md");
+    if (!existsSync(srcPath)) continue;
+    const srcBody = readMarkdown(srcPath);
+    const existing = existsSync(rootPath) ? readMarkdown(rootPath) : "";
+    const { fm } = parseRootFrontmatter(existing);
+    const fields = fm ? parseFmFields(fm) : {};
+    fields.name = skill.name;
+    fields.description = skill.description;
+    const order = ["name", "description"];
+    const newFm = renderFm(fields, order);
+    ensureDir(dirname(rootPath));
+    const newContent = newFm + "\n" + srcBody.replace(/^\n+/, "");
+    writeFileSync(rootPath, newContent);
+  }
+
+  logSuccess("Root canonical files synced from source");
+}
+
+// ============================================================================
 // FORMAT REGISTRY
 // ============================================================================
 
 const FORMAT_GENERATORS: Record<FormatName, (manifest: Manifest) => void> = {
   "claude-plugin": generateClaudePlugin, openai: generateOpenAIFunctions,
   n8n: generateN8nNode, prompts: generatePromptLibrary, mcp: generateMcpServer, cli: generateCli,
+  "root-canonical": syncRootCanonical,
 };
 
 // ============================================================================
@@ -482,6 +555,7 @@ async function main(): Promise<void> {
     if (args.format === "all" || args.format === "prompts") log("  - dist/prompts/*.yaml");
     if (args.format === "all" || args.format === "mcp") log("  - dist/mcp-server/ (full TypeScript MCP server)");
     if (args.format === "all" || args.format === "cli") log("  - dist/cli/cli.ts (standalone CLI)");
+    if (args.format === "all" || args.format === "root-canonical") log("  - commands/*.md, skills/*/SKILL.md (root canonical, synced from source)");
   } catch (error) {
     logError("Build failed!");
     if (error instanceof Error) console.error(error.message); else console.error(error);

@@ -210,6 +210,8 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 ## Jurisdiction Coverage
 
+> *Sources current as of 2026-05. Authority-version pins: EU AI Act (Regulation (EU) 2024/1689, in force 2024-08-01; prohibitions + AI Literacy Art. 4 effective 2025-02-02; GPAI obligations 2025-08-02; full applicability for high-risk Annex III systems 2026-08-02); GDPR (Regulation (EU) 2016/679); NIST AI Risk Management Framework 1.0 (2023-01) + Generative AI Profile NIST AI 600-1 (2024-07); ISO/IEC 42001:2023 (AI management systems) + ISO/IEC 23894:2023 (AI risk management); EEOC AI guidance (2023-05); CO AI Act SB 24-205 (effective 2026-06); NYC Local Law 144 (effective 2023-07); IL HB 3773; TX HB 2060; CA SB 53 + AB 2013 (effective 2026-01); UK DUA Act (2026-02); AU Privacy Act ADM provisions (2026-12). Verify status before using in any binding legal context.*
+
 | Tier | Jurisdictions |
 |------|----------------|
 | **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam, Brazil |

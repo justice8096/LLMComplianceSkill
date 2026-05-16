@@ -1,17 +1,7 @@
 ---
 name: ai-compliance
-description: >
-  This skill should be used when the user asks about "AI compliance", "EU AI Act",
-  "AI regulations", "compliance evidence", "GDPR for AI", "risk classification",
-  "AI disclosure requirements", "privacy impact assessment", "bias testing",
-  "human oversight", "consent records", "incident management", "governance framework",
-  "training data disclosure", "GPAI obligations", "Colorado AI Act", "China GenAI",
-  or mentions building an AI/LLM application that needs to comply with regulations
-  in specific countries or jurisdictions. Also trigger when the user says "generate
-  compliance templates", "check compliance", "run evidence checker", "fill compliance
-  config", "what regulations apply to my AI app", or asks about compliance deadlines.
+description: AI/LLM regulatory compliance knowledge covering 16+ jurisdictions including EU AI Act, GDPR, US state laws, UK AI governance, and frameworks like NIST AI RMF and ISO 42001
 ---
-
 # AI Compliance Evidence Collection Skill
 
 Identify applicable AI regulations for a given project, collect compliance evidence
@@ -224,8 +214,10 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 ## Jurisdiction Coverage
 
+> *Sources current as of 2026-05. Authority-version pins: EU AI Act (Regulation (EU) 2024/1689, in force 2024-08-01; prohibitions + AI Literacy Art. 4 effective 2025-02-02; GPAI obligations 2025-08-02; full applicability for high-risk Annex III systems 2026-08-02); GDPR (Regulation (EU) 2016/679); NIST AI Risk Management Framework 1.0 (2023-01) + Generative AI Profile NIST AI 600-1 (2024-07); ISO/IEC 42001:2023 (AI management systems) + ISO/IEC 23894:2023 (AI risk management); EEOC AI guidance (2023-05); CO AI Act SB 24-205 (effective 2026-06); NYC Local Law 144 (effective 2023-07); IL HB 3773; TX HB 2060; CA SB 53 + AB 2013 (effective 2026-01); UK DUA Act (2026-02); AU Privacy Act ADM provisions (2026-12). Verify status before using in any binding legal context.*
+
 | Tier | Jurisdictions |
-|------|---------------|
+|------|----------------|
 | **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam, Brazil |
 | **Active Sector** | China, United Kingdom, United States (CO, CA, NYC, IL, TX, UT) |
 | **Proposed** | Canada, India, Japan, Nigeria, Mexico, Colombia, Chile |

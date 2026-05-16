@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "LLM Compliance",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "AI/LLM compliance evidence collection toolkit with 24 templates, 21 interactive assessment tools, automated evidence extraction, and multi-jurisdiction regulatory coverage",
     "author": "Justice",
     "license": "MIT",
@@ -222,6 +222,12 @@
       "displayName": "Compliance Configuration",
       "description": "Configuration template for project metadata and compliance settings",
       "path": "templates/compliance-config.md"
+    },
+    {
+      "name": "compliance-report",
+      "displayName": "Compliance Report",
+      "description": "Generated compliance assessment report template with audit-artifact Provenance Block, jurisdiction crosswalk, composite scoring, and addendum-trigger criteria",
+      "path": "templates/compliance-report-template.md"
     }
   ]
 }
