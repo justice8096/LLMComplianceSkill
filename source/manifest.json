@@ -1,0 +1,227 @@
+{
+  "metadata": {
+    "name": "LLM Compliance",
+    "version": "1.1.0",
+    "description": "AI/LLM compliance evidence collection toolkit with 24 templates, 21 interactive assessment tools, automated evidence extraction, and multi-jurisdiction regulatory coverage",
+    "author": "Justice",
+    "license": "MIT",
+    "repository": "https://github.com/justice8096/LLMComplianceSkill",
+    "keywords": [
+      "compliance",
+      "AI",
+      "LLM",
+      "regulation",
+      "EU AI Act",
+      "GDPR",
+      "NIST",
+      "ISO 42001",
+      "evidence",
+      "audit"
+    ]
+  },
+  "skills": [
+    {
+      "name": "ai-compliance",
+      "displayName": "AI Compliance",
+      "description": "AI/LLM regulatory compliance knowledge covering 16+ jurisdictions including EU AI Act, GDPR, US state laws, UK AI governance, and frameworks like NIST AI RMF and ISO 42001",
+      "path": "skills/ai-compliance.md",
+      "keywords": [
+        "compliance",
+        "regulation",
+        "EU AI Act",
+        "GDPR",
+        "NIST",
+        "ISO 42001",
+        "jurisdiction"
+      ]
+    },
+    {
+      "name": "evidence-collection",
+      "displayName": "Evidence Collection",
+      "description": "Automated and interactive evidence collection pipeline with 24 templates, 3 extractors (git, package, CI), autofill, and validation for compliance documentation",
+      "path": "skills/evidence-collection.md",
+      "keywords": [
+        "evidence",
+        "templates",
+        "extraction",
+        "autofill",
+        "validation",
+        "documentation"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "name": "compliance-assessment",
+      "displayName": "Run Compliance Assessment",
+      "description": "Assess an AI/LLM system against applicable regulations for identified jurisdictions and generate a compliance gap analysis",
+      "path": "commands/compliance-assessment.md",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_path": {
+            "type": "string",
+            "description": "Path to the AI/LLM project to assess"
+          },
+          "jurisdictions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Target jurisdictions: eu, uk, us, canada, china, japan, korea, india, singapore, australia, nz, mexico, africa"
+          },
+          "risk_level": {
+            "type": "string",
+            "description": "AI system risk classification: minimal, limited, high, unacceptable",
+            "default": "high"
+          }
+        },
+        "required": [
+          "project_path"
+        ]
+      },
+      "keywords": [
+        "assessment",
+        "compliance",
+        "jurisdiction",
+        "risk",
+        "gap analysis"
+      ]
+    },
+    {
+      "name": "extract-evidence",
+      "displayName": "Extract Evidence",
+      "description": "Automatically extract compliance evidence from git history, package metadata, and CI/CD configuration",
+      "path": "commands/extract-evidence.md",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "project_path": {
+            "type": "string",
+            "description": "Path to the project to extract evidence from"
+          },
+          "config_path": {
+            "type": "string",
+            "description": "Path to compliance-config.json",
+            "default": "compliance-config.json"
+          }
+        },
+        "required": [
+          "project_path"
+        ]
+      },
+      "keywords": [
+        "extract",
+        "evidence",
+        "git",
+        "package",
+        "CI/CD",
+        "automated"
+      ]
+    },
+    {
+      "name": "autofill-templates",
+      "displayName": "Autofill Templates",
+      "description": "Populate compliance evidence templates with extracted data and configuration values",
+      "path": "commands/autofill-templates.md",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "config_path": {
+            "type": "string",
+            "description": "Path to compliance-config.json with project metadata"
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific template numbers to fill (e.g., 01, 02, 15). Empty for all."
+          },
+          "output_dir": {
+            "type": "string",
+            "description": "Output directory for filled templates",
+            "default": "output"
+          }
+        },
+        "required": [
+          "config_path"
+        ]
+      },
+      "keywords": [
+        "autofill",
+        "templates",
+        "populate",
+        "evidence",
+        "documentation"
+      ]
+    },
+    {
+      "name": "validate-evidence",
+      "displayName": "Validate Evidence",
+      "description": "Run evidence-checker to validate completeness and identify gaps in collected compliance documentation",
+      "path": "commands/validate-evidence.md",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "output_dir": {
+            "type": "string",
+            "description": "Path to directory containing filled evidence templates",
+            "default": "output"
+          },
+          "strict": {
+            "type": "boolean",
+            "description": "Enable strict mode — fail on any incomplete template",
+            "default": false
+          }
+        },
+        "required": []
+      },
+      "keywords": [
+        "validate",
+        "check",
+        "evidence",
+        "gaps",
+        "completeness"
+      ]
+    },
+    {
+      "name": "jurisdiction-lookup",
+      "displayName": "Jurisdiction Lookup",
+      "description": "Look up applicable AI regulations, deadlines, and requirements for a specific jurisdiction",
+      "path": "commands/jurisdiction-lookup.md",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "jurisdiction": {
+            "type": "string",
+            "description": "Jurisdiction to look up: eu, uk, us, canada, china, japan, korea, india, singapore, australia, nz, mexico, africa, or global"
+          },
+          "include_deadlines": {
+            "type": "boolean",
+            "description": "Include upcoming compliance deadlines",
+            "default": true
+          }
+        },
+        "required": [
+          "jurisdiction"
+        ]
+      },
+      "keywords": [
+        "jurisdiction",
+        "regulation",
+        "lookup",
+        "deadlines",
+        "requirements"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "name": "compliance-config",
+      "displayName": "Compliance Configuration",
+      "description": "Configuration template for project metadata and compliance settings",
+      "path": "templates/compliance-config.md"
+    }
+  ]
+}

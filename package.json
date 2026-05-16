@@ -1,14 +1,33 @@
 {
   "name": "llm-compliance-skill",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "AI/LLM compliance evidence collection toolkit",
+  "author": "Justice",
+  "license": "MIT",
   "private": true,
   "scripts": {
+    "build": "tsx build.ts",
+    "build:claude": "tsx build.ts --format claude-plugin",
+    "build:openai": "tsx build.ts --format openai",
+    "build:n8n": "tsx build.ts --format n8n",
+    "build:mcp": "tsx build.ts --format mcp",
+    "build:prompts": "tsx build.ts --format prompts",
+    "build:cli": "tsx build.ts --format cli",
+    "build:watch": "tsx --watch build.ts",
+    "clean": "rm -rf dist",
+    "validate": "tsx build.ts --validate-only",
+    "type-check": "tsc --noEmit",
     "test": "node --test tests/**/*.test.js",
     "test:watch": "node --test --watch tests/**/*.test.js",
     "test:verbose": "node --test --reporter=spec tests/**/*.test.js"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "zod": "^3.22.4"
   }
 }
