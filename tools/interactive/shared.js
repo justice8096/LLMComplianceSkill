@@ -408,11 +408,16 @@ function createAlert(type, text) {
 
 // --- Common CSS ---
 var SHARED_CSS = [
-  '* { box-sizing: border-box; margin: 0; padding: 0; }',
-  'body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: #0B1426; color: #F0EBE0; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 24px; }',
-  'h1 { font-size: 1.8em; margin-bottom: 8px; color: #E8B96A; font-weight: 300; letter-spacing: 1px; }',
-  'h2 { font-size: 1.2em; margin: 24px 0 12px; color: #9AACBA; font-weight: 400; border-bottom: 1px solid #1E2D3D; padding-bottom: 6px; }',
-  'h3 { font-size: 1em; margin: 16px 0 8px; color: #6B7B8D; }',
+  // All wizard styling is scoped under #wizard-root. Pre-F-012 this leaked via
+  // global `*`, `body`, `h1`, `h2`, `h3` selectors — fine when the wizard was
+  // the entire page, but a cross-component regression now that F-012 preserves
+  // non-wizard DOM. Anchoring to #wizard-root keeps the host page untouched.
+  '#wizard-root, #wizard-root *, #wizard-root *::before, #wizard-root *::after { box-sizing: border-box; }',
+  '#wizard-root * { margin: 0; padding: 0; }',
+  '#wizard-root { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: #0B1426; color: #F0EBE0; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 24px; }',
+  '#wizard-root h1 { font-size: 1.8em; margin-bottom: 8px; color: #E8B96A; font-weight: 300; letter-spacing: 1px; }',
+  '#wizard-root h2 { font-size: 1.2em; margin: 24px 0 12px; color: #9AACBA; font-weight: 400; border-bottom: 1px solid #1E2D3D; padding-bottom: 6px; }',
+  '#wizard-root h3 { font-size: 1em; margin: 16px 0 8px; color: #6B7B8D; }',
   '.subtitle { color: #6B7B8D; font-size: 0.9em; margin-bottom: 24px; }',
   '.section { margin-bottom: 32px; }',
   '.toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }',
@@ -480,7 +485,7 @@ var SHARED_CSS = [
   // are instant instead of animated. Scroll behavior also reverts to "auto"
   // (no smooth scroll).
   '@media (prefers-reduced-motion: reduce) {',
-  '  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }',
+  '  #wizard-root, #wizard-root *, #wizard-root *::before, #wizard-root *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }',
   '}'
 ].join('\n');
 
