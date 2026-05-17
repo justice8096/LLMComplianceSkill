@@ -321,30 +321,35 @@ function generateMcpServer(manifest: Manifest): void {
       let jsProp = "      " + paramName + ': { type: "' + paramDef.type + '", description: "' + cmd.description.replace(/"/g, '\\"') + '" }';
       jsonSchemaProps.push(jsProp);
     }
-    const toolCode = ['import { z } from "zod";', 'import { loadSkillContent } from "../knowledge/loader.js";', "",
+    const toolCode = ['import { z } from "zod";', 'import { loadCommandContent } from "../knowledge/loader.js";', "",
       "const " + toolName + "Schema = z.object({", ...zodFields, "});", "",
       "export const " + toolName + 'Definition = { name: "' + toolName + '", description: "' + cmd.description.replace(/"/g, '\\"') + '",',
       "  inputSchema: { type: \"object\" as const, properties: {", ...jsonSchemaProps.map((p) => p + ","),
       "    }, required: [" + requiredParams.map((p) => '"' + p + '"').join(", ") + "] } };", "",
       "export async function handle(input: Record<string, unknown>): Promise<string> {",
       "  const validated = " + toolName + "Schema.parse(input);",
-      '  const skillContent = await loadSkillContent("' + cmd.name + '");',
-      '  return JSON.stringify({ status: "success", command: "' + cmd.name + '", message: "Tool executed.", skillPreview: skillContent.slice(0, 200), input: validated }, null, 2);',
+      "  // cmd.name is a command id (e.g. \"extract-evidence\"); load the matching command knowledge",
+      "  // doc from knowledge/commands/, NOT knowledge/skills/ (which is keyed by skill id like \"ai-compliance\").",
+      '  const commandContent = await loadCommandContent("' + cmd.name + '");',
+      '  return JSON.stringify({ status: "success", command: "' + cmd.name + '", message: "Tool executed.", commandPreview: commandContent.slice(0, 200), input: validated }, null, 2);',
       "}"].join("\n");
     writeFileSync(resolve(base, "src/tools/" + toolName + ".ts"), toolCode);
   }
 
   const loaderCode = ['import { readFileSync } from "fs";', 'import { resolve, dirname } from "path";', 'import { fileURLToPath } from "url";', "",
     "const __filename = fileURLToPath(import.meta.url);", "const __dirname = dirname(__filename);", "",
-    "const CACHE = new Map<string, string>();", "",
+    "const SKILL_CACHE = new Map<string, string>();",
+    "const COMMAND_CACHE = new Map<string, string>();", "",
     "export async function loadSkillContent(skillId: string): Promise<string> {",
-    '  if (CACHE.has(skillId)) return CACHE.get(skillId)!;', "  try {",
+    '  if (SKILL_CACHE.has(skillId)) return SKILL_CACHE.get(skillId)!;', "  try {",
     '    const p = resolve(__dirname, "../../knowledge/skills/" + skillId + ".md");',
-    '    const content = readFileSync(p, "utf-8");', "    CACHE.set(skillId, content); return content;",
+    '    const content = readFileSync(p, "utf-8");', "    SKILL_CACHE.set(skillId, content); return content;",
     '  } catch { return ""; }', "}", "",
     "export async function loadCommandContent(commandId: string): Promise<string> {",
-    '  try { return readFileSync(resolve(__dirname, "../../knowledge/commands/" + commandId + ".md"), "utf-8"); }',
-    '  catch { return ""; }', "}"].join("\n");
+    '  if (COMMAND_CACHE.has(commandId)) return COMMAND_CACHE.get(commandId)!;', "  try {",
+    '    const p = resolve(__dirname, "../../knowledge/commands/" + commandId + ".md");',
+    '    const content = readFileSync(p, "utf-8");', "    COMMAND_CACHE.set(commandId, content); return content;",
+    '  } catch { return ""; }', "}"].join("\n");
   writeFileSync(resolve(base, "src/knowledge/loader.ts"), loaderCode);
 
   const toolImports: string[] = []; const toolDefs: string[] = []; const toolHandlerCases: string[] = [];
