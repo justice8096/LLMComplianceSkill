@@ -122,8 +122,14 @@ function createLocaleSwitcher(onChange) {
   var localeLabel = t('ui.locale.label', 'Language');
   row.appendChild(el('label', { className: 'field-label' }, [localeLabel]));
   var select = el('select', { className: 'field-select', 'aria-label': localeLabel });
+  // F-018 (WCAG 1.4.1): Each locale option shows its native-script name AND
+  // its Latin BCP-47 code (e.g., "한국어 (ko)"). A user who can't read the
+  // native script still has an identifier they can recognize / search for /
+  // describe verbally — color/script alone is no longer the sole means of
+  // distinguishing the current locale.
   for (var i = 0; i < locales.length; i++) {
-    var opt = el('option', { value: locales[i].code, textContent: locales[i].name });
+    var displayLabel = locales[i].name + ' (' + locales[i].code + ')';
+    var opt = el('option', { value: locales[i].code, textContent: displayLabel });
     if (locales[i].code === _i18nLocale) opt.selected = true;
     select.appendChild(opt);
   }
@@ -159,9 +165,14 @@ function i18nDetectLocale() {
 
 // --- Config load/save ---
 function loadConfigFromFile(callback) {
+  // F-013 (WCAG 1.3.1): The file input is created in-memory and click()ed
+  // immediately, so the OS file picker is what the user actually interacts
+  // with. The aria-label makes the input itself accessible if any AT inspects
+  // the DOM (some screen-reader modes describe the file picker invocation).
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
+  input.setAttribute('aria-label', t('ui.loadConfig.fileLabel', 'Load configuration JSON file'));
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -220,6 +231,12 @@ function el(tag, attrs, children) {
   return e;
 }
 
+// F-010 (WCAG 1.3.1): Heading-hierarchy convention.
+// The framework uses h1 for the page title (in buildChrome()) and h2 inside
+// each section. Step renderers should use h3 for sub-section headings —
+// never h1 (would duplicate the page title) and never skip from h2 to h4.
+// Following this convention keeps the document outline navigable for screen
+// readers that announce headings as a tree.
 function createSection(title, contentArray) {
   const section = el('div', { className: 'section' });
   section.appendChild(el('h2', {}, [title]));
@@ -227,6 +244,45 @@ function createSection(title, contentArray) {
     if (item) section.appendChild(item);
   }
   return section;
+}
+
+// F-014 (WCAG 1.3.1): Helper for result-summary tables in review steps.
+// Wizards previously rendered <table> tags by hand; this helper enforces
+// <caption> for table purpose and scope="col" on <th> so screen readers
+// announce column headers when navigating data cells. Adopt incrementally
+// across wizards — old hand-written tables remain valid until migrated.
+function createResultTable(caption, headers, rows) {
+  const table = el('table', { className: 'result-table' });
+  if (caption) {
+    table.appendChild(el('caption', {}, [caption]));
+  }
+  if (headers && headers.length) {
+    const thead = el('thead', {});
+    const trHead = el('tr', {});
+    for (const h of headers) {
+      trHead.appendChild(el('th', { scope: 'col' }, [h]));
+    }
+    thead.appendChild(trHead);
+    table.appendChild(thead);
+  }
+  const tbody = el('tbody', {});
+  for (const row of (rows || [])) {
+    const tr = el('tr', {});
+    for (const cell of row) {
+      tr.appendChild(el('td', {}, [cell == null ? '' : String(cell)]));
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  return table;
+}
+
+// F-015 (WCAG 1.3.1): Helper for status-badge pills. Wizards previously
+// rendered <span class="badge enacted">Enacted</span> inline; this helper
+// adds role="status" so assistive tech announces the badge as a state
+// indicator rather than treating it as decorative text. Adopt incrementally.
+function createBadge(type, text) {
+  return el('span', { className: 'badge ' + type, role: 'status', textContent: text });
 }
 
 function createToggle(label, value, onChange) {
@@ -309,11 +365,17 @@ function createSelect(label, options, value, onChange) {
   return row;
 }
 
-function createTextInput(label, value, onChange, placeholder) {
-  // F-008: id on the control, for= on the label
+function createTextInput(label, value, onChange, placeholder, autocomplete) {
+  // F-008: id on the control, for= on the label.
+  // F-016 (WCAG 1.3.5): Optional `autocomplete` parameter lets callers tag
+  //   inputs with semantic intent (e.g., "name", "email", "organization").
+  //   Browsers use this for autofill and password managers, AT can announce
+  //   it, and forms become more efficient to complete. Default "off" keeps
+  //   sensitive fields from accidental autofill until callers opt in.
   const id = _nextFieldId('input');
   const input = el('input', {
-    id: id, type: 'text', className: 'field-input', value: value || '', placeholder: placeholder || ''
+    id: id, type: 'text', className: 'field-input', value: value || '', placeholder: placeholder || '',
+    autocomplete: autocomplete || 'off'
   });
   input.addEventListener('input', function() { onChange(input.value); });
   const row = el('div', { className: 'field-row' });
@@ -346,11 +408,16 @@ function createAlert(type, text) {
 
 // --- Common CSS ---
 var SHARED_CSS = [
-  '* { box-sizing: border-box; margin: 0; padding: 0; }',
-  'body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: #0B1426; color: #F0EBE0; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 24px; }',
-  'h1 { font-size: 1.8em; margin-bottom: 8px; color: #E8B96A; font-weight: 300; letter-spacing: 1px; }',
-  'h2 { font-size: 1.2em; margin: 24px 0 12px; color: #9AACBA; font-weight: 400; border-bottom: 1px solid #1E2D3D; padding-bottom: 6px; }',
-  'h3 { font-size: 1em; margin: 16px 0 8px; color: #6B7B8D; }',
+  // All wizard styling is scoped under #wizard-root. Pre-F-012 this leaked via
+  // global `*`, `body`, `h1`, `h2`, `h3` selectors — fine when the wizard was
+  // the entire page, but a cross-component regression now that F-012 preserves
+  // non-wizard DOM. Anchoring to #wizard-root keeps the host page untouched.
+  '#wizard-root, #wizard-root *, #wizard-root *::before, #wizard-root *::after { box-sizing: border-box; }',
+  '#wizard-root * { margin: 0; padding: 0; }',
+  '#wizard-root { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: #0B1426; color: #F0EBE0; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 24px; }',
+  '#wizard-root h1 { font-size: 1.8em; margin-bottom: 8px; color: #E8B96A; font-weight: 300; letter-spacing: 1px; }',
+  '#wizard-root h2 { font-size: 1.2em; margin: 24px 0 12px; color: #9AACBA; font-weight: 400; border-bottom: 1px solid #1E2D3D; padding-bottom: 6px; }',
+  '#wizard-root h3 { font-size: 1em; margin: 16px 0 8px; color: #6B7B8D; }',
   '.subtitle { color: #6B7B8D; font-size: 0.9em; margin-bottom: 24px; }',
   '.section { margin-bottom: 32px; }',
   '.toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }',
@@ -411,7 +478,15 @@ var SHARED_CSS = [
   // F-005: Skip-nav link — off-screen by default, slides into view on focus.
   // Keyboard users see + activate it on first Tab; mouse/touch users never see it.
   '.skip-link { position: absolute; left: -9999px; top: 0; z-index: 999; padding: 8px 16px; background: #D4943A; color: #0B1426; font-weight: 600; text-decoration: none; border-radius: 0 0 4px 0; }',
-  '.skip-link:focus { left: 0; }'
+  '.skip-link:focus { left: 0; }',
+  // F-011 (WCAG 2.3.3): Honor prefers-reduced-motion. Users with vestibular
+  // disorders or motion sensitivity can opt out of animations OS-wide; we
+  // collapse all CSS transitions to near-zero duration so visual changes
+  // are instant instead of animated. Scroll behavior also reverts to "auto"
+  // (no smooth scroll).
+  '@media (prefers-reduced-motion: reduce) {',
+  '  #wizard-root, #wizard-root *, #wizard-root *::before, #wizard-root *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }',
+  '}'
 ].join('\n');
 
 function injectCSS() {
@@ -459,7 +534,18 @@ function createWizard(opts) {
   var _announcer = null;
 
   function buildChrome() {
-    document.body.textContent = '';
+    // F-012 (WCAG 4.1.2): Targeted clear instead of `document.body.textContent = ''`.
+    // The nuclear clear destroys any external content injected into body
+    // (analytics scripts, third-party widgets, dev-tools overlays). We now
+    // host all wizard chrome inside #wizard-root and only clear its children
+    // on rebuild — anything outside the root survives untouched.
+    var root = document.getElementById('wizard-root');
+    if (root) {
+      root.textContent = '';
+    } else {
+      root = el('div', { id: 'wizard-root' });
+      document.body.appendChild(root);
+    }
 
     // F-005 (WCAG 2.4.1): Skip-nav link — visually-hidden until focused,
     // then jumps to the main content. Lets keyboard users bypass the
@@ -469,10 +555,10 @@ function createWizard(opts) {
       className: 'skip-link',
       textContent: t('ui.skipNav', 'Skip to main content')
     });
-    document.body.appendChild(skipLink);
+    root.appendChild(skipLink);
 
-    document.body.appendChild(el('h1', {}, [opts.title]));
-    if (opts.subtitle) document.body.appendChild(el('p', { className: 'subtitle' }, [opts.subtitle]));
+    root.appendChild(el('h1', {}, [opts.title]));
+    if (opts.subtitle) root.appendChild(el('p', { className: 'subtitle' }, [opts.subtitle]));
 
     // F-006 (WCAG 1.3.1): Toolbar is a navigation landmark — distinct
     // aria-label disambiguates it from the wizard-progress nav (F-002) and
@@ -488,10 +574,10 @@ function createWizard(opts) {
       if (opts.onExport) opts.onExport();
     }}));
     toolbar.appendChild(createLocaleSwitcher(function() { refreshStep(); }));
-    document.body.appendChild(toolbar);
+    root.appendChild(toolbar);
 
     _progressContainer = el('div', { className: 'progress' });
-    document.body.appendChild(_progressContainer);
+    root.appendChild(_progressContainer);
 
     // F-006: Step container is the main landmark. role="main" makes it
     // discoverable by assistive tech as "the primary content of this page."
@@ -505,12 +591,12 @@ function createWizard(opts) {
         }, 300);
       });
     }
-    document.body.appendChild(_stepContainer);
+    root.appendChild(_stepContainer);
 
     // F-006: Prev/Next pagination is a navigation landmark, separate from
     // both the toolbar and the wizard progress nav.
     _navContainer = el('nav', { className: 'step-nav', 'aria-label': t('ui.stepNav.label', 'Step navigation') });
-    document.body.appendChild(_navContainer);
+    root.appendChild(_navContainer);
 
     // F-003 (WCAG 4.1.3): Visually-hidden live region that announces step
     // transitions for screen readers. polite = wait for screen reader to
@@ -521,7 +607,7 @@ function createWizard(opts) {
       'aria-atomic': 'true',
       className: 'sr-only'
     });
-    document.body.appendChild(_announcer);
+    root.appendChild(_announcer);
 
     _built = true;
   }
@@ -583,6 +669,14 @@ function createWizard(opts) {
         t('ui.progress.of', 'of') + ' ' + opts.totalSteps + ': ' +
         opts.stepLabels[_currentStep];
     }
+
+    // F-017 (WCAG 2.4.2): Document title reflects current step. Helps users
+    // who keep multiple wizards open in tabs identify which one they're
+    // looking at, and gives screen readers / browser history meaningful
+    // labels. Format: "Wizard Title — Step N: Step Label".
+    document.title = opts.title + ' — ' +
+      t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ': ' +
+      opts.stepLabels[_currentStep];
 
     // F-003: Move keyboard focus to the new step content so keyboard users
     // don't get stranded on the Next/Prev button after navigation. tabindex=-1
