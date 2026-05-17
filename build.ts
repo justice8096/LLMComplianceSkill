@@ -318,7 +318,12 @@ function generateMcpServer(manifest: Manifest): void {
       else zField += "string()";
       if (!requiredParams.includes(paramName)) zField += ".optional()";
       zField += ","; zodFields.push(zField);
-      let jsProp = "      " + paramName + ': { type: "' + paramDef.type + '", description: "' + cmd.description.replace(/"/g, '\\"') + '" }';
+      // Use the per-parameter description from manifest.json, not the command-level
+      // description. Reusing cmd.description here made every field in a command share
+      // the same generic text and discarded the manifest's parameter-level guidance,
+      // which clients/LLMs rely on to construct arguments correctly.
+      const paramDesc = (paramDef.description || "").replace(/"/g, '\\"');
+      let jsProp = "      " + paramName + ': { type: "' + paramDef.type + '", description: "' + paramDesc + '" }';
       jsonSchemaProps.push(jsProp);
     }
     const toolCode = ['import { z } from "zod";', 'import { loadCommandContent } from "../knowledge/loader.js";', "",
