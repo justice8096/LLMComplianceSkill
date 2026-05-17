@@ -1,7 +1,3 @@
----
-name: ai-compliance
-description: AI/LLM regulatory compliance knowledge covering 16+ jurisdictions including EU AI Act, GDPR, US state laws, UK AI governance, and frameworks like NIST AI RMF and ISO 42001
----
 # AI Compliance Evidence Collection Skill
 
 Identify applicable AI regulations for a given project, collect compliance evidence
