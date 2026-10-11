@@ -1,0 +1,19 @@
+# Keep text files LF in the repo and in every checkout, so generated files and
+# the bundled regulation copies do not show line-ending-only changes on Windows.
+* text=auto eol=lf
+
+# Windows scripts need CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.zip binary
