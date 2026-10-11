@@ -38,6 +38,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
+const { resolveBinary } = require('./resolve-binary');
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -171,34 +172,6 @@ function readText(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf8');
   } catch (_e) { return null; }
-}
-
-/**
- * Run a CLI command safely.
- * Locate an executable on the operator's PATH and return its absolute path,
- * or null when it is not installed. The lookup never consults the current
- * directory, so a file of the same name inside the scanned repository is
- * never chosen (on Windows, cmd.exe would otherwise search cwd first).
- */
-function resolveBinary(name) {
-  var dirs = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
-  var exts = [''];
-  if (process.platform === 'win32') {
-    exts = (process.env.PATHEXT || '.COM;.EXE;.BAT;.CMD').split(';').filter(Boolean);
-    exts.unshift('');
-  }
-  for (var i = 0; i < dirs.length; i++) {
-    // Relative PATH entries (including "." and "") would reintroduce
-    // cwd-first resolution; skip them.
-    if (!path.isAbsolute(dirs[i])) continue;
-    for (var j = 0; j < exts.length; j++) {
-      var candidate = path.join(dirs[i], name + exts[j]);
-      try {
-        if (fs.statSync(candidate).isFile()) return candidate;
-      } catch (_e) { /* keep looking */ }
-    }
-  }
-  return null;
 }
 
 /**
@@ -953,6 +926,20 @@ function runNpmAudit(repoPath) {
   }
 }
 
+/**
+ * pip-audit argv for a scanned repository's requirements file.
+ * Plain `pip-audit -r FILE` resolves the requirements with pip, which is
+ * the same as `pip install -r FILE`: a local path, VCS link or extra index
+ * named in the file runs its setup.py on the operator's machine (CWE-829).
+ * --disable-pip with --no-deps makes pip-audit read the pinned versions
+ * from the file and query the vulnerability service without installing
+ * anything. Unpinned entries are reported by pip-audit as errors and are
+ * not audited.
+ */
+function pipAuditArgs(reqFile) {
+  return ['--format', 'json', '--disable-pip', '--no-deps', '-r', reqFile];
+}
+
 function runPipAudit(repoPath) {
   var hasPip = fileExists(path.join(repoPath, 'requirements.txt')) ||
                fileExists(path.join(repoPath, 'Pipfile')) ||
@@ -965,11 +952,14 @@ function runPipAudit(repoPath) {
     return null;
   }
   log('Running pip-audit...');
-  // Without -r, pip-audit scans the operator's active environment, not the repo.
-  var pipArgs = ['--format', 'json'];
   var reqFile = path.join(repoPath, 'requirements.txt');
-  if (fileExists(reqFile)) pipArgs.push('-r', reqFile);
-  var result = runTool(pipAudit, pipArgs, repoPath, 60000);
+  if (!fileExists(reqFile)) {
+    // Without -r, pip-audit scans the operator's active environment, not
+    // the repo, so there is nothing to report for this repository.
+    log('  no requirements.txt - skipping pip-audit');
+    return null;
+  }
+  var result = runTool(pipAudit, pipAuditArgs(reqFile), repoPath, 60000);
   if (!result.ok && !result.stdout) {
     log('  pip-audit not available or failed - skipping');
     return null;
@@ -1161,6 +1151,11 @@ function extract(repoPath) {
   var auditResults = { critical: 0, high: 0, moderate: 0, low: 0, info: 0 };
   var npmAudit = ecosystems.indexOf('npm') !== -1 ? runNpmAudit(repoPath) : null;
   var pipAudit = ecosystems.indexOf('pip') !== -1 ? runPipAudit(repoPath) : null;
+  // Which audits produced results. An empty list means auditResults is not
+  // evidence of zero vulnerabilities, only that no audit ran.
+  var auditsRun = [];
+  if (npmAudit) auditsRun.push('npm');
+  if (pipAudit) auditsRun.push('pip');
 
   if (npmAudit) {
     auditResults.critical += (npmAudit.critical || 0);
@@ -1303,6 +1298,7 @@ function extract(repoPath) {
     },
     vulnerabilities: {
       auditResults: auditResults,
+      auditsRun: auditsRun,
       hasDependabot: securityInfra.hasDependabot,
       hasRenovate: securityInfra.hasRenovate,
       hasSecurityWorkflows: securityInfra.hasSecurityWorkflows,
@@ -1378,4 +1374,8 @@ function main() {
   log('Done.');
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { pipAuditArgs: pipAuditArgs };

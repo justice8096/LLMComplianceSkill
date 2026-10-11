@@ -15,6 +15,17 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+Extractor fixes from the post-commit SAST audit of 2026-10-11 (`audits/sast-dast-scan.md`). **Addendum guidance:** evidence produced by `git-evidence.js` or `package-evidence.js` with 1.4.0 understated signed commits (always 0), had an empty `topAiModifiedFiles`, and on Windows omitted npm audit results without saying so. Re-run the extractors and file an addendum for any artifact that used those fields. Re-run also if you scanned an untrusted Python repository with 1.4.0.
+
+### Security `[defect]`
+- `package-evidence.js` ran `pip-audit -r <repo>/requirements.txt`, which installs the listed requirements; a local path or VCS entry in a scanned repository ran its `setup.py` on the operator's machine (CWE-829, HIGH-01). pip-audit now runs with `--disable-pip --no-deps`: it reads pinned versions only and installs nothing. Unpinned entries are not audited.
+- `git-evidence.js` started a bare `git`, so on Windows a `git.exe` in the working directory could run (CWE-427, MEDIUM-01). Both extractors now share `tools/extractors/resolve-binary.js`, which resolves tools to absolute paths from PATH only.
+
+### Fixed `[defect]`
+- Signed-commit counts were always 0, because blanking `gpg.program` and its siblings broke signature verification (INFO-07). These programs are now pinned to the operator's global git config or the default program on PATH, so a scanned repository still cannot choose them.
+- `topAiModifiedFiles` was always empty, because the commit hash came after `--` and git read it as a path (INFO-06). Root commits are now included too.
+- On Windows, npm audit was silently skipped: the lookup chose the extensionless `npm` shell script, which cannot be started (INFO-08). Evidence now lists `vulnerabilities.auditsRun`, so an empty list shows that no audit ran, instead of reading as zero vulnerabilities.
+
 ## [1.4.0] - 2026-10-11
 
 Security, accessibility and translation release. No regulatory content changed beyond the knowledge-base syncs listed under `[authority]`, so outputs generated with 1.3.0 do not need addenda for legal content; re-run the extractors if you scanned an untrusted repository with 1.3.0 (see the extractor fixes below).

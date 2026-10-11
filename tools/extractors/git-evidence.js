@@ -22,6 +22,7 @@ const { execFileSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { resolveBinary } = require('./resolve-binary');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -95,12 +96,63 @@ const GIT_HARDENING = [
   '-c', 'core.hooksPath=' + os.devNull,
   '-c', 'diff.external=',
   '-c', 'protocol.allow=never',
-  // Signature verification can launch gpg/ssh/x509 programs named in repo config.
-  '-c', 'gpg.program=',
-  '-c', 'gpg.ssh.program=',
-  '-c', 'gpg.x509.program=',
   '-c', 'log.showSignature=false'
 ];
+
+let gitFile = null;
+
+/**
+ * Absolute path of git from the operator's PATH, never from the current
+ * directory, so a git.exe planted beside the scan cannot run (CWE-427).
+ */
+function gitBinary() {
+  if (!gitFile) {
+    gitFile = resolveBinary('git');
+    if (!gitFile) throw new Error('git not found on PATH');
+  }
+  return gitFile;
+}
+
+/**
+ * Signature checks (%G?) launch gpg, ssh-keygen or gpgsm. A scanned
+ * repository's .git/config could name any program here (CWE-426), so each
+ * is pinned to the value in the operator's own global git config, or to the
+ * default program resolved from PATH. Blanking them instead made every
+ * signature verify as bad.
+ */
+const SIGNING_PROGRAMS = [
+  ['gpg.program', 'gpg'],
+  ['gpg.ssh.program', 'ssh-keygen'],
+  ['gpg.x509.program', 'gpgsm']
+];
+
+let signingOverrides = null;
+
+function operatorGitConfig(key) {
+  try {
+    // --global reads only the operator's own config file, never a repo's.
+    return execFileSync(gitBinary(), ['config', '--global', '--get', key], {
+      cwd: os.tmpdir(),
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      timeout: 10000,
+      windowsHide: true
+    }).trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+function getSigningOverrides() {
+  if (!signingOverrides) {
+    signingOverrides = [];
+    for (const [key, fallback] of SIGNING_PROGRAMS) {
+      const program = operatorGitConfig(key) || resolveBinary(fallback) || '';
+      signingOverrides.push('-c', key + '=' + program);
+    }
+  }
+  return signingOverrides;
+}
 
 /**
  * Run a git command in the given repository.
@@ -120,8 +172,8 @@ function git(args, repoPath) {
       throw new Error('git() argv entries must be strings');
     }
   }
-  const argv = ['-C', repoPath, ...GIT_HARDENING, ...args];
-  return execFileSync('git', argv, {
+  const argv = ['-C', repoPath, ...GIT_HARDENING, ...getSigningOverrides(), ...args];
+  return execFileSync(gitBinary(), argv, {
     encoding: 'utf8',
     maxBuffer: 50 * 1024 * 1024,
     timeout: 60000,
@@ -449,12 +501,15 @@ function extractAiCodeGeneration(repoPath, since) {
         const batch = aiCommitHashes.slice(i, i + batchSize);
         for (const hash of batch) {
           try {
-            const files = gitLines(['diff-tree', '--no-commit-id', '--name-only', '-r', '--', hash], repoPath);
+            // hash passed isHash() (hex only), so it cannot be read as an option.
+            // It must come before -- or git treats it as a path. --root lists
+            // the files of a root commit, which has no parent to diff against.
+            const files = gitLines(['diff-tree', '--no-commit-id', '--name-only', '-r', '--root', hash, '--'], repoPath);
             for (const f of files) {
               fileCounts[f] = (fileCounts[f] || 0) + 1;
             }
           } catch {
-            // Skip commits that fail (e.g., initial commit)
+            // Skip commits git cannot read (e.g. a shallow clone boundary)
           }
         }
       }

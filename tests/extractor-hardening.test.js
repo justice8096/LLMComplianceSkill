@@ -133,8 +133,8 @@ test('package-evidence: npm audit runs isolated from the repository .npmrc', fun
     'tools must be resolved to absolute paths from PATH, never from cwd');
 });
 
-test('package-evidence: resolveBinary ignores relative PATH entries', function() {
-  var src = fs.readFileSync(PACKAGE_EVIDENCE, 'utf8');
+test('resolve-binary: resolveBinary ignores relative PATH entries', function() {
+  var src = fs.readFileSync(path.join(EXTRACTORS_DIR, 'resolve-binary.js'), 'utf8');
   assert.ok(/if \(!path\.isAbsolute\(dirs\[i\]\)\) continue;/.test(src),
     'relative PATH entries (including ".") must be skipped');
 });
