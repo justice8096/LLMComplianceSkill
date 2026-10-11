@@ -3,7 +3,7 @@
 ![Lint](https://github.com/justice8096/LLMComplianceSkill/actions/workflows/lint.yml/badge.svg)
 ![Release](https://img.shields.io/github/v/release/justice8096/LLMComplianceSkill)
 
-Open-source toolkit for gathering AI/LLM compliance evidence across 16+ jurisdictions. Built as a [Claude Code](https://claude.ai/claude-code) skill.
+Open-source toolkit for gathering AI/LLM compliance evidence across 25 jurisdictions (regulatory data current as of 2026-10-11). Built as a [Claude Code](https://claude.ai/claude-code) skill; the regulatory knowledge half also runs in claude.ai and Cowork, the evidence pipeline needs Node.js.
 
 **[View the site](https://justice8096.github.io/LLMComplianceSkill/)** | **[Templates](#templates)** | **[Interactive Tools](#interactive-tools)** | **[Quick Start](#quick-start)**
 
@@ -17,7 +17,7 @@ When you build an AI-powered application, you need evidence that it complies wit
 - **21 interactive HTML tools** for compliance areas requiring human judgment
 - **An autofill script** that populates templates from a single config file
 - **3 automated evidence extractors** for git, package, and CI/CD analysis
-- **Regulation research** covering 16 jurisdictions with specific provisions and deadlines
+- **Regulation research** covering 25 jurisdictions with specific provisions and 47 dated deadlines, synced from [ai-regulatory-knowledge-base](https://github.com/justice8096/ai-regulatory-knowledge-base) via `npm run sync:kb`
 
 The output is designed to be **handed to your legal or compliance team** to help prove compliance.
 

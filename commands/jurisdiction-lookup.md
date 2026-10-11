@@ -12,7 +12,15 @@ Look up AI regulations and deadlines for a specific jurisdiction.
 
 ## Covered Jurisdictions
 
-EU, UK, US (federal + state), Canada, China, Japan, South Korea, India, Singapore, ASEAN, Australia, New Zealand, Mexico, Latin America, Africa
+Use the codes from `tools/data/jurisdiction-matrix.json`.
+
+| Region | Codes |
+|--------|-------|
+| Europe | EU, UK |
+| United States | US-CA, US-NY, US-IL, US-CT, US-WA, US-CO, US-TX, US-UT, US-NYC |
+| Americas | CA (Canada), BR, MX, PE |
+| Asia-Pacific | CN, JP, KR, IN, SG, VN, AU, NZ |
+| Africa | NG, ZA |
 
 ## Output
 

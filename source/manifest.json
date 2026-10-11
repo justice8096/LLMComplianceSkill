@@ -23,7 +23,7 @@
     {
       "name": "ai-compliance",
       "displayName": "AI Compliance",
-      "description": "AI/LLM regulatory compliance knowledge covering 16+ jurisdictions including EU AI Act, GDPR, US state laws, UK AI governance, and frameworks like NIST AI RMF and ISO 42001",
+      "description": "AI/LLM regulatory compliance knowledge covering 25 jurisdictions (data current as of 2026-10-11) including the EU AI Act as amended by the Digital Omnibus, GDPR, US state laws (CA, NY, IL, CT, WA, CO, TX), UK AI governance, Korea AI Basic Act, Vietnam Law on AI, and frameworks like NIST AI RMF and ISO 42001",
       "path": "skills/ai-compliance.md",
       "keywords": [
         "compliance",
