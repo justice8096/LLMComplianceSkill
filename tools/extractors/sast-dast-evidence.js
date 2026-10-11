@@ -225,7 +225,7 @@ function parseSastDastScan(content) {
   if (assessmentMatch) result.overallAssessment = assessmentMatch[1];
 
   // Parse severity summary table
-  var summaryRows = parseMarkdownTable(content, /Severity/i);
+  var summaryRows = parseMarkdownTable(content, /^\s*\|\s*Severity\s*\|/i);
   for (var i = 0; i < summaryRows.length; i++) {
     var row = summaryRows[i];
     var severity = (row['Severity'] || '').replace(/\*+/g, '').trim().toLowerCase();

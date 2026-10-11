@@ -94,7 +94,12 @@ const GIT_HARDENING = [
   '-c', 'core.fsmonitor=false',
   '-c', 'core.hooksPath=' + os.devNull,
   '-c', 'diff.external=',
-  '-c', 'protocol.allow=never'
+  '-c', 'protocol.allow=never',
+  // Signature verification can launch gpg/ssh/x509 programs named in repo config.
+  '-c', 'gpg.program=',
+  '-c', 'gpg.ssh.program=',
+  '-c', 'gpg.x509.program=',
+  '-c', 'log.showSignature=false'
 ];
 
 /**
@@ -152,6 +157,21 @@ function sinceArg(days) {
 function fileExists(filePath) {
   try {
     return fs.statSync(filePath).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * True only if filePath is a regular file whose real location is inside repoPath.
+ * Blocks symlinks that point at files elsewhere on the machine (CWE-59, CWE-22).
+ */
+function isRepoFile(repoPath, filePath) {
+  try {
+    const realRepo = fs.realpathSync(repoPath) + path.sep;
+    const realFile = fs.realpathSync(filePath);
+    if (!realFile.startsWith(realRepo)) return false;
+    return fs.statSync(realFile).isFile();
   } catch {
     return false;
   }
@@ -334,7 +354,7 @@ function extractChangeManagement(repoPath, since, days) {
     const changelogNames = ['CHANGELOG.md', 'CHANGELOG', 'changelog.md', 'CHANGES.md', 'HISTORY.md'];
     for (const name of changelogNames) {
       const changelogPath = path.join(repoPath, name);
-      if (fileExists(changelogPath)) {
+      if (isRepoFile(repoPath, changelogPath)) {
         result.hasChangelog = true;
         const stat = fs.statSync(changelogPath);
         result.changelogLastUpdate = stat.mtime.toISOString().split('T')[0];
@@ -615,7 +635,8 @@ function extractSecurityPractices(repoPath, since) {
   try {
     // Signed commits
     const sigLines = gitLines(['log', since, '--format=%G?'], repoPath);
-    const signed = sigLines.filter(s => s === 'G' || s === 'U' || s === 'E').length;
+    // Only 'G' (good signature) counts. 'U' (unknown trust) and 'E' (unverifiable) do not prove authorship.
+    const signed = sigLines.filter(s => s === 'G').length;
     result.signedCommits = signed;
     result.signedPercentage = sigLines.length > 0
       ? Math.round((signed / sigLines.length) * 100)
@@ -711,7 +732,7 @@ function extractGovernance(repoPath) {
     ];
 
     for (const coPath of codeownersPaths) {
-      if (fileExists(coPath)) {
+      if (isRepoFile(repoPath, coPath)) {
         const content = fs.readFileSync(coPath, 'utf8');
         const lines = content.split('\n')
           .filter(l => l.trim() && !l.trim().startsWith('#'));
@@ -736,7 +757,7 @@ function extractGovernance(repoPath) {
     // Contributing guidelines
     const contributingNames = ['CONTRIBUTING.md', 'CONTRIBUTING', 'contributing.md', '.github/CONTRIBUTING.md'];
     for (const name of contributingNames) {
-      if (fileExists(path.join(repoPath, name))) {
+      if (isRepoFile(repoPath, path.join(repoPath, name))) {
         result.hasContributing = true;
         break;
       }
@@ -750,7 +771,7 @@ function extractGovernance(repoPath) {
     const licenseNames = ['LICENSE', 'LICENSE.md', 'LICENSE.txt', 'LICENCE', 'LICENCE.md', 'license'];
     for (const name of licenseNames) {
       const lPath = path.join(repoPath, name);
-      if (fileExists(lPath)) {
+      if (isRepoFile(repoPath, lPath)) {
         result.hasLicense = true;
         // Try to detect license type from first few lines
         const content = fs.readFileSync(lPath, 'utf8').slice(0, 2000);

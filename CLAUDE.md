@@ -85,7 +85,6 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 6. Review output and hand to legal/compliance team
 
 ## Technical Conventions
-- Security pre-commit hook flags unsafe shell patterns even in comments/docs/markdown — avoid trigger words like `exec()` in generated text
 - Large generated files (50+ model entries, extensive JSON) should be split across multiple agents writing separate chunk files — single agents hit token limits
 - Interactive tools use targeted DOM manipulation (toggle `display:none`) instead of `refreshStep()` for fields with in-progress text — prevents form data loss
 - Extractors output JSON to stdout, progress/errors to stderr — designed for piping
@@ -105,7 +104,7 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - Maintain the comparison matrix in Global Overview when any jurisdiction's status changes
 - When adding LLM models, add to the appropriate chunk file and update the index if needed
 - When adding templates, create a matching interactive tool and update autofill.js
-- When exporting to Obsidian, update the corresponding vault notes (pipeline architecture, lessons learned)
-- New templates should be copied to `D:/SecondBrainData/SoftwarePractices/AI-Compliance-Templates/`
+- When exporting to Obsidian, update the corresponding vault notes (pipeline architecture, lessons learned) only after the user confirms the write
+- New templates are staged in the repo first; copy them to `D:/SecondBrainData/SoftwarePractices/AI-Compliance-Templates/` only after the user confirms, and never overwrite an existing vault note without confirmation
 - When adding i18n keys (new fields, checkboxes, tool strings), add to en.json first, then all 6 locale stubs
 - When adding a new interactive tool, include `i18nLoad(i18nDetectLocale(), boot)` pattern and add tool keys to locale files

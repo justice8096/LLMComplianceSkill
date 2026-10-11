@@ -101,6 +101,7 @@ function main() {
   };
 
   // Save updated config
+  if (fs.existsSync(configPath)) fs.copyFileSync(configPath, configPath + '.bak');
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
   console.log('\nEvidence extracted and saved to: ' + configPath);
 

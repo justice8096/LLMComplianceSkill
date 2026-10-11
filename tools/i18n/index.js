@@ -27,6 +27,7 @@ var _fieldKeyCache = null;    // display name → dot-path key (en values)
 var _checkboxKeyCache = null; // checkbox label → dot-path key (en values)
 
 function loadLocaleFile(code) {
+  if (typeof code !== 'string' || !/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(code)) return null;
   var filePath = path.join(LOCALES_DIR, code + '.json');
   try {
     var raw = fs.readFileSync(filePath, 'utf8');

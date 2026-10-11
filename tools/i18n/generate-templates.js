@@ -259,6 +259,10 @@ function main() {
   // Load locale data
   var localesDir = path.join(__dirname, 'locales');
   var enPath = path.join(localesDir, 'en.json');
+  if (!/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(opts.locale)) {
+    process.stderr.write('Invalid locale code: ' + opts.locale + '\n');
+    process.exit(1);
+  }
   var locPath = path.join(localesDir, opts.locale + '.json');
 
   if (!fs.existsSync(locPath)) {

@@ -451,7 +451,9 @@ function parseLockV1Deps(deps, directNames, devNames, packages, repoPath) {
 function extractNpmPackageLicense(repoPath, pkgName, lockInfo) {
   // Try reading the installed package's package.json
   var installedPkgJson = path.join(repoPath, 'node_modules', pkgName, 'package.json');
-  var pkg = readJSON(installedPkgJson);
+  // Reject names that could escape node_modules (e.g. "../../x" from a crafted lockfile).
+  var safeName = /^(@[\w.~-]+\/)?[\w.~-]+$/.test(pkgName) && pkgName.indexOf('..') === -1;
+  var pkg = safeName ? readJSON(installedPkgJson) : null;
   if (pkg) {
     if (typeof pkg.license === 'string') return pkg.license;
     if (typeof pkg.license === 'object' && pkg.license && pkg.license.type) return pkg.license.type;
@@ -963,7 +965,11 @@ function runPipAudit(repoPath) {
     return null;
   }
   log('Running pip-audit...');
-  var result = runTool(pipAudit, ['--format', 'json'], repoPath, 60000);
+  // Without -r, pip-audit scans the operator's active environment, not the repo.
+  var pipArgs = ['--format', 'json'];
+  var reqFile = path.join(repoPath, 'requirements.txt');
+  if (fileExists(reqFile)) pipArgs.push('-r', reqFile);
+  var result = runTool(pipAudit, pipArgs, repoPath, 60000);
   if (!result.ok && !result.stdout) {
     log('  pip-audit not available or failed - skipping');
     return null;
@@ -971,10 +977,12 @@ function runPipAudit(repoPath) {
   try {
     var audit = JSON.parse(result.stdout || result.stderr);
     var counts = { critical: 0, high: 0, moderate: 0, low: 0, info: 0 };
-    if (Array.isArray(audit)) {
-      for (var i = 0; i < audit.length; i++) {
+    // pip-audit JSON is an object with a "dependencies" array; each entry lists its vulns.
+    var deps = Array.isArray(audit) ? audit : (audit && Array.isArray(audit.dependencies) ? audit.dependencies : []);
+    for (var i = 0; i < deps.length; i++) {
+      if (deps[i] && Array.isArray(deps[i].vulns)) {
         // pip-audit doesn't always provide severity; count as moderate
-        counts.moderate++;
+        counts.moderate += deps[i].vulns.length;
       }
     }
     return counts;
