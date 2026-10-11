@@ -669,7 +669,7 @@
 
         var row = el('div', { className: 'right-row' });
         var header = el('div', { className: 'right-row-header' });
-        header.appendChild(el('span', { className: 'right-row-title' }, [(idx + 1) + '. Right to be ' + right]));
+        header.appendChild(el('span', { className: 'right-row-title' }, [(idx + 1) + '. ' + right]));
         row.appendChild(header);
 
         row.appendChild(createToggle('Implemented?', rState.implemented, function(v) {
