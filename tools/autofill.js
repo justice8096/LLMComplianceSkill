@@ -254,11 +254,12 @@ function fillTemplate(templatePath, config, matrix, deadlines) {
 
   // --- F0. LLM Selector auto-fill ---
   const llmSel = (config.interactiveToolResults || {}).llmSelector;
+  // Hoisted so template 23 (supply chain) can read it outside this block
+  const selectedModels = [];
   if (llmSel && llmSel.usesLlm !== 'no') {
     const registry = loadLlmRegistry();
 
     // Collect all selected models (registry + custom)
-    const selectedModels = [];
     if (registry && llmSel.selectedModels?.length) {
       for (const modelId of llmSel.selectedModels) {
         const found = registry.models.find(m => m.id === modelId);
