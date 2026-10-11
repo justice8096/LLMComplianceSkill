@@ -3,7 +3,7 @@
 ![Lint](https://github.com/justice8096/LLMComplianceSkill/actions/workflows/lint.yml/badge.svg)
 ![Release](https://img.shields.io/github/v/release/justice8096/LLMComplianceSkill)
 
-Open-source toolkit for gathering AI/LLM compliance evidence across 25 jurisdictions (regulatory data current as of 2026-10-11). Built as a [Claude Code](https://claude.ai/claude-code) skill; the regulatory knowledge half also runs in claude.ai and Cowork, the evidence pipeline needs Node.js.
+Open-source toolkit for gathering AI/LLM compliance evidence across 25 jurisdictions (regulatory data current as of 11 Oct 2026). Built as a [Claude Code](https://claude.ai/claude-code) skill; the regulatory knowledge half also runs in claude.ai and Cowork, the evidence pipeline needs Node.js.
 
 **[View the site](https://justice8096.github.io/LLMComplianceSkill/)** | **[Templates](#templates)** | **[Interactive Tools](#interactive-tools)** | **[Quick Start](#quick-start)**
 
@@ -160,10 +160,10 @@ No server required. Everything runs locally with zero external dependencies.
 | **Jan 2026** | US-CA | SB 53 + AB 2013 |
 | **Feb 2026** | UK | DUA Act — ADM reforms |
 | **Jan 2026** | KR | AI Basic Act in force |
-| **Aug 2, 2026** | EU | AI Act — Art. 50 transparency + penalties (high-risk delayed to Dec 2027 by Digital Omnibus) |
-| **Dec 10, 2026** | AU | Privacy Act ADM obligations |
-| **Jan 1, 2027** | US | CO SB 26-189, NY RAISE Act, IL SB 315, CA CCPA ADMT |
-| **Dec 2, 2027** | EU | AI Act — Annex III high-risk applicability |
+| **2 Aug 2026** | EU | AI Act — Art. 50 transparency + penalties (high-risk delayed to Dec 2027 by Digital Omnibus) |
+| **10 Dec 2026** | AU | Privacy Act ADM obligations |
+| **1 Jan 2027** | US | CO SB 26-189, NY RAISE Act, IL SB 315, CA CCPA ADMT |
+| **2 Dec 2027** | EU | AI Act — Annex III high-risk applicability |
 
 ## Using as a Claude Code Skill
 

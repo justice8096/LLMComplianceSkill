@@ -1,6 +1,6 @@
 # AI Compliance Evidence Collection Skill
 
-> **Data current as of 2026-10-11.** Regulation files, deadlines and jurisdiction matrix were
+> **Data current as of 11 Oct 2026.** Regulation files, deadlines and jurisdiction matrix were
 > synced from ai-regulatory-knowledge-base v1.1.0. Verify any deadline after that date.
 
 Identify applicable AI regulations for a given project, collect compliance evidence
@@ -226,30 +226,30 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 ## Jurisdiction Coverage
 
-> **Sources current as of 2026-10-11.** Verify status before using in any binding legal context.
+> **Sources current as of 11 Oct 2026.** Verify status before using in any binding legal context.
 
 | Authority | Version | Key dates |
 |-----------|---------|-----------|
-| EU AI Act | Regulation (EU) 2024/1689, amended by Regulation (EU) 2026/1744 (Digital Omnibus, in force 2026-07-27) | Prohibitions and AI literacy 2025-02-02; GPAI 2025-08-02; Art. 50 transparency and penalties 2026-08-02; Annex III high-risk 2027-12-02; Annex I 2028-08-02 |
+| EU AI Act | Regulation (EU) 2024/1689, amended by Regulation (EU) 2026/1744 (Digital Omnibus, in force 27 Jul 2026) | Prohibitions and AI literacy 2 Feb 2025; GPAI 2 Aug 2025; Art. 50 transparency and penalties 2 Aug 2026; Annex III high-risk 2 Dec 2027; Annex I 2 Aug 2028 |
 | GDPR | Regulation (EU) 2016/679 | In force |
 | NIST AI RMF | 1.0 (2023-01) plus Generative AI Profile AI 600-1 (2024-07) | Voluntary |
 | ISO/IEC | 42001:2023, 42005:2025, 42006:2025, 23894:2023 | Voluntary |
 | EEOC AI guidance | 2023-05 | Guidance |
-| Colorado | SB 26-189 (signed 2026-05-14; replaces SB 24-205) | Effective 2027-01-01 |
-| US executive branch | EO 14409 "Promoting Advanced AI Innovation and Security" (2026-06-02) | Federal cyber directives; voluntary 30-day pre-release review for covered frontier models; nothing binding on private companies |
-| US executive branch | Executive order "Inaugurating the Era of Super Intelligence" (2026-09-29) | Terminology: agencies use "SI" for "AI"; defined by reference to 15 U.S.C. 9401(3); no statute or regulation changed; legislative language due about 2026-11-28 |
-| New York | RAISE Act | Effective 2027-01-01 |
-| Illinois | HB 3773; SB 315 | 2026-01-01; 2027-01-01 |
-| Connecticut | Public Act 26-15 | Phased from 2026-10-01 |
-| Washington | HB 2225 | Effective 2027-01-01 |
-| Texas | TRAIGA (HB 149) | Effective 2026-01-01 |
+| Colorado | SB 26-189 (signed 14 May 2026; replaces SB 24-205) | Effective 1 Jan 2027 |
+| US executive branch | EO 14409 "Promoting Advanced AI Innovation and Security" (2 Jun 2026) | Federal cyber directives; voluntary 30-day pre-release review for covered frontier models; nothing binding on private companies |
+| US executive branch | Executive order "Inaugurating the Era of Super Intelligence" (29 Sep 2026) | Terminology: agencies use "SI" for "AI"; defined by reference to 15 U.S.C. 9401(3); no statute or regulation changed; legislative language due about 28 Nov 2026 |
+| New York | RAISE Act | Effective 1 Jan 2027 |
+| Illinois | HB 3773; SB 315 | 1 Jan 2026; 1 Jan 2027 |
+| Connecticut | Public Act 26-15 | Phased from 1 Oct 2026 |
+| Washington | HB 2225 | Effective 1 Jan 2027 |
+| Texas | TRAIGA (HB 149) | Effective 1 Jan 2026 |
 | New York City | Local Law 144 | Effective 2023-07 |
-| California | SB 53, AB 2013, SB 243; SB 942; CCPA ADMT regulations | 2026-01-01; 2026-08-02; 2027-01-01 |
-| South Korea | AI Basic Act | In force 2026-01-22 |
-| Vietnam | Law on AI 134/2025/QH15 | In force 2026-03-01 |
-| India | IT Amendment Rules 2026 | In force 2026-02-20 |
-| United Kingdom | Data (Use and Access) Act 2025 | ADM reforms 2026-02-05 |
-| Australia | Privacy Act ADM transparency | Commences 2026-12-10 |
+| California | SB 53, AB 2013, SB 243; SB 942; CCPA ADMT regulations | 1 Jan 2026; 2 Aug 2026; 1 Jan 2027 |
+| South Korea | AI Basic Act | In force 22 Jan 2026 |
+| Vietnam | Law on AI 134/2025/QH15 | In force 1 Mar 2026 |
+| India | IT Amendment Rules 2026 | In force 20 Feb 2026 |
+| United Kingdom | Data (Use and Access) Act 2025 | ADM reforms 5 Feb 2026 |
+| Australia | Privacy Act ADM transparency | Commences 10 Dec 2026 |
 
 | Tier | Jurisdictions |
 |------|----------------|
@@ -264,22 +264,22 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 | Date | Event |
 |------|-------|
-| Feb 2, 2025 | EU AI Act — Prohibited practices + AI Literacy (Art. 4) enforceable |
-| Aug 2, 2025 | EU AI Act — GPAI model obligations enforceable |
-| Jan 2026 | US-CA — SB 53 (safety) + AB 2013 (training data) effective |
-| Feb 2026 | UK — DUA Act automated decision-making reforms |
-| Jan 22, 2026 | KR — AI Basic Act in force (fines deferred to about Jan 2027) |
-| Feb 20, 2026 | IN — IT Amendment Rules 2026 (synthetic content labelling) |
-| Mar 1, 2026 | VN — Law on AI in force |
-| Jul 27, 2026 | EU — Digital Omnibus on AI in force (high-risk dates moved) |
-| Aug 2, 2026 | EU AI Act — Art. 50 transparency, penalties, AI Office GPAI enforcement |
-| Dec 2, 2026 | EU AI Act — machine-readable marking grace period ends |
-| Dec 10, 2026 | AU — Privacy Act automated decision-making obligations |
-| Sep 29, 2026 | US — Executive order renames AI to "Super Intelligence" (SI) in federal documents; terminology only |
-| Jan 1, 2027 | US — CO SB 26-189, NY RAISE Act, IL SB 315, WA HB 2225, CA CCPA ADMT and SB 947 |
-| May 13, 2027 | IN — DPDP Rules core obligations |
-| Dec 2, 2027 | EU AI Act — Annex III high-risk applicability |
-| Aug 2, 2028 | EU AI Act — Annex I embedded high-risk applicability |
+| 2 Feb 2025 | EU AI Act — Prohibited practices + AI Literacy (Art. 4) enforceable |
+| 2 Aug 2025 | EU AI Act — GPAI model obligations enforceable |
+| 1 Jan 2026 | US-CA — SB 53 (safety) + AB 2013 (training data) effective |
+| 22 Jan 2026 | KR — AI Basic Act in force (fines deferred to about Jan 2027) |
+| 5 Feb 2026 | UK — DUA Act automated decision-making reforms |
+| 20 Feb 2026 | IN — IT Amendment Rules 2026 (synthetic content labelling) |
+| 1 Mar 2026 | VN — Law on AI in force |
+| 27 Jul 2026 | EU — Digital Omnibus on AI in force (high-risk dates moved) |
+| 2 Aug 2026 | EU AI Act — Art. 50 transparency, penalties, AI Office GPAI enforcement |
+| 29 Sep 2026 | US — Executive order renames AI to "Super Intelligence" (SI) in federal documents; terminology only |
+| 2 Dec 2026 | EU AI Act — machine-readable marking grace period ends |
+| 10 Dec 2026 | AU — Privacy Act automated decision-making obligations |
+| 1 Jan 2027 | US — CO SB 26-189, NY RAISE Act, IL SB 315, WA HB 2225, CA CCPA ADMT and SB 947 |
+| 13 May 2027 | IN — DPDP Rules core obligations |
+| 2 Dec 2027 | EU AI Act — Annex III high-risk applicability |
+| 2 Aug 2028 | EU AI Act — Annex I embedded high-risk applicability |
 
 ---
 
@@ -293,6 +293,6 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 ---
 
-**Knowledge base last updated**: 2026-10-11 (ai-regulatory-knowledge-base v1.1.0). Regulations change
+**Knowledge base last updated**: 11 Oct 2026 (ai-regulatory-knowledge-base v1.1.0). Regulations change
 frequently; verify the status of proposed frameworks and any deadline after that date before relying
 on them for compliance decisions. This is research output, not legal advice.

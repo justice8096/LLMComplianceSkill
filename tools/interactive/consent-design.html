@@ -20,15 +20,15 @@
   var style = document.createElement('style');
   style.textContent = [
     '.purpose-card { background: #0D1830; border: 1px solid #1E2D3D; border-radius: 4px; padding: 14px; margin-bottom: 10px; }',
-    '.purpose-header { font-size: 0.95em; color: #E8B96A; margin-bottom: 8px; }',
-    '.jurisdiction-note { font-size: 0.8em; color: #6B7B8D; padding: 6px 10px; background: #1E2D3D44; border-left: 2px solid #3A4A5A; margin: 6px 0; }',
+    '.purpose-header { font-size: 0.95rem; color: #E8B96A; margin-bottom: 8px; }',
+    '.jurisdiction-note { font-size: 0.875rem; color: #8A9AAB; padding: 6px 10px; background: #1E2D3D44; border-left: 2px solid #3A4A5A; margin: 6px 0; }',
     '.consent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }',
     '.consent-grid .field-row { margin-bottom: 4px; }',
     '.record-field-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border: 1px solid #1E2D3D; border-radius: 4px; margin-bottom: 4px; background: #0D1830; }',
     '.stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0; }',
     '.summary-stat { display: inline-block; padding: 8px 16px; margin: 4px; border-radius: 4px; background: #1E2D3D; text-align: center; }',
     '.summary-stat-value { font-size: 1.4em; font-weight: 600; }',
-    '.summary-stat-label { font-size: 0.75em; color: #6B7B8D; }',
+    '.summary-stat-label { font-size: 0.875rem; color: #8A9AAB; }',
     '.summary-card { background: #0D1830; border: 1px solid #1E2D3D; border-radius: 4px; padding: 12px; margin-bottom: 8px; }',
     '.score-bar { height: 6px; border-radius: 3px; background: #3A4A5A; margin: 8px 0; }',
     '.score-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }'
@@ -345,7 +345,7 @@
     var pct = Math.round((enabledCount / fields.length) * 100);
     var cls = pct >= 75 ? 'score-low' : pct >= 50 ? 'score-med' : 'score-high';
     section.appendChild(el('div', { style: 'margin-top: 12px;' }, [
-      el('span', { style: 'font-size: 0.85em; color: #9AACBA;' }, ['Record completeness: ']),
+      el('span', { style: 'font-size: 0.875rem; color: #9AACBA;' }, ['Record completeness: ']),
       el('span', { className: cls }, [pct + '% (' + enabledCount + '/' + fields.length + ' fields)'])
     ]));
 
@@ -424,7 +424,7 @@
       consentPurposes.forEach(function(p) {
         var mech = state.consentMechanisms[p.id];
         var card = el('div', { className: 'summary-card' });
-        card.appendChild(el('div', { style: 'color: #E8B96A; font-size: 0.95em; margin-bottom: 6px;' }, [p.label]));
+        card.appendChild(el('div', { style: 'color: #E8B96A; font-size: 0.95rem; margin-bottom: 6px;' }, [p.label]));
 
         var details = [
           ['Collection', findLabel(COLLECTION_METHODS, mech.collectionMethod)],
@@ -435,7 +435,7 @@
           ['Child Consent', mech.childConsent ? 'Yes (age ' + (mech.childAgeThreshold || 'not set') + ')' : 'No']
         ];
         details.forEach(function(d) {
-          var row = el('div', { style: 'font-size: 0.85em; color: #9AACBA; margin-bottom: 2px;' });
+          var row = el('div', { style: 'font-size: 0.875rem; color: #9AACBA; margin-bottom: 2px;' });
           row.appendChild(document.createTextNode(d[0] + ': '));
           if (d[0] === 'Pre-checked' && mech.preChecked) {
             row.appendChild(el('span', { className: 'score-high' }, [d[1]]));
@@ -459,11 +459,11 @@
     addStat(statsDiv, PURPOSES.length, 'Purposes');
     addStat(statsDiv, consentPurposes.length, 'Require Consent', 'score-med');
     addStat(statsDiv, enabledCount + '/' + recordFields.length, 'Record Fields', scoreCls);
-    addStat(statsDiv, pct + '%', 'Completeness', scoreCls);
+    addStat(statsDiv, pctText(pct), 'Completeness', scoreCls);
     section.appendChild(statsDiv);
 
     var bar = el('div', { className: 'score-bar' });
-    var fill = el('div', { className: 'score-fill', style: 'width: ' + pct + '%; background: ' + (pct >= 75 ? '#4DBFBF' : pct >= 50 ? '#E8B96A' : '#e74c3c') + ';' });
+    var fill = el('div', { className: 'score-fill', style: 'width: ' + pct + '%; background: ' + (pct >= 75 ? '#4DBFBF' : pct >= 50 ? '#E8B96A' : '#F0705F') + ';' });
     bar.appendChild(fill);
     section.appendChild(bar);
 
@@ -476,13 +476,13 @@
       ['Audit Retention', state.lifecycle.auditRetentionPeriod || 'Not set']
     ];
     lcDetails.forEach(function(d) {
-      lcCard.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; margin-bottom: 2px;' }, [d[0] + ': ' + d[1]]));
+      lcCard.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; margin-bottom: 2px;' }, [d[0] + ': ' + d[1]]));
     });
     if (state.lifecycle.reConsentTriggers) {
-      lcCard.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; margin-bottom: 2px;' }, ['Re-consent Triggers: ' + state.lifecycle.reConsentTriggers]));
+      lcCard.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; margin-bottom: 2px;' }, ['Re-consent Triggers: ' + state.lifecycle.reConsentTriggers]));
     }
     if (state.lifecycle.crossBorderApproach) {
-      lcCard.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA;' }, ['Cross-border Approach: ' + state.lifecycle.crossBorderApproach]));
+      lcCard.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA;' }, ['Cross-border Approach: ' + state.lifecycle.crossBorderApproach]));
     }
     section.appendChild(lcCard);
 

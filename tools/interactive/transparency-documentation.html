@@ -303,7 +303,7 @@
       var cls = pct >= 80 ? 'score-low' : pct >= 50 ? 'score-med' : 'score-high';
       var row = el('tr'); row.appendChild(el('td', {}, [s.label]));
       row.appendChild(el('td', {}, [score.filled + ' / ' + score.total]));
-      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '%']));
+      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '% ' + completenessWord(pct)]));
       row.appendChild(scoreCell); tbody.appendChild(row);
     }
     table.appendChild(tbody); section.appendChild(table);
@@ -311,7 +311,7 @@
     var overallCls = overallPct >= 80 ? 'score-low' : overallPct >= 50 ? 'score-med' : 'score-high';
     var overallEl = el('div', { style: 'margin-top: 16px; text-align: center; font-size: 1.2em;' });
     overallEl.appendChild(document.createTextNode('Overall Completeness: '));
-    overallEl.appendChild(el('span', { className: overallCls }, [overallPct + '%']));
+    overallEl.appendChild(el('span', { className: overallCls }, [pctText(overallPct, totalFilled, totalAll) + ', ' + completenessWord(overallPct)]));
     section.appendChild(overallEl);
     if (overallPct < 50) section.appendChild(createAlert('danger', 'Documentation is incomplete. Several required sections need attention before regulatory submission.'));
     else if (overallPct < 80) section.appendChild(createAlert('warning', 'Documentation is partially complete. Review unfilled sections to improve compliance readiness.'));

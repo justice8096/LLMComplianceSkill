@@ -177,10 +177,10 @@
     if (config.project) {
       var infoBox = el('div', { style: 'padding: 12px; border: 1px solid #2A7B7B55; border-radius: 4px; background: #2A7B7B11; margin-top: 12px;' });
       infoBox.appendChild(el('h3', {}, ['Loaded System Info']));
-      infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 8px;' }, ['Project: ' + (config.project.name || 'N/A')]));
-      infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA;' }, ['Description: ' + (config.project.description || 'N/A')]));
+      infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin-top: 8px;' }, ['Project: ' + (config.project.name || 'N/A')]));
+      infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA;' }, ['Description: ' + (config.project.description || 'N/A')]));
       if (config.project.jurisdictions && config.project.jurisdictions.length > 0) {
-        infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA;' }, ['Jurisdictions: ' + config.project.jurisdictions.join(', ')]));
+        infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA;' }, ['Jurisdictions: ' + config.project.jurisdictions.join(', ')]));
       }
       items.push(infoBox);
       items.push(createAlert('success', 'Config loaded successfully. Proceed to Step 2 to map your automated decisions.'));
@@ -201,7 +201,7 @@
         var header = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;' });
         header.appendChild(el('h3', { style: 'color: #E8B96A;' }, ['Decision ' + (idx + 1)]));
         if (state.decisions.length > 1) {
-          header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.8em;', onClick: function() { state.decisions.splice(idx, 1); wizard.refreshStep(); } }));
+          header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.875rem;', onClick: function() { state.decisions.splice(idx, 1); wizard.refreshStep(); } }));
         }
         group.appendChild(header);
         group.appendChild(createTextInput('Decision name', d.name, function(v) { d.name = v; }, 'e.g. Loan approval, content recommendation'));
@@ -238,7 +238,7 @@
         var c = state.significance[cDef.id];
         var group = el('div', { style: 'margin-bottom: 16px; padding: 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [cDef.label]));
-        group.appendChild(el('p', { style: 'font-size: 0.8em; color: #6B7B8D; margin-bottom: 8px;' }, [cDef.description]));
+        group.appendChild(el('p', { style: 'font-size: 0.875rem; color: #8A9AAB; margin-bottom: 8px;' }, [cDef.description]));
         group.appendChild(createToggle('Applies to your system?', c.applies, function(v) { c.applies = v; wizard.saveNow(); }));
         group.appendChild(createTextArea('Justification', c.justification, function(v) { c.justification = v; }, 'Explain why this does or does not apply'));
         section.appendChild(group);
@@ -277,7 +277,7 @@
         var m = state.explainability.methods[mDef.id];
         var group = el('div', { style: 'margin-bottom: 12px; padding: 10px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         group.appendChild(el('h3', {}, [mDef.label]));
-        group.appendChild(el('p', { style: 'font-size: 0.8em; color: #6B7B8D; margin-bottom: 8px;' }, [mDef.description]));
+        group.appendChild(el('p', { style: 'font-size: 0.875rem; color: #8A9AAB; margin-bottom: 8px;' }, [mDef.description]));
         group.appendChild(createToggle('Used?', m.used, function(v) { m.used = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Implementation details', m.implementation, function(v) { m.implementation = v; }, 'How is this method implemented?'));
         section.appendChild(group);
@@ -344,7 +344,7 @@
       var cls = pct >= 80 ? 'score-low' : pct >= 50 ? 'score-med' : 'score-high';
       var row = el('tr'); row.appendChild(el('td', {}, [s.label]));
       row.appendChild(el('td', {}, [score.filled + ' / ' + score.total]));
-      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '%']));
+      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '% ' + completenessWord(pct)]));
       row.appendChild(scoreCell); tbody.appendChild(row);
     }
     table.appendChild(tbody); section.appendChild(table);
@@ -352,7 +352,7 @@
     var overallCls = overallPct >= 80 ? 'score-low' : overallPct >= 50 ? 'score-med' : 'score-high';
     var overallEl = el('div', { style: 'margin-top: 16px; text-align: center; font-size: 1.2em;' });
     overallEl.appendChild(document.createTextNode('Overall Completeness: '));
-    overallEl.appendChild(el('span', { className: overallCls }, [overallPct + '%']));
+    overallEl.appendChild(el('span', { className: overallCls }, [pctText(overallPct, totalFilled, totalAll) + ', ' + completenessWord(overallPct)]));
     section.appendChild(overallEl);
     if (overallPct < 50) section.appendChild(createAlert('danger', 'Automated decision documentation is incomplete. Several required sections need attention.'));
     else if (overallPct < 80) section.appendChild(createAlert('warning', 'Automated decision documentation is partially complete. Review unfilled sections.'));
@@ -365,13 +365,13 @@
     riskBox.appendChild(el('h3', {}, ['GDPR Art. 22 Risk Assessment']));
     if (triggered >= 2) {
       riskBox.appendChild(el('span', { className: 'score-high' }, ['HIGH RISK']));
-      riskBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 4px;' }, ['Art. 22 likely applies. Ensure meaningful human involvement, right to contest, and valid legal basis.']));
+      riskBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin-top: 4px;' }, ['Art. 22 likely applies. Ensure meaningful human involvement, right to contest, and valid legal basis.']));
     } else if (triggered === 1) {
       riskBox.appendChild(el('span', { className: 'score-med' }, ['MEDIUM RISK']));
-      riskBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 4px;' }, ['One trigger criterion met. Review with legal counsel.']));
+      riskBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin-top: 4px;' }, ['One trigger criterion met. Review with legal counsel.']));
     } else {
       riskBox.appendChild(el('span', { className: 'score-low' }, ['LOWER RISK']));
-      riskBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 4px;' }, ['Art. 22 may not apply based on current assessment. Verify with legal counsel.']));
+      riskBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin-top: 4px;' }, ['Art. 22 may not apply based on current assessment. Verify with legal counsel.']));
     }
     section.appendChild(riskBox);
 

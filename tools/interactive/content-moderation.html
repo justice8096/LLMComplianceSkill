@@ -203,8 +203,8 @@
       var info = config.systemInfo;
       var infoBox = el('div', { style: 'padding: 12px; border: 1px solid #2A7B7B55; border-radius: 4px; background: #2A7B7B11; margin-bottom: 12px;' });
       infoBox.appendChild(el('h3', {}, ['Loaded from config:']));
-      if (info.systemName) infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin: 4px 0;' }, ['System: ' + info.systemName]));
-      if (info.version) infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin: 4px 0;' }, ['Version: ' + info.version]));
+      if (info.systemName) infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin: 4px 0;' }, ['System: ' + info.systemName]));
+      if (info.version) infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin: 4px 0;' }, ['Version: ' + info.version]));
       items.push(infoBox);
     }
     items.push(createTextInput('System name', state.systemInfo.systemName, function(v) { state.systemInfo.systemName = v; }, 'e.g. Customer Support AI v2.1'));
@@ -421,7 +421,7 @@
       var cls = pct >= 80 ? 'score-low' : pct >= 50 ? 'score-med' : 'score-high';
       var row = el('tr'); row.appendChild(el('td', {}, [s.label]));
       row.appendChild(el('td', {}, [score.filled + ' / ' + score.total]));
-      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '%']));
+      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '% ' + completenessWord(pct)]));
       row.appendChild(scoreCell); tbody.appendChild(row);
     }
     table.appendChild(tbody); section.appendChild(table);
@@ -429,14 +429,14 @@
     var overallCls = overallPct >= 80 ? 'score-low' : overallPct >= 50 ? 'score-med' : 'score-high';
     var overallEl = el('div', { style: 'margin-top: 16px; text-align: center; font-size: 1.2em;' });
     overallEl.appendChild(document.createTextNode('Overall Completeness: '));
-    overallEl.appendChild(el('span', { className: overallCls }, [overallPct + '%']));
+    overallEl.appendChild(el('span', { className: overallCls }, [pctText(overallPct, totalFilled, totalAll) + ', ' + completenessWord(overallPct)]));
     section.appendChild(overallEl);
 
     var implementedCount = 0;
     for (var i = 0; i < moderationMechanisms.length; i++) {
       if (state.mechanisms[moderationMechanisms[i].id].implemented === true) implementedCount++;
     }
-    var mechEl = el('div', { style: 'margin-top: 12px; text-align: center; font-size: 0.9em; color: #9AACBA;' });
+    var mechEl = el('div', { style: 'margin-top: 12px; text-align: center; font-size: 0.9rem; color: #9AACBA;' });
     mechEl.appendChild(document.createTextNode('Moderation mechanisms active: ' + implementedCount + ' / ' + moderationMechanisms.length));
     section.appendChild(mechEl);
 

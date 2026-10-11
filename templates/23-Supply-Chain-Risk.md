@@ -76,13 +76,13 @@
 | **Insecure defaults** - HTTP instead of HTTPS, permissive CORS, debug modes | | | | |
 | **Incomplete error handling** - Swallowed exceptions, information leakage in errors | | | | |
 
-**Statistics (OpenSSF 2025):** 45% of AI-assisted development tasks introduce critical security flaws; 62% of AI-generated code contains known vulnerabilities; 78% contains at least one exploitable vulnerability that traditional scanning misses.
+**Why this matters:** In Veracode's 2025 GenAI Code Security Report, AI-generated code introduced a known security flaw in 45% of tasks tested, or about 9 in every 20 ([Veracode, July 2025](https://www.veracode.com/press-release/ai-generated-code-poses-major-security-risks-in-nearly-half-of-all-development-tasks-veracode-research-reveals/)).
 
 ### 3.2 Dependency Hallucination / Slopsquatting (OWASP LLM03, ENISA 2025)
 
 | Risk | Applicable? | Likelihood | Impact | Controls |
 |------|:-----------:|-----------|--------|----------|
-| **Package hallucination** - AI suggesting nonexistent packages (~20% rate) | | | | |
+| **Package hallucination** - AI suggesting nonexistent packages (about 1 in 5 suggested packages in one 2025 study of 16 code models) | | | | |
 | **Slopsquatting** - Attacker registers hallucinated package names with malware | | | | |
 | **Version hallucination** - AI suggesting nonexistent versions of real packages | | | | |
 | **Dependency confusion** - AI mixing public/private package names | | | | |

@@ -22,34 +22,34 @@
     '.model-card { padding: 12px; margin-bottom: 8px; border: 2px solid #1E2D3D; border-radius: 6px; background: #0D1830; cursor: pointer; transition: all 0.15s; }',
     '.model-card:hover { border-color: #3A4A5A; }',
     '.model-card.selected { border-color: #D4943A; background: #1E2D3D; }',
-    '.model-meta { font-size: 0.85em; color: #9AACBA; margin-top: 4px; }',
+    '.model-meta { font-size: 0.875rem; color: #9AACBA; margin-top: 4px; }',
     '.model-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }',
-    '.model-tag { font-size: 0.75em; padding: 2px 8px; border-radius: 3px; background: #1E2D3D; color: #9AACBA; }',
+    '.model-tag { font-size: 0.875rem; padding: 2px 8px; border-radius: 3px; background: #1E2D3D; color: #9AACBA; }',
     '.model-tag.open { background: #1a3a2a; color: #4DBFBF; }',
     '.model-tag.api { background: #3a2a1a; color: #E8B96A; }',
-    '.model-tag.china { background: #3a1a1a; color: #e74c3c; }',
+    '.model-tag.china { background: #3a1a1a; color: #F0705F; }',
     '.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }',
-    '.filter-btn { padding: 6px 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830; color: #9AACBA; cursor: pointer; font-size: 0.85em; }',
+    '.filter-btn { padding: 6px 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830; color: #9AACBA; cursor: pointer; font-size: 0.875rem; }',
     '.filter-btn.active { border-color: #D4943A; color: #E8B96A; background: #1E2D3D; }',
-    '.autofill-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1E2D3D; font-size: 0.85em; }',
+    '.autofill-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1E2D3D; font-size: 0.875rem; }',
     '.autofill-field { color: #9AACBA; }',
     '.autofill-value { color: #4DBFBF; max-width: 60%; text-align: right; }',
-    '.compliance-flag { padding: 8px 12px; margin-bottom: 6px; border-left: 3px solid #D4943A; background: #0D183088; font-size: 0.9em; }',
-    '.compliance-flag.warning { border-color: #e74c3c; }',
+    '.compliance-flag { padding: 8px 12px; margin-bottom: 6px; border-left: 3px solid #D4943A; background: #0D183088; font-size: 0.9rem; }',
+    '.compliance-flag.warning { border-color: #F0705F; }',
     '.compliance-flag.info { border-color: #2A7B7B; }',
-    '.search-input { width: 100%; padding: 10px 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830; color: #F0EBE0; font-size: 0.95em; margin-bottom: 12px; }',
-    '.search-input::placeholder { color: #6B7B8D; }',
+    '.search-input { width: 100%; padding: 10px 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830; color: #F0EBE0; font-size: 0.95rem; margin-bottom: 12px; }',
+    '.search-input::placeholder { color: #8A9AAB; }',
     '.model-cards-container { max-height: 500px; overflow-y: auto; padding-right: 4px; }',
     '.custom-model-form { padding: 16px; border: 1px dashed #3A4A5A; border-radius: 6px; background: #0D1830; margin-top: 12px; }',
     '.deploy-block { padding: 12px; border: 1px solid #1E2D3D; border-radius: 6px; background: #0D1830; margin-bottom: 10px; }',
-    '.deploy-block-title { font-size: 0.95em; font-weight: 600; color: #E8B96A; margin-bottom: 8px; }',
-    '.risk-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85em; }',
+    '.deploy-block-title { font-size: 0.95rem; font-weight: 600; color: #E8B96A; margin-bottom: 8px; }',
+    '.risk-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.875rem; }',
     '.risk-label { color: #9AACBA; }',
     '.risk-yes { color: #4DBFBF; }',
-    '.risk-no { color: #e74c3c; }',
+    '.risk-no { color: #F0705F; }',
     '.risk-partial { color: #E8B96A; }',
     '.obligation-section { margin-bottom: 16px; }',
-    '.obligation-title { font-size: 0.95em; font-weight: 600; margin-bottom: 6px; }',
+    '.obligation-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }',
     '.obligation-title.provider { color: #4DBFBF; }',
     '.obligation-title.deployer { color: #E8B96A; }'
   ].join('\n');
@@ -290,13 +290,13 @@
         });
 
         var header = el('div', { style: 'display: flex; justify-content: space-between; align-items: center;' });
-        var labelSpan = el('span', { style: 'font-size: 0.95em; font-weight: 600; color: ' + (isSel ? '#E8B96A' : '#F0EBE0') + ';' }, [opt.label]);
+        var labelSpan = el('span', { style: 'font-size: 0.95rem; font-weight: 600; color: ' + (isSel ? '#E8B96A' : '#F0EBE0') + ';' }, [opt.label]);
         header.appendChild(labelSpan);
         var badge = el('span', { className: 'badge enacted', style: isSel ? '' : 'display:none' }, ['Selected']);
         header.appendChild(badge);
         btn.appendChild(header);
 
-        var desc = el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin-top: 6px; display: ' + (isSel ? 'block' : 'none') + ';' }, [opt.desc]);
+        var desc = el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin-top: 6px; display: ' + (isSel ? 'block' : 'none') + ';' }, [opt.desc]);
         btn.appendChild(desc);
 
         btn._labelSpan = labelSpan;
@@ -340,13 +340,13 @@
   function renderNonLlmSummary(container) {
     container.appendChild(createAlert('info', 'Your project does not use an LLM. The following templates still apply for general AI systems:'));
     for (var i = 0; i < nonLlmTemplates.length; i++) {
-      var row = el('div', { style: 'padding: 4px 0 4px 12px; font-size: 0.85em; color: #4DBFBF;' }, ['\u2713 ' + nonLlmTemplates[i]]);
+      var row = el('div', { style: 'padding: 4px 0 4px 12px; font-size: 0.875rem; color: #4DBFBF;' }, ['\u2713 ' + nonLlmTemplates[i]]);
       container.appendChild(row);
     }
     container.appendChild(el('div', { style: 'margin-top: 8px;' }));
     container.appendChild(createAlert('warning', 'The following LLM-specific templates will NOT apply:'));
     for (var i = 0; i < llmTemplates.length; i++) {
-      var row = el('div', { style: 'padding: 4px 0 4px 12px; font-size: 0.85em; color: #6B7B8D;' }, ['\u2717 ' + llmTemplates[i]]);
+      var row = el('div', { style: 'padding: 4px 0 4px 12px; font-size: 0.875rem; color: #8A9AAB;' }, ['\u2717 ' + llmTemplates[i]]);
       container.appendChild(row);
     }
   }
@@ -363,10 +363,10 @@
       return;
     }
 
-    var countEl = el('div', { style: 'font-size: 0.9em; color: #E8B96A; margin-bottom: 12px;' }, [getSelectedCount() + ' model(s) selected']);
+    var countEl = el('div', { style: 'font-size: 0.9rem; color: #E8B96A; margin-bottom: 12px;' }, [getSelectedCount() + ' model(s) selected']);
 
     var cardsContainer = el('div', { className: 'model-cards-container' });
-    var loadingEl = el('div', { style: 'color: #6B7B8D; padding: 20px; text-align: center;' }, ['Loading model registry...']);
+    var loadingEl = el('div', { style: 'color: #8A9AAB; padding: 20px; text-align: center;' }, ['Loading model registry...']);
     cardsContainer.appendChild(loadingEl);
 
     // Search input
@@ -407,7 +407,7 @@
 
     // Source filter bar
     var sourceBar = el('div', { className: 'filter-bar' });
-    sourceBar.appendChild(el('span', { style: 'font-size: 0.8em; color: #6B7B8D; padding: 6px 0;' }, ['Source:']));
+    sourceBar.appendChild(el('span', { style: 'font-size: 0.875rem; color: #8A9AAB; padding: 6px 0;' }, ['Source:']));
     var sourceFilters = ['', 'HuggingFace', 'Ollama', 'API'];
     var sourceButtons = [];
     for (var i = 0; i < sourceFilters.length; i++) {
@@ -431,7 +431,7 @@
 
     // Country filter bar
     var countryBar = el('div', { className: 'filter-bar' });
-    countryBar.appendChild(el('span', { style: 'font-size: 0.8em; color: #6B7B8D; padding: 6px 0;' }, ['Country:']));
+    countryBar.appendChild(el('span', { style: 'font-size: 0.875rem; color: #8A9AAB; padding: 6px 0;' }, ['Country:']));
     var countryFilters = ['', 'US', 'France', 'China', 'Canada', 'UK', 'Other'];
     var countryButtons = [];
     for (var i = 0; i < countryFilters.length; i++) {
@@ -495,7 +495,7 @@
         (function(cm, idx) {
           var row = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border: 1px solid #D4943A; border-radius: 4px; margin-bottom: 4px; background: #1E2D3D;' });
           row.appendChild(el('span', { style: 'color: #E8B96A;' }, [cm.name + ' (' + cm.provider + ')']));
-          var removeBtn = el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 2px 10px; font-size: 0.75em;' });
+          var removeBtn = el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 2px 10px; font-size: 0.875rem;' });
           removeBtn.addEventListener('click', function() {
             state.customModels.splice(idx, 1);
             delete state.deployments['custom-' + cm.id];
@@ -777,7 +777,7 @@
 
     // Auto-fill preview
     section.appendChild(el('h3', {}, ['Auto-fill Preview']));
-    section.appendChild(el('p', { style: 'font-size: 0.85em; color: #6B7B8D; margin-bottom: 8px;' }, ['These fields will be pre-populated in the evidence toolkit from your selections:']));
+    section.appendChild(el('p', { style: 'font-size: 0.875rem; color: #8A9AAB; margin-bottom: 8px;' }, ['These fields will be pre-populated in the evidence toolkit from your selections:']));
 
     var autofillData = buildAutofillData(allModels);
     for (var i = 0; i < autofillData.length; i++) {
@@ -800,27 +800,27 @@
     var providerObl = el('div', { className: 'obligation-section' });
     providerObl.appendChild(el('div', { className: 'obligation-title provider' }, ['Provider Obligations (on model vendor)']));
     if (hasApiModel) {
-      providerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Training data documentation and disclosure']));
-      providerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Model safety testing and red-teaming']));
-      providerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Model card / technical documentation']));
-      providerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Copyright policy for training data']));
-      providerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Content filtering and watermarking (if applicable)']));
+      providerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Training data documentation and disclosure']));
+      providerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Model safety testing and red-teaming']));
+      providerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Model card / technical documentation']));
+      providerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Copyright policy for training data']));
+      providerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Content filtering and watermarking (if applicable)']));
     }
     if (hasOpenSource) {
-      providerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #E8B96A; padding: 2px 0 2px 12px;' }, ['\u26A0 Open-source models may shift some provider obligations to you as the deployer if the provider does not fulfill them.']));
+      providerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #E8B96A; padding: 2px 0 2px 12px;' }, ['\u26A0 Open-source models may shift some provider obligations to you as the deployer if the provider does not fulfill them.']));
     }
     section.appendChild(providerObl);
 
     var deployerObl = el('div', { className: 'obligation-section' });
     deployerObl.appendChild(el('div', { className: 'obligation-title deployer' }, ['Deployer Obligations (on you)']));
-    deployerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Risk assessment for your specific use case']));
-    deployerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Human oversight implementation']));
-    deployerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Transparency and user disclosure']));
-    deployerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Data processing agreements (for API models)']));
-    deployerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Incident monitoring and reporting']));
-    deployerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Bias and fairness testing for your application']));
+    deployerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Risk assessment for your specific use case']));
+    deployerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Human oversight implementation']));
+    deployerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Transparency and user disclosure']));
+    deployerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Data processing agreements (for API models)']));
+    deployerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Incident monitoring and reporting']));
+    deployerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #9AACBA; padding: 2px 0 2px 12px;' }, ['\u2022 Bias and fairness testing for your application']));
     if (state.usesLlm === 'own') {
-      deployerObl.appendChild(el('div', { style: 'font-size: 0.85em; color: #e74c3c; padding: 2px 0 2px 12px;' }, ['\u26A0 As the model developer, you also bear ALL provider obligations listed above.']));
+      deployerObl.appendChild(el('div', { style: 'font-size: 0.875rem; color: #F0705F; padding: 2px 0 2px 12px;' }, ['\u26A0 As the model developer, you also bear ALL provider obligations listed above.']));
     }
     section.appendChild(deployerObl);
 
@@ -971,7 +971,7 @@
       section.appendChild(createAlert('info', 'This project does not use an LLM. General AI templates apply.'));
       section.appendChild(el('h3', {}, ['Applicable Templates']));
       for (var i = 0; i < nonLlmTemplates.length; i++) {
-        section.appendChild(el('div', { style: 'padding: 2px 0 2px 12px; font-size: 0.85em; color: #4DBFBF;' }, ['\u2713 ' + nonLlmTemplates[i]]));
+        section.appendChild(el('div', { style: 'padding: 2px 0 2px 12px; font-size: 0.875rem; color: #4DBFBF;' }, ['\u2713 ' + nonLlmTemplates[i]]));
       }
       section.appendChild(el('div', { style: 'margin-top: 16px;' }));
       section.appendChild(createTextArea('Notes', state.notes, function(v) { state.notes = v; }, 'Any additional notes about AI usage in this project...'));
@@ -1027,9 +1027,9 @@
       // Compliance notes for this model
       var notes = getModelComplianceNotes(model, dep);
       if (notes.length > 0) {
-        mCard.appendChild(el('div', { style: 'margin-top: 8px; font-size: 0.8em; color: #6B7B8D;' }, ['Compliance notes:']));
+        mCard.appendChild(el('div', { style: 'margin-top: 8px; font-size: 0.875rem; color: #8A9AAB;' }, ['Compliance notes:']));
         for (var j = 0; j < notes.length; j++) {
-          mCard.appendChild(el('div', { style: 'padding: 2px 0 2px 12px; font-size: 0.8em; color: #E8B96A;' }, ['\u26A0 ' + notes[j]]));
+          mCard.appendChild(el('div', { style: 'padding: 2px 0 2px 12px; font-size: 0.875rem; color: #E8B96A;' }, ['\u26A0 ' + notes[j]]));
         }
       }
 
@@ -1038,7 +1038,7 @@
 
     // Auto-fill fields
     section.appendChild(el('h3', {}, ['Auto-fill Fields']));
-    section.appendChild(el('p', { style: 'font-size: 0.85em; color: #6B7B8D; margin-bottom: 8px;' }, ['These values will be written to your compliance config when you click "Apply to Config":']));
+    section.appendChild(el('p', { style: 'font-size: 0.875rem; color: #8A9AAB; margin-bottom: 8px;' }, ['These values will be written to your compliance config when you click "Apply to Config":']));
     var autofillData = buildAutofillData(allModels);
     for (var i = 0; i < autofillData.length; i++) {
       var row = el('div', { className: 'autofill-row' });
