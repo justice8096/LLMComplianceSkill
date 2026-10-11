@@ -25,40 +25,58 @@
       "keyDeadline": "now"
     },
     "US-CO": {
-      "name": "United States - Colorado",
+      "name": "United States — Colorado",
       "nameKey": "US-CO",
       "status": "enacted",
       "keyDeadline": "2027-01-01"
     },
     "US-CA": {
-      "name": "United States - California",
+      "name": "United States — California",
       "nameKey": "US-CA",
       "status": "active-sector",
       "keyDeadline": "2027-01-01"
     },
     "US-NYC": {
-      "name": "United States - New York City",
+      "name": "United States — New York City",
       "nameKey": "US-NYC",
       "status": "enacted",
       "keyDeadline": "now"
     },
     "US-IL": {
-      "name": "United States - Illinois",
+      "name": "United States — Illinois",
       "nameKey": "US-IL",
       "status": "enacted",
       "keyDeadline": "now"
     },
     "US-TX": {
-      "name": "United States - Texas",
+      "name": "United States — Texas",
       "nameKey": "US-TX",
       "status": "enacted",
       "keyDeadline": "now"
     },
     "US-UT": {
-      "name": "United States - Utah",
+      "name": "United States — Utah",
       "nameKey": "US-UT",
       "status": "enacted",
       "keyDeadline": "now"
+    },
+    "US-NY": {
+      "name": "United States — New York",
+      "nameKey": "US-NY",
+      "status": "enacted",
+      "keyDeadline": "2027-01-01"
+    },
+    "US-CT": {
+      "name": "United States — Connecticut",
+      "nameKey": "US-CT",
+      "status": "enacted",
+      "keyDeadline": "2026-10-01"
+    },
+    "US-WA": {
+      "name": "United States — Washington",
+      "nameKey": "US-WA",
+      "status": "enacted",
+      "keyDeadline": "2027-01-01"
     },
     "CA": {
       "name": "Canada",
@@ -140,6 +158,8 @@
       "KR": true,
       "UK": true,
       "US-CO": true,
+      "US-IL": true,
+      "US-NY": true,
       "BR": true,
       "PE": true,
       "NG": true,
@@ -155,6 +175,8 @@
       "US-NYC": true,
       "US-IL": true,
       "US-UT": true,
+      "US-CT": true,
+      "US-WA": true,
       "CA": true,
       "IN": true,
       "NZ": true
@@ -163,13 +185,16 @@
       "EU": true,
       "CN": true,
       "KR": true,
-      "US-CA": true
+      "US-CA": true,
+      "US-CT": true
     },
     "04": {
       "EU": true,
       "UK": true,
       "US-CO": true,
+      "US-CA": true,
       "US-NYC": true,
+      "US-CT": true,
       "CA": true,
       "AU": true,
       "ZA": true
@@ -185,6 +210,10 @@
       "EU": true,
       "KR": true,
       "US-CO": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true,
+      "US-CT": true,
       "CA": true,
       "BR": true,
       "PE": true,
@@ -192,8 +221,8 @@
     },
     "07": {
       "EU": true,
-      "UK": true,
       "KR": true,
+      "UK": true,
       "CA": true,
       "BR": true,
       "IN": true,
@@ -207,12 +236,13 @@
     },
     "08": {
       "EU": true,
-      "UK": true,
       "KR": true,
+      "UK": true,
       "US-CO": true,
       "US-CA": true,
       "US-NYC": true,
       "US-IL": true,
+      "US-CT": true,
       "CA": true,
       "SG": true,
       "AU": true,
@@ -220,19 +250,22 @@
     },
     "09": {
       "EU": true,
-      "UK": true,
       "KR": true,
+      "UK": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-CT": true,
       "CA": true,
+      "JP": true,
       "SG": true,
       "AU": true,
-      "JP": true,
       "NG": true,
       "ZA": true
     },
     "10": {
       "EU": true,
-      "UK": true,
       "KR": true,
+      "UK": true,
       "CA": true,
       "BR": true,
       "IN": true,
@@ -245,8 +278,9 @@
     },
     "11": {
       "EU": true,
-      "UK": true,
       "KR": true,
+      "UK": true,
+      "US-CA": true,
       "CA": true,
       "BR": true,
       "IN": true,
@@ -259,20 +293,29 @@
     "12": {
       "EU": true,
       "UK": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-TX": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true,
       "CA": true,
       "BR": true,
       "JP": true,
       "SG": true,
       "AU": true,
-      "NZ": true,
-      "US-TX": true
+      "NZ": true
     },
     "13": {
       "EU": true,
       "CN": true,
       "KR": true,
       "UK": true,
-      "US-CA": true
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true
     },
     "14": {
       "EU": true,
@@ -285,16 +328,25 @@
       "EU": true,
       "CN": true,
       "KR": true,
-      "UK": true
+      "UK": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true
     },
     "16": {
       "CN": true,
+      "US-CA": true,
+      "US-CT": true,
+      "US-WA": true,
       "IN": true
     },
     "17": {
       "EU": true,
       "KR": true,
       "US-CO": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true,
       "BR": true,
       "PE": true,
       "NG": true,
@@ -305,13 +357,15 @@
       "EU": true
     },
     "19": {
-      "EU": true
+      "EU": true,
+      "US-IL": true
     },
     "20": {
       "EU": true,
-      "UK": true,
       "KR": true,
+      "UK": true,
       "US-NYC": true,
+      "US-CT": true,
       "CA": true,
       "BR": true,
       "IN": true,
@@ -331,6 +385,9 @@
       "US-IL": true,
       "US-TX": true,
       "US-UT": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true,
       "CA": true,
       "BR": true,
       "IN": true,
@@ -355,6 +412,9 @@
       "US-IL": true,
       "US-TX": true,
       "US-UT": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true,
       "CA": true,
       "BR": true,
       "IN": true,
@@ -375,16 +435,19 @@
       "UK": true,
       "US-CO": true,
       "US-CA": true,
+      "US-NY": true,
       "CA": true,
+      "JP": true,
       "SG": true,
-      "AU": true,
-      "JP": true
+      "AU": true
     },
     "24": {
       "EU": true,
       "CN": true,
       "KR": true,
-      "UK": true
+      "UK": true,
+      "US-CA": true,
+      "US-NY": true
     }
   },
   "templateNames": {

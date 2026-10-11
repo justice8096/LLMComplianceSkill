@@ -28,11 +28,14 @@ Regulatory refresh to October 2026, synced from ai-regulatory-knowledge-base v1.
 - `README.md`, `Evidence-Requirements.md`, `Law-Evidence-Matrix.md`: Colorado, EU and new state-law rows updated.
 
 ### Fixed `[defect]`
+- `tools/autofill.js` jurisdiction checkbox filler no longer prefix-matches: selecting `US-NY` (United States - New York) used to also tick New York City in template 21.
 - `tools/autofill.js` now honors `--output <dir>` (it previously always wrote to `output/`, so `evidence-checker.js --output` could never find the files).
 - `tools/autofill.js` and `tools/evidence-checker.js` strip a UTF-8 BOM before `JSON.parse`; configs saved by Notepad or PowerShell `Set-Content -Encoding UTF8` no longer crash with "Unexpected token".
 - Em dashes in `deadline-data.json` (which rendered as mojibake on Windows) replaced with hyphens; a test now guards against their return.
 
 ### Added `[structural]`
+- `tools/data/jurisdiction-matrix.json` gains three jurisdictions (22 -> 25): `US-NY` (RAISE Act), `US-CT` (Public Act 26-15) and `US-WA` (HB 2225), with template requirements mapped on an inclusive basis (binding duties plus strongly advisable evidence). Locale names added in all seven locales; tests updated to 25.
+- Template requirements re-mapped for the 2026 laws: `US-CO` (SB 26-189: notices, ADM logic and human review in; impact assessment kept as advisable), `US-CA` (adds CCPA ADMT, SB 947, SB 243 and SB 53 governance/security templates) and `US-IL` (adds SB 315 frontier templates incl. 19 Conformity Assessment for the third-party audit).
 - `tools/sync-kb.js` (`npm run sync:kb`, `npm run sync:kb:check`): copies the regulation files and world map from a sibling or `--from` checkout of ai-regulatory-knowledge-base, so the knowledge base is the single source of truth and this repo can be checked for drift in CI.
 - Tests: `eu.aiAct.transparency` presence, no `usCo.sb24205`, ASCII-only law names.
 

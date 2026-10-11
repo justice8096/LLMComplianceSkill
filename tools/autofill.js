@@ -112,9 +112,10 @@ function fillCheckbox(md, itemText, checked) {
 }
 
 function fillJurisdictionCheckbox(md, jurisdictionName) {
-  // Match: [ ] **jurisdiction**  or  [ ] jurisdiction
+  // Match: [ ] **jurisdiction**  or  [ ] jurisdiction, but only the whole cell:
+  // "United States - New York" must not also tick "United States - New York City".
   const escaped = jurisdictionName.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
-  const re = new RegExp(`\\[ \\](\\s*\\*?\\*?${escaped})`, 'gi');
+  const re = new RegExp(`\\[ \\](\\s*\\*?\\*?${escaped}\\*?\\*?)(?=\\s*(\\||$))`, 'gim');
   return md.replace(re, `[x]$1`);
 }
 

@@ -188,8 +188,8 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 | File | Contents |
 |------|----------|
-| `tools/data/jurisdiction-matrix.json` | Which templates each jurisdiction requires |
-| `tools/data/deadline-data.json` | 21 compliance deadlines with exact dates |
+| `tools/data/jurisdiction-matrix.json` | Which templates each of the 25 jurisdictions requires |
+| `tools/data/deadline-data.json` | 47 compliance deadlines with exact dates (2023-2028) |
 | `tools/data/llm-registry.json` | Index for 66-model LLM registry (chunked across 6 files) |
 | `tools/data/llm-registry-*.json` | Per-provider model registry chunks (Meta, Mistral, Google/Microsoft, China, API-only, other open) |
 

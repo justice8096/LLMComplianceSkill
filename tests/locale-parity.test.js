@@ -143,15 +143,15 @@ NON_EN_LOCALES.forEach(function(lc) {
   });
 });
 
-// ── All 22 jurisdictions present ─────────────────────────────────────────────
+// ── All 25 jurisdictions present ─────────────────────────────────────────────
 
 var EXPECTED_JURISDICTIONS = [
-  'EU', 'CN', 'KR', 'UK', 'US-CO', 'US-CA', 'US-NYC', 'US-IL', 'US-TX', 'US-UT',
+  'EU', 'CN', 'KR', 'UK', 'US-CO', 'US-CA', 'US-NYC', 'US-IL', 'US-TX', 'US-UT', 'US-NY', 'US-CT', 'US-WA',
   'CA', 'BR', 'IN', 'JP', 'SG', 'AU', 'NZ', 'PE', 'NG', 'ZA', 'MX', 'VN'
 ];
 
 NON_EN_LOCALES.forEach(function(lc) {
-  test(lc + ': jurisdictions has all 22 entries', function() {
+  test(lc + ': jurisdictions has all 25 entries', function() {
     var d = readLocale(lc);
     EXPECTED_JURISDICTIONS.forEach(function(j) {
       assert.ok(
