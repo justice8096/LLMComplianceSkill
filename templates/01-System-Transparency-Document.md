@@ -1,6 +1,6 @@
 # System Transparency Document
 
-> **Laws served:** EU AI Act Arts. 11-14, 50; Colorado SB 24-205; UK DUA Act; South Korea AI Basic Act; Brazil PL 2338/2023; Peru Law No. 31814
+> **Laws served:** EU AI Act Arts. 11-14, 50; Colorado SB 26-189; UK DUA Act; South Korea AI Basic Act; Brazil PL 2338/2023; Peru Law No. 31814
 > **Template version:** 1.0 | **Last updated:** 2026-03-14
 
 ---
@@ -69,7 +69,7 @@
 
 ## 3. Known Limitations
 
-> **Required by:** Colorado SB 24-205 (developer must disclose); EU AI Act Art. 13
+> **Required by:** Colorado SB 26-189 (developer must document); EU AI Act Art. 13
 
 | Limitation | Description | Mitigation |
 |-----------|-------------|------------|

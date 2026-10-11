@@ -92,7 +92,7 @@ No server required. Everything runs locally with zero external dependencies.
 
 | # | Template | Key Regulations |
 |---|---------|----------------|
-| 01 | System Transparency Document | EU AI Act Arts. 11-14, Colorado SB 24-205, UK DUA Act |
+| 01 | System Transparency Document | EU AI Act Arts. 11-14, Colorado SB 26-189, UK DUA Act |
 | 02 | User-Facing Disclosure Toolkit | EU AI Act Art. 50, Colorado, California, China |
 | 03 | Content Labeling Spec | EU AI Act, China Content Labeling, California SB 942 |
 | 04 | Automated Decision Logic | EU, UK, Colorado, Australia |
@@ -159,9 +159,11 @@ No server required. Everything runs locally with zero external dependencies.
 | **Aug 2025** | EU | AI Act — GPAI obligations |
 | **Jan 2026** | US-CA | SB 53 + AB 2013 |
 | **Feb 2026** | UK | DUA Act — ADM reforms |
-| **Jun 2026** | US-CO | Colorado AI Act (SB 24-205) |
-| **Aug 2026** | EU | AI Act — Full applicability |
-| **Dec 2026** | AU | Privacy Act ADM obligations |
+| **Jan 2026** | KR | AI Basic Act in force |
+| **Aug 2, 2026** | EU | AI Act — Art. 50 transparency + penalties (high-risk delayed to Dec 2027 by Digital Omnibus) |
+| **Dec 10, 2026** | AU | Privacy Act ADM obligations |
+| **Jan 1, 2027** | US | CO SB 26-189, NY RAISE Act, IL SB 315, CA CCPA ADMT |
+| **Dec 2, 2027** | EU | AI Act — Annex III high-risk applicability |
 
 ## Using as a Claude Code Skill
 

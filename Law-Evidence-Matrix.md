@@ -56,8 +56,8 @@
 | Law | Status | RC | CA | RM | IA | TD | TD-DATA | TD-CR | TRANS | DISC | LABEL | HO | BIAS | PIA | CONSENT | DSR | GOV | LIT | INC | REG | SEC | SAFE | CE | ENERGY |
 |-----|--------|----|----|----|----|----|---------|----|-------|------|-------|----|------|-----|---------|-----|-----|-----|-----|-----|-----|------|----|----|
 | EU AI Act — Prohibited practices | In force | ✅ | | | | ✅ | | | | | | | | | | | | | | | | | | |
-| EU AI Act — High-risk systems | Aug 2026 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | | ✅ | ✅ | ✅ | ✅ | ✅ | | | | ✅ | ✅ | ✅ | ✅ | | | ✅ | |
-| EU AI Act — Limited risk (Art. 50) | Aug 2026 | | | | | | | | | ✅ | ✅ | | | | | | | | | | | | | |
+| EU AI Act — High-risk systems | Dec 2027 (Annex III) / Aug 2028 (Annex I) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | | ✅ | ✅ | ✅ | ✅ | ✅ | | | | ✅ | ✅ | ✅ | ✅ | | | ✅ | |
+| EU AI Act — Limited risk (Art. 50) | In force (Aug 2026) | | | | | | | | | ✅ | ✅ | | | | | | | | | | | | | |
 | EU AI Act — AI Literacy (Art. 4) | In force | | | | | | | | | | | | | | | | | ✅ | | | | | | |
 | EU AI Act — GPAI baseline (Art. 53) | In force | | | | | ✅ | ✅ | ✅ | | | | | | | | | | | | | | | | |
 | EU AI Act — GPAI systemic risk (Art. 55) | In force | | | | | ✅ | ✅ | ✅ | | | | | | | | | | | ✅ | | ✅ | ✅ | | ✅ |
@@ -81,10 +81,12 @@
 
 | Law | Status | RC | RM | IA | TD | TD-DATA | TD-CR | TRANS | DISC | LABEL | LABEL-WM | HO | BIAS | BIAS-AUDIT | PIA | CONSENT | DRP | GOV | INC | WB | SECT |
 |-----|--------|----|----|----|----|---------|-------|-------|------|-------|------|----|------|------|-----|---------|-----|-----|-----|----|----|
-| Colorado AI Act (SB 24-205) | Jun 2026 | ✅ | ✅ | ✅ | ✅ | | | | ✅ | | | | ✅ | | | | | | | | |
+| Colorado SB 26-189 (replaces SB 24-205) | Jan 2027 | ✅ | | | ✅ | | | | ✅ | | | ✅ | | | | | | | | | |
+| NY RAISE Act (frontier models) | Jan 2027 | | ✅ | | ✅ | | | | | | | | | | | | | ✅ | ✅ | ✅ | |
+| IL SB 315 AI Safety Measures Act | Jan 2027 | | ✅ | | ✅ | | | | | | | | | ✅ | | | | ✅ | ✅ | ✅ | |
 | CA Frontier AI (SB 53) | In force | | | | | | | | | | | | | | | | | | ✅ | ✅ | |
 | CA Training Data (AB 2013) | In force | | | | | ✅ | | | | | | | | | | | | | | | |
-| CA AI Transparency (SB 942) | Aug 2026 | | | | | | | | ✅ | ✅ | ✅ | | | | | | | | | | |
+| CA AI Transparency (SB 942, amended SB 1000) | In force (Aug 2026) | | | | | | | | ✅ | ✅ | ✅ | | | | | | | | | | |
 | CA Common Pricing Algorithm ban | In force | | | | ✅ | | | | | | | | | | | | | | | | |
 | CA Civil Rights AI Employment | In force | | | | | | | | | | | | ✅ | | | | | | | | |
 | CA Deepfake disclosure laws | Various | | | | | | | | | ✅ | | | | | | | | | | | |

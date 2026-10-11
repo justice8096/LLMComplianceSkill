@@ -1,6 +1,6 @@
 # User-Facing Disclosure Toolkit
 
-> **Laws served:** EU AI Act Art. 50; South Korea AI Basic Act; China GenAI Interim Measures; Utah GenAI Disclosure; California SB 942; Colorado SB 24-205; NYC Local Law 144; Illinois AI Video Interview Act
+> **Laws served:** EU AI Act Art. 50; South Korea AI Basic Act; China GenAI Interim Measures; Utah GenAI Disclosure; California SB 942; Colorado SB 26-189; NYC Local Law 144; Illinois AI Video Interview Act
 > **Template version:** 1.0 | **Last updated:** 2026-03-14
 
 ---

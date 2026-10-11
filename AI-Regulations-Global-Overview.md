@@ -1,6 +1,6 @@
-# AI & LLM Software Development Regulations — Global Overview
+# AI & LLM Software Development Regulations - Global Overview
 
-**Last Updated:** 2026-03-13
+**Last Updated:** 2026-10-11
 **Tags:** #ai-regulation #global #moc #software-development
 
 ---
@@ -11,17 +11,17 @@ This folder contains research on AI and LLM software development regulations acr
 
 | Region | File | Status | Key Takeaway |
 |--------|------|--------|-------------|
-| **European Union** | [[AI-Regulations-EU]] | Enacted (phased) | EU AI Act — world's first comprehensive AI law; full applicability Aug 2026 |
-| **United Kingdom** | [[AI-Regulations-UK]] | Sector-specific + DUA Act | No AI Bill yet (expected late 2026); DUA Act reforms in force Feb 2026 |
-| **United States** | [[AI-Regulations-UnitedStates]] | Patchwork | No federal law; aggressive state legislation; federal preemption battle |
-| **Canada** | [[AI-Regulations-Canada]] | In transition | AIDA died; privacy reform expected; provincial laws advancing |
-| **China** | [[AI-Regulations-China]] | Actively enforced | First country with binding GenAI rules; algorithm filing mandatory; comprehensive AI law in research |
-| **Japan & South Korea** | [[AI-Regulations-Japan-SouthKorea]] | Mixed | Japan: innovation-first soft law; South Korea: AI Basic Act effective Jan 2026 |
-| **India, Singapore & ASEAN** | [[AI-Regulations-India-Singapore-ASEAN]] | Emerging | Singapore leads on governance toolkits; India relies on DPDPA; Vietnam first ASEAN AI law |
-| **Australia** | [[AI-Regulations-Australia]] | No AI-specific law | Existing laws + voluntary guidance; AI Safety Institute launching 2026 |
-| **New Zealand** | [[AI-Regulations-NewZealand]] | No AI-specific law | Light-touch, voluntary guidance; relies on Privacy Act 2020 |
-| **Mexico & Latin America** | [[AI-Regulations-Mexico-LatinAmerica]] | Mostly proposed | Peru only enacted law; Brazil most advanced; EU-influenced risk-based approach spreading |
-| **Africa** | [[AI-Regulations-Africa]] | Strategies + data protection | No enacted AI law yet; Nigeria's bill imminent; AU Continental AI Strategy; data protection as de facto AI regulation |
+| **European Union** | [[AI-Regulations-EU]] | Enacted (phased, amended) | EU AI Act; Digital Omnibus (Reg. 2026/1744) delayed high-risk rules to Dec 2027 / Aug 2028; transparency and penalties live since Aug 2026 |
+| **United Kingdom** | [[AI-Regulations-UK]] | Sector-specific + DUA Act | No AI Bill (none in the May 2026 King's Speech); DUA Act in force; Ofcom and CMA enforcing |
+| **United States** | [[AI-Regulations-UnitedStates]] | Patchwork | No federal law; frontier-model laws in CA, NY, IL; Colorado narrowed and paused; preemption fight in court |
+| **Canada** | [[AI-Regulations-Canada]] | In transition | AIDA dead; AI for All strategy (Jun 2026) rules out an AI act; Bill C-36 privacy and C-34 chatbot bills tabled |
+| **China** | [[AI-Regulations-China]] | Actively enforced | Binding GenAI, labeling and companion-AI rules; algorithm filing mandatory; comprehensive AI law still research-only |
+| **Japan & South Korea** | [[AI-Regulations-Japan-SouthKorea]] | Mixed | Japan: soft law plus 2026 APPI amendment; South Korea: AI Basic Act in force since Jan 22, 2026 |
+| **India, Singapore & ASEAN** | [[AI-Regulations-India-Singapore-ASEAN]] | Emerging | India mandates synthetic-content labels (Feb 2026); Vietnam AI law in force (Mar 2026); Thailand and Malaysia drafting |
+| **Australia** | [[AI-Regulations-Australia]] | Shifting to mandatory | Australian Standards for AI announced Jul 2026 (bill early 2027); ADM transparency Dec 10, 2026 |
+| **New Zealand** | [[AI-Regulations-NewZealand]] | No AI-specific law | Light-touch; IPP 3A (May 2026) and Biometrics Code are the binding changes |
+| **Mexico & Latin America** | [[AI-Regulations-Mexico-LatinAmerica]] | Mostly proposed | Peru's law operative (Sep 2026); Brazil enforces ECA Digital and sector rules; Chile rewriting its bill |
+| **Africa** | [[AI-Regulations-Africa]] | Strategies + data protection | No enacted AI law; Nigeria bill at third reading; Kenya AI Bill tabled; SA policy withdrawn |
 
 Interactive map: [[AI-Regulations-World-Map.html]] (open in browser for hover tooltips)
 
@@ -31,25 +31,31 @@ Interactive map: [[AI-Regulations-World-Map.html]] (open in browser for hover to
 
 | Date | Jurisdiction | Event |
 |------|-------------|-------|
-| **Already in force** | China | GenAI measures, algorithm filing, content labeling, security standards |
-| **Jan 1, 2026** | US (CA, TX, IL) | Multiple state AI laws effective |
-| **Jan 1, 2026** | China | Amended Cybersecurity Law (AI provisions) |
-| **Jan 22, 2026** | South Korea | AI Basic Act effective |
-| **Feb 5-6, 2026** | UK | DUA Act ADM reforms + deepfake offence |
-| **Mar 2026** | US | Commerce Dept evaluation of state laws; FTC AI policy statement |
-| **Mar 2026** | UK | Government AI/copyright report due |
-| **Mar 2026** | Vietnam | AI law begins phased rollout |
-| **Mar 2026** | Nigeria | Digital Economy Bill targeted for passage |
-| **Mar 2026** | South Africa | Draft AI Policy expected gazetted for 60-day consultation |
-| **Jun 30, 2026** | US (CO) | Colorado AI Act effective |
-| **Aug 2, 2026** | EU | **AI Act fully applicable** — high-risk, transparency, conformity |
+| **Already in force** | China | GenAI measures, algorithm filing, content labeling, security standards, companion-AI measures (Jul 15, 2026) |
+| **Jan 1, 2026** | US (CA, TX, IL) | SB 53, AB 2013, SB 243, TRAIGA, IL HB 3773 in force |
+| **Jan 22, 2026** | South Korea | AI Basic Act and Enforcement Decree in force; fines deferred about one year |
+| **Feb 5-6, 2026** | UK | DUA Act ADM reforms and deepfake offence |
+| **Feb 20, 2026** | India | IT Amendment Rules 2026: synthetic content labelling, 3-hour takedown |
+| **Mar 1, 2026** | Vietnam | Law on AI 134/2025/QH15 in force |
+| **Mar 18, 2026** | UK | Government AI and copyright report: no TDM exception |
+| **May 1, 2026** | New Zealand | IPP 3A indirect-collection notice in force |
+| **May 15, 2026** | Council of Europe | EU deposits ratification of the Framework Convention on AI (first Party; not yet in force) |
+| **May 19, 2026** | US | TAKE IT DOWN Act platform compliance |
+| **Jul 6-7, 2026** | UN | First Global Dialogue on AI Governance, Geneva |
+| **Jul 27, 2026** | EU | Digital Omnibus on AI (Reg. 2026/1744) in force |
+| **Aug 2, 2026** | EU | Article 50 transparency, penalty regime and AI Office GPAI enforcement apply |
+| **Sep 10, 2026** | Peru | First mandatory phase of Law 31814 regulation |
+| **Nov 2026** | Brazil | ECA Digital sanctions begin (formal enforcement Jan 2027) |
 | **Nov 1, 2026** | Egypt | PDPL full enforcement deadline |
-| **Late 2026** | UK | First UK AI Bill expected |
-| **Late 2026** | Morocco | National Agency for AI Governance formal launch |
-| **Dec 2026** | Australia | Privacy Act ADM transparency obligations effective |
-| **2026/2027** | South Africa | AI Policy finalization targeted |
-| **Aug 2, 2027** | EU | High-risk AI in regulated products |
-| **2027-2028** | China | Comprehensive AI law expected |
+| **Dec 2, 2026** | EU | Machine-readable marking grace period ends; new Art. 5 prohibition fully applies |
+| **Dec 10, 2026** | Australia | Privacy Act ADM transparency obligations commence |
+| **Jan 1, 2027** | US | CO SB 26-189, NY RAISE Act, IL SB 315, WA HB 2225, CA CCPA ADMT rules, most Sep 2026 California signings |
+| **Early 2027** | Australia | Australian Standards for AI bill expected |
+| **May 3-4, 2027** | UN | Second Global Dialogue on AI Governance, New York |
+| **May 13, 2027** | India | DPDP Rules core obligations commence |
+| **Aug 2, 2027** | EU | Legacy GPAI models must comply; sandboxes operational |
+| **Dec 2, 2027** | EU | Annex III high-risk obligations apply |
+| **Aug 2, 2028** | EU | Annex I embedded high-risk obligations apply |
 | **2028** | AU (Africa) | Continental AI Strategy Phase 2 begins |
 
 ---
@@ -58,75 +64,88 @@ Interactive map: [[AI-Regulations-World-Map.html]] (open in browser for hover to
 
 | Aspect | EU | UK | US | Canada | China | Japan | S. Korea | Singapore | India | Australia | NZ | LatAm | Africa |
 |--------|-----|-----|-----|--------|-------|-------|----------|-----------|-------|-----------|-----|-------|--------|
-| Comprehensive AI law | ✅ | ❌ | ❌ | ❌ | Partial¹ | Soft | ✅ | ❌ | ❌ | ❌ | ❌ | Peru only | ❌² |
-| Risk-based tiers | ✅ | ❌ | CO only | Proposed | Coming | ❌ | ✅ | ❌ | ❌ | Proposed | ❌ | Most bills | Nigeria bill |
-| GenAI/LLM rules | ✅ | ❌ | CA SB53 | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | Brazil bill | ❌ |
-| Content labeling | ✅ | ❌ | Varies | ❌ | ✅ | ❌ | ✅ | ❌ | Pressing | ❌ | ❌ | Some | ❌ |
-| Algorithm registration | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| AI Safety Institute | EU AI Office | ✅ | ❌ fed | ✅ CAISI | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | UCT Hub |
-| ADM rights in law | ✅ | ✅ DUA | Varies | Proposed | ❌ | ❌ | ✅ | ❌ | ❌ | Dec 2026 | ❌ | Varies | ✅³ |
-| Max penalty | €35M/7% | Varies | $20K (CO) | CAD25M/5% | Criminal | Warnings | TBD | Sector | DPDPA | AUD3.3M | Privacy | Varies⁴ |
+| Comprehensive AI law | Yes | No | No | No | Partial (1) | Soft | Yes (in force) | No | No | Proposed 2027 | No | Peru; Brazil/Mexico sectoral | No (2) |
+| Risk-based tiers | Yes | No | CO (narrowed) | No | Coming | No | Yes | No | No | Proposed | No | Most bills; Vietnam-style in Peru | Kenya, Nigeria bills |
+| Frontier / GenAI model rules | Yes (GPAI) | No | CA, NY, IL | No | Yes | No | Yes (10^26 FLOPs) | No | No | No | No | Brazil bill | No |
+| Content labeling | Yes (Aug 2026) | No | CA SB 942, others | No | Yes | No | Yes | No | Yes (Feb 2026) | No | No | Some | No |
+| Algorithm registration | No | No | No | No | Yes | No | No | No | No | No | No | Peru registry | No |
+| AI Safety Institute | EU AI Office | Yes (AISI) | CAISI | Yes (CAISI) | No | Yes | Yes | Yes | Proposed | Yes | No | No | Kenya (network member) |
+| ADM rights in law | Yes | Yes (DUA) | Varies | Proposed (C-36) | No | No | Yes | No | DPDP (SDF duty) | Dec 2026 | No | Varies | Yes (3) |
+| Max penalty | EUR 35M / 7% | Varies | $1M-$3M (NY, CA) | CAD 25M / 5% (proposed) | Criminal | None | KRW 30M | Sector | DPDPA | AUD 3.3M | Privacy | Varies | Varies (4) |
 
-¹ China has binding sector-specific regulations; comprehensive AI law in 2026-2027 research phase
-² Nigeria's Digital Economy Bill targeted for Mar 2026 passage
-³ POPIA Sec 71 (South Africa), NDPA Sec 37 (Nigeria), Kenya DPA, Ethiopia PDPP, Ghana DPA Sec 41
-⁴ Nigeria: ₦766M+ fines enforced; South Africa: POPIA penalties; Botswana: BWP 50M or 4% turnover
+(1) China has binding sector-specific regulations; a comprehensive AI law is a research item only on the NPC's 2026 plan
+(2) Nigeria's Digital Economy Bill at third reading (Jul 2026); Kenya's AI Bill No. 4 of 2026 tabled in the Senate
+(3) POPIA Sec 71 (South Africa), NDPA Sec 37 (Nigeria), Kenya DPA, Ethiopia PDPP, Ghana DPA Sec 41
+(4) Nigeria: NGN 766M+ fines enforced; South Africa: POPIA penalties; Botswana: BWP 50M or 4% turnover
+
+---
+
+## International Standards and Bodies
+
+- **ISO/IEC 42001:2023** (AI management systems) unchanged; **42005:2025** (AI impact assessment, May 2025) and **42006:2025** (requirements for AIMS certification bodies, Jul 2025) published; 42007 at DIS stage
+- **NIST AI RMF 1.0** remains current; a revision was directed by the July 2025 AI Action Plan but no draft had appeared by October 2026; Generative AI Profile (AI 600-1) unchanged; critical-infrastructure profile concept note Apr 7, 2026
+- **Council of Europe Framework Convention on AI (CETS 225):** European Parliament consent Mar 11, 2026; EU deposited ratification May 15, 2026 as the first Party; not in force (needs five ratifications including three Council of Europe members)
+- **OECD / Hiroshima AI Process:** HAIP Reporting Framework v2.0 launched May 28, 2026 (role-based, SME-friendly, covers agentic AI); 50+ organisations pledged; no revision of the OECD AI Principles
+- **G7 Evian (June 2026):** leaders' working session with frontier-lab CEOs on child safety and watermarking; no new binding instrument (secondary source)
+- **United Nations:** Independent International Scientific Panel on AI preliminary report Jul 1, 2026; first Global Dialogue on AI Governance Geneva Jul 6-7, 2026 (163 countries; AI Child Safety Pledge; Global Network for AI Capacity Building); second Dialogue New York May 3-4, 2027
+- **India AI Impact Summit (Feb 16-20, 2026):** New Delhi Declaration endorsed by 92 countries and organisations
+- **International Network for Advanced AI Measurement, Evaluation and Science** (renamed from the International Network of AI Safety Institutes, Dec 2025): Australia, Canada, EU, France, Japan, Kenya, South Korea, Singapore, UK, US
+- **World AI Cooperation Organization (WAICO):** founded by China in Shanghai Jul 16, 2026 with 29 founding states
+- **IEEE 7014.1-2026** (emulated empathy in general-purpose AI partners) published Jun 12, 2026
+- **WHO:** no new 2026 AI-in-health guidance verified beyond the January 2024 LMM guidance
 
 ---
 
 ## Cross-Cutting Themes
 
-### 1. Risk-Based Classification Is the Global Standard
-The EU AI Act's tiered risk approach has become the template. South Korea, Brazil, Vietnam, Nigeria, and most Latin American proposals directly mirror it. Even countries taking lighter approaches (UK, Australia, NZ) use risk concepts in their voluntary guidance.
+### 1. Risk-Based Classification Is the Global Standard, With Delays
+The EU AI Act's tiered approach remains the template (South Korea, Vietnam, Peru, Brazil, Kenya, Thailand, Malaysia), but 2026 was the year of postponement and narrowing: the EU delayed high-risk duties to late 2027 and 2028, Colorado replaced its duty-of-care model with a notice regime, and Chile is abandoning the EU model for an ex-post framework.
 
 ### 2. Transparency and Disclosure Are Universal Priorities
-Every jurisdiction with AI-specific rules requires disclosure when AI makes decisions about people or generates content. This is the single most common AI requirement globally — build it into every product.
+Every jurisdiction with AI-specific rules requires disclosure when AI makes decisions about people or generates content. Synthetic-content labelling is now binding in the EU, China, South Korea, India and Vietnam, and in several US states.
 
-### 3. Employment AI Is the Regulatory Vanguard
-AI in hiring, performance evaluation, and workplace management is the most actively regulated use case across all regions — from NYC Local Law 144 to Ontario's disclosure requirements to the EU's high-risk classification to South Korea's AI Basic Act.
+### 3. Frontier Models Are a Regulatory Category of Their Own
+The EU (GPAI with systemic risk), South Korea (10^26 FLOPs), California SB 53, New York's RAISE Act and Illinois SB 315 all regulate developers of the largest models directly, with incident reporting and published safety frameworks; Illinois adds mandatory third-party audits from 2027.
 
-### 4. China Sets the Enforcement Pace
-While the EU gets attention for its comprehensive law, China is already the most actively enforced AI regulatory environment — with mandatory algorithm filing, LLM registration, content labeling, and real penalties for non-compliance.
+### 4. Companion and Conversational AI Is the Newest Target
+China's companion-AI measures (Jul 2026), Washington, California, Connecticut and Oklahoma chatbot laws, Canada's Bill C-34, Brazil's PL 5.349 and Korea's Network Act amendment all single out emotionally engaging chatbots, especially for minors.
 
-### 5. Copyright and AI Training Data Remain Unresolved Everywhere
-No jurisdiction has fully resolved questions about AI training on copyrighted works, ownership of AI-generated content, or TDM rights. The UK's March 2026 report may provide some clarity. China has ruled AI cannot be an inventor but hasn't resolved output copyright.
+### 5. Employment AI Remains the Regulatory Vanguard
+AI in hiring, performance evaluation and workplace management is the most actively regulated use case: NYC Local Law 144, Ontario's disclosure rule, California SB 947, Connecticut's AEDT framework, the EU's high-risk classification, NSW's WHS duty and South Korea's AI Basic Act.
 
-### 6. Federal-State/Provincial Tension Is Real
-Both the US and Canada face fragmentation between federal and sub-national AI regulation. The EU has the most harmonized approach. Australia, UK, and India manage through sector regulators.
+### 6. China Sets the Enforcement Pace
+China remains the most actively enforced AI environment, with mandatory algorithm filing, LLM registration, content labeling, companion-AI filing and campaign-style enforcement (5.6 million items removed in 2026).
 
-### 7. Innovation vs. Safety Spectrum
-Countries are positioning along a spectrum:
-- **Safety-first:** EU, South Korea, China (with state control overlay)
-- **Balanced:** UK, Australia, Canada, Singapore, Brazil, South Africa
-- **Innovation-first:** US (federal), Japan, Argentina, New Zealand, Rwanda
+### 7. Copyright and AI Training Data Remain Unresolved
+The UK (Mar 2026) and Australia (Jul 2026) rejected TDM exceptions; Japan reaffirmed its Art. 30-4 exception and eased data provision via the APPI amendment; US courts split (Bartz settlement, Thomson Reuters v. Ross). No jurisdiction has resolved output ownership.
 
-### 8. AI Safety Institutes Are Proliferating
-The UK (AISI at Bletchley Park), US, Japan, South Korea, Canada (CAISI), Australia, India, and now Africa (UCT Hub) all have or are establishing AI safety institutes — creating an international network for frontier model evaluation.
+### 8. Federal-State/Provincial Tension Is Real
+The US preemption fight moved from executive orders to litigation (xAI and DOJ v. Colorado) and a proposed FTC preemption theory, with no Congressional action. Canada's federal bills are the first to stake out ground since AIDA.
 
 ### 9. Data Protection Laws Are the Global AI Backstop
-Across Africa, ASEAN, and other emerging markets, data protection statutes serve as the primary enforceable AI framework — with automated decision-making provisions providing the most direct regulatory hooks long before dedicated AI laws arrive.
+Across Africa, ASEAN, Latin America and the Pacific, data protection statutes (DPDP, POPIA, LGPD, IPP 3A) carry the enforceable AI obligations long before dedicated AI laws arrive.
 
-### 10. Linguistic Sovereignty Is an Emerging Regulatory Theme
-Africa is leading a distinctive contribution to global AI governance: insistence on multilingual AI that reflects local contexts. From Nigeria's N-ATLAS to Morocco's Mistral AI partnership for Arabic/Amazigh to Cameroon's "GPT Cameroon," regulators are demanding AI systems serve local languages and cultures.
+### 10. Linguistic and Digital Sovereignty
+Africa's multilingual AI push (N-ATLAS, Morocco's Arabic/Amazigh models), Canada's sovereign compute plan, the EU Cloud and AI Development Act and China's WAICO show governments treating AI infrastructure and language coverage as policy levers.
 
 ---
 
 ## Priority Actions for AI/LLM Developers
 
-1. **Classify your AI systems by risk level** — this will be required in most jurisdictions
-2. **Implement transparency/disclosure everywhere** — disclose AI use to end users, especially for decisions about people
-3. **Build audit trails** — document training data, model decisions, impact assessments
-4. **Test for bias and discrimination** — algorithmic fairness is a regulatory priority globally
-5. **Respect copyright** — err on the side of caution with training data; license where possible
-6. **Label AI-generated content** — mandatory in EU, China, South Korea; trending everywhere else
-7. **Monitor the EU AI Act timeline** — Aug 2026 is the most impactful global deadline
-8. **Track US state laws** — Colorado (June 2026) and California are highest priority
-9. **Register algorithms if serving China** — mandatory CAC filing required
-10. **Prepare for South Korea** — AI Basic Act effective Jan 2026 with local representative requirements
-11. **Prepare for privacy law integration** — AI regulation is increasingly tied to data protection reform (Australia, Canada, India, UK, Africa)
-12. **Watch Nigeria** — its Digital Economy Bill may set the template for all of Africa
-13. **Support multilingual AI** where you serve African or other non-English markets — regulatory expectations are growing
+1. **Classify your AI systems by risk level** - required in the EU (from Dec 2027), South Korea, Vietnam and Peru now; coming in Australia
+2. **Implement transparency/disclosure everywhere** - disclose AI use to end users, especially for decisions about people and for chatbots
+3. **Label AI-generated content** - binding in the EU, China, South Korea, India, Vietnam and California; make it machine-readable before Dec 2, 2026 for the EU
+4. **Build audit trails** - training data, model decisions, impact assessments; Illinois will require third-party audits for frontier developers
+5. **Test for bias and discrimination** - algorithmic fairness is a regulatory priority globally
+6. **Respect copyright** - no TDM safe harbour in the UK or Australia; license where possible
+7. **Monitor the EU AI Act timeline** - transparency and GPAI enforcement are live; high-risk duties start Dec 2, 2027
+8. **Track US state laws** - frontier developers (CA, NY, IL), chatbots (CA, WA, CT), employment (CA, CT, IL), and Colorado's Jan 2027 notice regime
+9. **Register algorithms if serving China** - mandatory CAC filing, plus companion-AI filing thresholds
+10. **South Korea obligations apply now** - local representative, labelling, high-impact assessments; fines resume around Jan 2027
+11. **Prepare for privacy law integration** - Canada C-36, India DPDP (May 2027), Australia Tranche 2, New Zealand IPP 3A
+12. **Watch Nigeria and Kenya** - the first binding African AI laws are likely to come from one of them
+13. **Support multilingual AI** where you serve African or other non-English markets
 
 ---
 
-*Research compiled from web sources including EU official pages, White & Case, Baker Botts, Baker McKenzie, Brookings, IAPP, FPF, CMS, Carnegie Endowment, Fisher Phillips, and regional legal analyses. Consult legal counsel for jurisdiction-specific compliance advice.*
+*Research compiled from official sources (European Commission, FTC, gov.ca.gov, parl.ca, priv.gc.ca, pm.gov.au, UN, OECD, ISO, NIST) and legal analyses (White & Case, Gibson Dunn, Baker McKenzie, Mayer Brown, Kim & Chang, A&O Shearman, IAPP, FPF, CMS, Brookings and regional firms). Items marked unverified rest on a single secondary source. Consult legal counsel for jurisdiction-specific compliance advice.*

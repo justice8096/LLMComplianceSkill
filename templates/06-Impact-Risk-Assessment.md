@@ -1,6 +1,6 @@
 # Impact and Risk Assessment
 
-> **Laws served:** EU AI Act Art. 9 (risk management), Art. 27 (fundamental rights); Colorado SB 24-205; South Korea AI Basic Act; Brazil PL 2338/2023; Peru Law No. 31814; Nigeria GAID/NDPA
+> **Laws served:** EU AI Act Art. 9 (risk management), Art. 27 (fundamental rights); Colorado SB 26-189; South Korea AI Basic Act; Brazil PL 2338/2023; Peru Law No. 31814; Nigeria GAID/NDPA
 > **Template version:** 1.0 | **Last updated:** 2026-03-14
 
 ---
@@ -94,7 +94,7 @@
 
 ## 4. Algorithmic Impact Evaluation
 
-> **Required by:** Colorado SB 24-205 (consequential decisions); Brazil PL 2338/2023; Canada Directive on ADM
+> **Required by:** Colorado SB 26-189 (developer documentation to deployers); Brazil PL 2338/2023; Canada Directive on ADM
 
 ### 4.1 Consequential Decision Assessment (Colorado)
 

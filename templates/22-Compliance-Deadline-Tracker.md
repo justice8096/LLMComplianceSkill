@@ -38,7 +38,12 @@
 | **South Korea** | AI Basic Act | 22 Jan 2026 | Risk classification, rights impact, disclosure, human oversight | [ ] Compliant [ ] In progress [ ] N/A |
 | **UK** | DUA Act — ADM reforms | 5 Feb 2026 | Automated decision-making safeguards | [ ] Compliant [ ] In progress [ ] N/A |
 | **UK** | DUA Act — Deepfake offence | 6 Feb 2026 | Criminal offence for non-consensual intimate AI images | [ ] Compliant [ ] In progress [ ] N/A |
-| **Peru** | Law No. 31814 | Sep 2025 | Risk classification, registry, impact evaluations | [ ] Compliant [ ] In progress [ ] N/A |
+| **Peru** | Law No. 31814 + regulation | 22 Jan 2026 (phase 1: 10 Sep 2026) | Risk classification, registry, impact evaluations | [ ] Compliant [ ] In progress [ ] N/A |
+| **Vietnam** | Law on AI 134/2025/QH15 | 1 Mar 2026 | Risk classification notice, conformity assessment, output tagging | [ ] Compliant [ ] In progress [ ] N/A |
+| **India** | IT Amendment Rules 2026 | 20 Feb 2026 | Synthetic content labelling, 3-hour takedown | [ ] Compliant [ ] In progress [ ] N/A |
+| **China** | Anthropomorphic AI Measures | 15 Jul 2026 | Companion AI disclosure, minor mode, filing thresholds | [ ] Compliant [ ] In progress [ ] N/A |
+| **EU** | AI Act Art. 50 + penalties | 2 Aug 2026 | Chatbot disclosure, deepfake labelling, AI Office GPAI enforcement | [ ] Compliant [ ] In progress [ ] N/A |
+| **US — California** | SB 942 (amended SB 1000) | 2 Aug 2026 | Latent disclosure, provenance, disclosure verification tool | [ ] Compliant [ ] In progress [ ] N/A |
 | **Nigeria** | GAID | Sep 2025 | DPIAs, privacy by design | [ ] Compliant [ ] In progress [ ] N/A |
 
 ---
@@ -47,14 +52,10 @@
 
 | Date | Jurisdiction | Law | Obligation | Alert Date (90 days before) | Your Status |
 |------|-------------|-----|-----------|:---:|:---:|
-| **Mar 2026** | Nigeria | Digital Economy Bill | Risk-based AI classification, algorithmic transparency | Dec 2025 | [ ] Ready [ ] In progress [ ] N/A |
-| **Mar 2026** | Vietnam | Digital Technology Industry Law | Risk-based classification (phased) | Dec 2025 | [ ] Ready [ ] In progress [ ] N/A |
-| **Mar 2026** | UK | Copyright report | DUA Act copyright provision recommendations due | Dec 2025 | [ ] Monitoring |
-| **30 Jun 2026** | US — Colorado | SB 24-205 | Reasonable care, documentation, impact assessments, consumer disclosure | 1 Apr 2026 | [ ] Ready [ ] In progress [ ] N/A |
-| **2 Aug 2026** | EU | AI Act — Full | High-risk systems: conformity, transparency, human oversight, registration | 4 May 2026 | [ ] Ready [ ] In progress [ ] N/A |
-| **2 Aug 2026** | US — California | SB 942 | Watermarking, latent disclosure, detection tools | 4 May 2026 | [ ] Ready [ ] In progress [ ] N/A |
-| **Nov 2026** | Egypt | PDPL | Full enforcement of personal data protection | Aug 2026 | [ ] Ready [ ] In progress [ ] N/A |
-| **Dec 2026** | Australia | Privacy Act ADM | ADM transparency obligations | Sep 2026 | [ ] Ready [ ] In progress [ ] N/A |
+| **1 Nov 2026** | Egypt | PDPL | Full enforcement of personal data protection | 3 Aug 2026 | [ ] Ready [ ] In progress [ ] N/A |
+| **Nov 2026** | Brazil | ECA Digital (Lei 15.211/2025) | Age assurance, minor protections; sanctions begin (formal enforcement Jan 2027) | Aug 2026 | [ ] Ready [ ] In progress [ ] N/A |
+| **2 Dec 2026** | EU | AI Act Art. 50(2) | Machine-readable marking grace period ends; new Art. 5 prohibition fully applies | 3 Sep 2026 | [ ] Ready [ ] In progress [ ] N/A |
+| **10 Dec 2026** | Australia | Privacy Act APP 1.7-1.9 | ADM transparency in privacy policies | 11 Sep 2026 | [ ] Ready [ ] In progress [ ] N/A |
 
 ---
 
@@ -62,12 +63,23 @@
 
 | Date | Jurisdiction | Law | Obligation | Alert Date |
 |------|-------------|-----|-----------|:---:|
-| **2 Aug 2027** | EU | AI Act — Regulated products | High-risk AI in Annex I regulated products | May 2027 |
-| **TBD 2026-27** | South Africa | Draft AI Policy Framework | National AI regulation expected | Monitor |
-| **TBD 2026** | Mexico | Federal AI Law | Risk-based AI regulation | Monitor |
+| **1 Jan 2027** | US — Colorado | SB 26-189 | ADMT pre-use and adverse-decision notices, human review, 3-year records (enforcement paused by xAI v. Colorado) | 3 Oct 2026 |
+| **1 Jan 2027** | US — New York | RAISE Act | Frontier model safety frameworks, 72-hour incident reporting | 3 Oct 2026 |
+| **1 Jan 2027** | US — Illinois | SB 315 | Frontier developer safety practices, annual third-party audits | 3 Oct 2026 |
+| **1 Jan 2027** | US — California | CCPA ADMT regs; SB 947; SB 951 | ADMT notice and opt-out; no sole-ADS discipline; displacement notice | 3 Oct 2026 |
+| **1 Jan 2027** | US — Washington / Connecticut | HB 2225; PA 26-15 phase 2 | Companion chatbot disclosure and minor safety | 3 Oct 2026 |
+| **Jan 2027** | South Korea | AI Basic Act | Administrative fine grace period expected to end | Oct 2026 |
+| **13 May 2027** | India | DPDP Rules 2025 | Core obligations: notice, consent, breach reporting, rights | Feb 2027 |
+| **2 Aug 2027** | EU | AI Act — Legacy GPAI | Models on market before 2 Aug 2025 must comply; sandboxes operational | May 2027 |
+| **2 Dec 2027** | EU | AI Act — Annex III high-risk | Conformity assessment, risk management, registration, human oversight | 3 Sep 2027 |
+| **1 Apr 2028** | US — California | CCPA | First risk-assessment submissions | Jan 2028 |
+| **2 Aug 2028** | EU | AI Act — Regulated products | High-risk AI in Annex I regulated products | May 2028 |
+| **Early 2027** | Australia | Australian Standards for AI | Mandatory AI standards bill expected | Monitor |
+| **TBD** | Nigeria / Kenya | Digital Economy Bill / AI Bill No. 4 of 2026 | First binding African AI laws | Monitor |
+| **TBD** | Mexico | General AI law (needs constitutional reform) | Risk-based AI regulation | Monitor |
 | **TBD** | Colombia | AI bills | Full enactment | Monitor |
-| **TBD** | Chile | AI Regulatory Bill | Full enactment | Monitor |
-| **TBD** | UK | AI Bill (potential) | Possible comprehensive AI legislation | Monitor |
+| **TBD** | Chile | AI bill (being rewritten as an enabling law) | Full enactment | Monitor |
+| **TBD** | UK | Regulating for Growth Bill | Statutory AI sandbox powers; no AI Bill scheduled | Monitor |
 | **TBD** | Canada | Federal AI legislation (post-AIDA) | Possible new attempt | Monitor |
 | **TBD** | India | AI regulation | Possible sector-specific or omnibus regulation | Monitor |
 

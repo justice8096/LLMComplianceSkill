@@ -1,6 +1,6 @@
 # Automated Decision Logic Document
 
-> **Laws served:** UK DUA Act ADM reforms; South Africa POPIA Sec 71; NYC Local Law 144; Colorado SB 24-205; Australia Privacy Act ADM; EU AI Act Art. 13-14; Canada Directive on ADM
+> **Laws served:** UK DUA Act ADM reforms; South Africa POPIA Sec 71; NYC Local Law 144; Colorado SB 26-189; Australia Privacy Act ADM; EU AI Act Art. 13-14; Canada Directive on ADM
 > **Template version:** 1.0 | **Last updated:** 2026-03-14
 
 ---
@@ -87,7 +87,7 @@ Describe the pipeline from input to decision output:
 
 ### 3.2 User-Facing Explanation
 
-> **Required by:** South Africa POPIA Sec 71 (logic disclosure); UK DUA Act; Colorado SB 24-205
+> **Required by:** South Africa POPIA Sec 71 (logic disclosure); UK DUA Act; Colorado SB 26-189
 
 | Aspect | Details |
 |--------|---------|
@@ -127,7 +127,7 @@ Describe the pipeline from input to decision output:
 
 ## 6. Contestability
 
-> **Required by:** UK Five Principles; South Korea AI Basic Act; Colorado SB 24-205
+> **Required by:** UK Five Principles; South Korea AI Basic Act; Colorado SB 26-189
 
 | Aspect | Details |
 |--------|---------|

@@ -76,12 +76,14 @@ Every template includes:
 |----------|------|-----|
 | **Immediate** | Template 18 (AI Literacy) | EU Art. 4 already enforceable since Feb 2025 |
 | **Immediate** | Templates for China (03, 14, 15, 16) | Actively enforced now |
-| **Q1-Q2 2026** | South Korea templates (01, 06, 08, 09, 17) | AI Basic Act effective Jan 2026 |
-| **Q1-Q2 2026** | UK templates (04, 07) | DUA Act effective Feb 2026 |
-| **Q2 2026** | Colorado templates (06, 08, 17) | Colorado AI Act effective Jun 2026 |
-| **Q2-Q3 2026** | EU full compliance (all high-risk templates) | Full applicability Aug 2026 |
-| **Q3 2026** | California SB 942 (02, 03) | Effective Aug 2026 |
-| **Q4 2026** | Australia (04, 07) | Privacy Act ADM effective Dec 2026 |
+| **Immediate** | South Korea templates (01, 06, 08, 09, 17) | AI Basic Act in force since Jan 2026; fines from about Jan 2027 |
+| **Immediate** | UK templates (04, 07) | DUA Act in force since Feb 2026 |
+| **Immediate** | EU transparency templates (02, 03) | Art. 50 in force since 2 Aug 2026; machine-readable marking by 2 Dec 2026 |
+| **Immediate** | California SB 942 (02, 03) | In force since Aug 2026 |
+| **Q4 2026** | Australia (04, 07) | Privacy Act ADM effective 10 Dec 2026 |
+| **Q4 2026** | Colorado templates (01, 02, 04) | SB 26-189 notice regime effective 1 Jan 2027 (enforcement paused) |
+| **Q4 2026** | Frontier developers (01, 06, 13) | NY RAISE Act and IL SB 315 effective 1 Jan 2027 |
+| **2027** | EU high-risk templates (06, 09, 14, 17, 19) | Annex III applicability 2 Dec 2027; Annex I 2 Aug 2028 |
 
 ---
 

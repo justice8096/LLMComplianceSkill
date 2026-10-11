@@ -77,9 +77,11 @@
 | **US — NYC** | Local Law 144 | Annual independent bias audit; public disclosure of results; candidate notice | [ ] |
 | **US — Illinois** | HB 3773 | Bias testing for AI employment tools; no discrimination against protected classes | [ ] |
 | **US — Illinois** | AI Video Interview Act | Notice, consent, data retention/destruction for AI video analysis | [ ] |
-| **US — Colorado** | SB 24-205 | Consequential employment decisions — impact assessment, consumer disclosure, risk management | [ ] |
+| **US — Colorado** | SB 26-189 (eff. 1 Jan 2027) | ADMT in employment decisions — pre-use notice, adverse-decision notice, human review | [ ] |
+| **US — California** | SB 947 (eff. 1 Jan 2027) | No discipline or termination based solely on an automated decision system; human review | [ ] |
+| **US — Connecticut** | Public Act 26-15 | AEDT framework; employer notices from 1 Oct 2027 | [ ] |
 | **US — California** | Civil Rights AI Employment | Bias testing for AI employment decisions | [ ] |
-| **Canada — Ontario** | Workers for Workers Four Act | Employer disclosure of AI use in hiring; bias testing | [ ] |
+| **Canada — Ontario** | Working for Workers Four Act (in force 1 Jan 2026) | Employer disclosure of AI use in hiring; bias testing | [ ] |
 | **EU** | AI Act Annex III | Employment AI is high-risk: full compliance required | [ ] |
 | **Australia** | Fair Work Commission | AI in workplace monitoring and decisions | [ ] |
 | **South Korea** | AI Basic Act | Employment as high-impact AI category | [ ] |

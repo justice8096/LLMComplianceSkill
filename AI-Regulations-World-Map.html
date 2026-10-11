@@ -29,7 +29,7 @@
 </style>
 </head>
 <body>
-<h1>LLM & AI software development regulations — world map</h1>
+<h1>LLM & AI software development regulations - world map</h1>
 <div id="map-container">
   <div id="tooltip"></div>
 </div>
@@ -40,7 +40,7 @@
   <div class="legend-item"><div class="legend-swatch" style="background:#7F77DD"></div>Voluntary frameworks / strategy</div>
   <div class="legend-item"><div class="legend-swatch" style="background:#d5d5d5"></div>No AI-specific measures tracked</div>
 </div>
-<p class="note">Hover over countries for details. Includes coverage inherited via union membership (EU/EEA, AU) and territories.<br>Data as of March 2026. See individual regulation files in this folder for detailed coverage per jurisdiction.</p>
+<p class="note">Hover over countries for details. Includes coverage inherited via union membership (EU/EEA, AU) and territories.<br>Data as of October 2026. See individual regulation files in this folder for detailed coverage per jurisdiction.</p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
@@ -51,12 +51,12 @@ function add(cat, id, name, detail, via) {
 }
 
 // === ENACTED: EU AI Act (27 member states) ===
-const euDetail = 'EU AI Act — full applicability Aug 2026';
+const euDetail = 'EU AI Act - transparency and GPAI enforcement live Aug 2026; high-risk delayed to Dec 2027 / Aug 2028 (Digital Omnibus)';
 const euVia = 'EU member state';
-add('enacted','276','Germany',euDetail,euVia);
+add('enacted','276','Germany','EU AI Act + KI-MIG implementing law (Jul 2026); Bundesnetzagentur as authority',euVia);
 add('enacted','250','France',euDetail,euVia);
-add('enacted','380','Italy','EU AI Act + Italy AI Law (Oct 2025)',euVia);
-add('enacted','724','Spain','EU AI Act — first EU AI supervisory agency',euVia);
+add('enacted','380','Italy','EU AI Act + Italy AI Law 132/2025; ACN as authority',euVia);
+add('enacted','724','Spain','EU AI Act - AESIA supervisory agency; national implementing law approved by government May 2026',euVia);
 add('enacted','620','Portugal',euDetail,euVia);
 add('enacted','056','Belgium',euDetail,euVia);
 add('enacted','528','Netherlands',euDetail,euVia);
@@ -67,12 +67,12 @@ add('enacted','233','Estonia',euDetail,euVia);
 add('enacted','246','Finland',euDetail,euVia);
 add('enacted','300','Greece',euDetail,euVia);
 add('enacted','348','Hungary',euDetail,euVia);
-add('enacted','372','Ireland','EU AI Act — 60% of GPAI enforcement (tech HQs)',euVia);
+add('enacted','372','Ireland','EU AI Act + Regulation of AI Act 2026 (Jul 2026); tech HQs',euVia);
 add('enacted','428','Latvia',euDetail,euVia);
 add('enacted','440','Lithuania',euDetail,euVia);
 add('enacted','442','Luxembourg',euDetail,euVia);
 add('enacted','470','Malta',euDetail,euVia);
-add('enacted','616','Poland',euDetail,euVia);
+add('enacted','616','Poland','EU AI Act + Polish implementing act in force Aug 2026; penalties from Oct 28, 2026',euVia);
 add('enacted','642','Romania',euDetail,euVia);
 add('enacted','703','Slovakia',euDetail,euVia);
 add('enacted','705','Slovenia',euDetail,euVia);
@@ -81,28 +81,28 @@ add('enacted','100','Bulgaria',euDetail,euVia);
 add('enacted','191','Croatia',euDetail,euVia);
 add('enacted','196','Cyprus',euDetail,euVia);
 
-// === ENACTED: EEA — EU AI Act extends via EEA Agreement ===
-const eeaVia = 'EEA member — EU AI Act extends via EEA Agreement';
+// === ENACTED: EEA - EU AI Act extends via EEA Agreement ===
+const eeaVia = 'EEA member - EU AI Act extends via EEA Agreement';
 add('enacted','578','Norway',euDetail,eeaVia);
 add('enacted','352','Iceland',euDetail,eeaVia);
 add('enacted','438','Liechtenstein',euDetail,eeaVia);
 
 // === ENACTED: French overseas regions (part of EU) ===
-add('enacted','254','French Guiana','EU AI Act applies — French overseas region, integral part of EU','French overseas region (part of EU/France)');
+add('enacted','254','French Guiana','EU AI Act applies - French overseas region, integral part of EU','French overseas region (part of EU/France)');
 
 // === ENACTED: Non-EU countries with own AI laws ===
-add('enacted','410','South Korea','AI Basic Act effective Jan 22, 2026 — risk-based, high-impact AI focus','');
-add('enacted','604','Peru','Law No. 31814 — first AI law in Latin America, 3-tier risk framework','');
-add('enacted','704','Vietnam','Digital Technology Industry Law — first ASEAN AI law, phased from Mar 2026','');
-add('enacted','076','Brazil','PL 2338/2023 — Senate-approved bill, most detailed in LatAm, risk-based','');
+add('enacted','410','South Korea','AI Basic Act in force Jan 22, 2026 - risk-based, high-impact AI; fines deferred to ~Jan 2027','');
+add('enacted','604','Peru','Law No. 31814 + regulation in force Jan 2026; first mandatory phase Sep 10, 2026','');
+add('enacted','704','Vietnam','Law on AI 134/2025/QH15 in force Mar 1, 2026 - first ASEAN AI law, 3 risk tiers','');
+add('active-sector','076','Brazil','PL 2338/2023 stalled in Chamber; ECA Digital child-safety law enforced from Nov 2026; CFM and CVM AI rules binding','');
 
 // === ACTIVE-SECTOR: Countries with binding sector/state rules ===
-add('active-sector','840','United States','State patchwork: CO AI Act (Jun 2026), CA frontier AI (Jan 2026), TX, IL; no federal law; Dec 2025 EO aims to preempt states','');
-add('active-sector','156','China','Most actively enforced globally: GenAI measures (Aug 2023), algorithm/LLM filing, content labeling (Sep 2025), Cybersecurity Law (Jan 2026)','');
-add('active-sector','826','United Kingdom','DUA Act (Feb 2026): ADM reforms + deepfake offence; sector regulators (ICO, FCA, CMA); AI Bill expected late 2026','');
+add('active-sector','840','United States','No federal law. Frontier-model laws CA (in force), NY and IL (Jan 2027); CO narrowed to notice regime (Jan 2027) and paused by litigation; TX TRAIGA; chatbot laws CA, WA, CT','');
+add('active-sector','156','China','Most actively enforced globally: GenAI measures, algorithm/LLM filing, content labeling (Sep 2025), Cybersecurity Law (Jan 2026), companion-AI measures (Jul 2026); AI law still research-only','');
+add('active-sector','826','United Kingdom','DUA Act in force; Ofcom OSA enforcement; CMA SMS designations; no AI Bill (none in May 2026 King\'s Speech)','');
 
 // === ACTIVE-SECTOR: US territories ===
-const usVia = 'US territory — federal executive orders and some state-equivalent laws apply';
+const usVia = 'US territory - federal executive orders and some state-equivalent laws apply';
 add('active-sector','630','Puerto Rico','Federal AI executive orders apply; territory may adopt own AI measures',usVia);
 
 // === ACTIVE-SECTOR: UK territories (large enough to show) ===
@@ -110,37 +110,37 @@ add('active-sector','238','Falkland Islands','UK DUA Act provisions may extend; 
     'UK Overseas Territory');
 
 // === PROPOSED: Countries with active AI legislation ===
-add('proposed','124','Canada','AIDA died Jan 2025; privacy reform + Ontario AI hiring 2026; CAISI; CAD 925M AI infra','');
-add('proposed','484','Mexico','Federal AI Law in Senate; creates CONAIA; risk-based; expected 2026','');
+add('proposed','124','Canada','AIDA died; AI for All strategy (Jun 2026) rules out AI act; Bill C-36 privacy and C-34 chatbot bills tabled Jun 2026; Ontario AI hiring disclosure in force','');
+add('active-sector','484','Mexico','General AI law stuck in committee (needs constitutional reform); May 2026 labor/copyright AI consent rules enacted; new LFPDPPP 2025, INAI abolished','');
 add('proposed','032','Argentina','Multiple AI bills; innovation-hub strategy with light regulation','');
-add('proposed','152','Chile','AI bill introduced 2024; National AI Policy since 2021; LatAm AI leader','');
-add('proposed','170','Colombia','Bill 059 approved by Senate; creating National AI Council (CON-IA)','');
-add('proposed','392','Japan','AI Promotion Act (May 2025): innovation-first, principles-based, non-punitive','');
-add('proposed','356','India','DPDPA enforcing mid-2025; AI Governance Guidelines; no dedicated AI law','');
-add('proposed','566','Nigeria','Digital Economy Bill targeted Mar 2026 — potentially first AI law in Africa; NDPA enforced; N-ATLAS multilingual LLM','');
-add('proposed','818','Egypt','Draft AI Law in development; PDPL enforcement Nov 2026; expanded AI Council Jan 2026','');
-add('proposed','504','Morocco','Digital X.0 Framework Law; National AI Agency anticipated 2026; Mistral AI Arabic/Amazigh','');
+add('proposed','152','Chile','Bill 16821-19 in Senate; Executive rewriting it as an enabling law (sandboxes, ex-post sanctions) in 2026','');
+add('proposed','170','Colombia','PL 043/2025 and government bill PL 025-2026 (Jul 2026); CONPES 4144 AI policy','');
+add('proposed','392','Japan','AI Promotion Act (Jun 2025) principles-based, no penalties; AI Basic Plan revised Jul 2026; APPI amended Jul 2026','');
+add('active-sector','356','India','IT Amendment Rules 2026: synthetic content labelling + 3-hour takedown (Feb 2026); DPDP Rules phased to May 2027; no AI act','');
+add('proposed','566','Nigeria','Digital Economy Bill at third reading (Jul 2026), not yet assented; NDPA enforced; N-ATLAS multilingual LLM','');
+add('voluntary','818','Egypt','NCAI AI governance framework and GenAI guidelines (2026, voluntary); no AI bill in Parliament; PDPL enforcement Nov 2026','');
+add('proposed','504','Morocco','Digital X.0 Framework Law; AI agency proposal and draft AI law in preparation (unverified timing); Mistral AI Arabic/Amazigh','');
 add('proposed','231','Ethiopia','National AI Policy (June 2024); Ethiopian AI Institute; PDPP 2024 with AI decision rights','');
 
 // === PROPOSED: Western Sahara (Morocco-administered) ===
 add('proposed','732','Western Sahara','Morocco-administered territory; Morocco Digital X.0 framework may extend','Territory administered by Morocco');
 
 // === VOLUNTARY: Asia-Pacific ===
-add('voluntary','036','Australia','National AI Plan (Dec 2025); AI Safety Institute; Privacy Act ADM reforms Dec 2026','');
-add('voluntary','554','New Zealand','Light-touch; AI Strategy Jul 2025; OECD principles; Privacy Act 2020','');
-add('voluntary','702','Singapore','AI Verify framework; MAS Veritas for finance; PDPA applies','');
-add('voluntary','764','Thailand','ETDA drafting regulation; sector-based approach','');
-add('voluntary','360','Indonesia','Presidential regulations expected early 2026; sector-specific','');
-add('voluntary','608','Philippines','AI framework planned for ASEAN chairmanship 2026','');
-add('voluntary','458','Malaysia','13th Malaysia Plan (2026-2031) AI priorities','');
+add('active-sector','036','Australia','Australian Standards for AI announced Jul 2026 (bill early 2027); Privacy Act ADM transparency Dec 10, 2026; eSafety chatbot codes in force Mar 2026','');
+add('voluntary','554','New Zealand','Light-touch; AI Strategy Jul 2025; IPP 3A in force May 2026; Biometrics Code binding','');
+add('voluntary','702','Singapore','AI Verify; Agentic AI framework (May 2026); Online Safety Commission live Jun 2026; PDPA applies','');
+add('proposed','764','Thailand','Revised Draft AI Act (ETDA) consulted Jul-Aug 2026; risk-based with extraterritorial reach','');
+add('proposed','360','Indonesia','Presidential Regulation on AI roadmap awaiting signature (Jul 2026); AI law to follow','');
+add('proposed','608','Philippines','House consolidated 26 bills into draft AI Development and Regulation Act (Jul 2026)','');
+add('proposed','458','Malaysia','AI Governance Bill consultation (Jul 2026): central AI authority, 3-tier risk; 13th Malaysia Plan','');
 
 // === VOLUNTARY: African countries with national AI strategies/frameworks ===
-const auVia = 'AU member — Continental AI Strategy (2024); Kigali Declaration signatory';
-add('voluntary','710','South Africa','Draft AI Policy — consultation expected Mar 2026; POPIA Sec 71; AI Safety Hub at UCT',auVia);
-add('voluntary','404','Kenya','National AI Strategy 2025-2030; DPA 2019 ADM protections; suspended Worldcoin',auVia);
+const auVia = 'AU member - Continental AI Strategy (2024); Kigali Declaration signatory';
+add('voluntary','710','South Africa','Draft AI Policy gazetted Apr 2026 then withdrawn; POPIA Sec 71 applies; AI Safety Hub at UCT',auVia);
+add('proposed','404','Kenya','AI Bill No. 4 of 2026 in Senate (AI Commissioner, 4 risk tiers); National AI Strategy 2025-2030; DPA 2019',auVia);
 add('voluntary','646','Rwanda',"First African National AI Policy (Apr 2023); C4IR Rwanda; Gates Foundation AI Hub",auVia);
 add('voluntary','480','Mauritius','2025-2029 AI Blueprint; binding AI advisory licensing (2021); GPAI member',auVia);
-add('voluntary','288','Ghana','DPA 2012 Sec 41 — right to object to automated decisions',auVia);
+add('voluntary','288','Ghana','National AI Strategy Apr 2026; DPA 2012 Sec 41 automated-decision rights',auVia);
 add('voluntary','788','Tunisia','New data protection bill with AI sandbox provisions',auVia);
 add('voluntary','894','Zambia','National AI Strategy 2024-2026; first in HealthAI Global Network; DPA 2021',auVia);
 add('voluntary','120','Cameroon','National AI Strategy Jul 2025; "GPT Cameroon" local LLM plan',auVia);
@@ -185,10 +185,10 @@ add('voluntary','624','Guinea-Bissau','AU member; Kigali Declaration signatory',
 add('voluntary','140','Central African Republic','AU member','AU Continental AI Strategy member');
 
 // === VOLUNTARY: Greenland (Danish territory, NOT in EU/EEA) ===
-add('voluntary','304','Greenland','Danish autonomous territory — NOT part of EU/EEA; left EEC in 1985. Danish data protection extends partially.','Danish autonomous territory (not EU/EEA)');
+add('voluntary','304','Greenland','Danish autonomous territory - NOT part of EU/EEA; left EEC in 1985. Danish data protection extends partially.','Danish autonomous territory (not EU/EEA)');
 
 // === VOLUNTARY: New Caledonia (French territory, NOT in EU) ===
-add('voluntary','540','New Caledonia','French special collectivity — NOT part of EU. Some French data protection principles apply.','French overseas collectivity (not EU)');
+add('voluntary','540','New Caledonia','French special collectivity - NOT part of EU. Some French data protection principles apply.','French overseas collectivity (not EU)');
 
 // === Swiss non-EU but own framework ===
 add('voluntary','756','Switzerland','National AI Strategy; finalizing regulatory proposal; GDPR-equivalent FADP applies; not EU/EEA but closely aligned','');

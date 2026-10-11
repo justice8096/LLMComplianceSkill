@@ -27,17 +27,17 @@ Start with the Global Overview for cross-jurisdictional comparisons.
 | File | Contents |
 |------|----------|
 | `AI-Regulations-Global-Overview.md` | Cross-cutting themes, compliance timeline, comparison matrix |
-| `AI-Regulations-EU.md` | EU AI Act (2024), GDPR, sectoral rules |
+| `AI-Regulations-EU.md` | EU AI Act (2024) as amended by the Digital Omnibus (Reg. 2026/1744), GDPR, Data Act, sectoral rules |
 | `AI-Regulations-UK.md` | UK DUA Act, ICO guidance, sector regulators |
-| `AI-Regulations-UnitedStates.md` | CO SB 24-205, CA SB 53/AB 2013, NYC LL 144, IL AEDT, TX HB 1709, UT SB 149, federal guidance |
-| `AI-Regulations-Canada.md` | AIDA (Bill C-27), CPPA, province-level rules |
-| `AI-Regulations-China.md` | GenAI Measures, Algorithm Recommendation Regulations, Deep Synthesis Rules, CAC registration |
-| `AI-Regulations-Japan-SouthKorea.md` | South Korea AI Act, PIPA amendments, Japan AI governance guidelines |
-| `AI-Regulations-India-Singapore-ASEAN.md` | DPDP Act, Singapore Model AI Governance, ASEAN AI Governance Framework |
-| `AI-Regulations-Australia.md` | Privacy Act amendments, AI Ethics Principles, sector-specific rules |
-| `AI-Regulations-NewZealand.md` | Algorithm Charter, Privacy Act 2020, proposed AI guidance |
-| `AI-Regulations-Mexico-LatinAmerica.md` | Peru D.U. 007-2022, Brazil LGPD + PL 2338, Mexico proposed AI bill |
-| `AI-Regulations-Africa.md` | South Africa POPIA, Nigeria proposed AI policy, AU framework |
+| `AI-Regulations-UnitedStates.md` | CO SB 26-189, CA SB 53/AB 2013/SB 243/SB 942, NY RAISE Act, IL HB 3773/SB 315, CT PA 26-15, WA HB 2225, TX TRAIGA, NYC LL 144, federal preemption |
+| `AI-Regulations-Canada.md` | AI for All strategy, Bill C-36 (privacy), Bill C-34 (chatbots), Ontario hiring disclosure, Quebec Law 25 |
+| `AI-Regulations-China.md` | GenAI Measures, labeling, anthropomorphic AI measures (2026), ethics review, CAC registration |
+| `AI-Regulations-Japan-SouthKorea.md` | South Korea AI Basic Act (in force), PIPA, Japan AI Promotion Act, AI Basic Plan, APPI 2026 amendment |
+| `AI-Regulations-India-Singapore-ASEAN.md` | India IT Amendment Rules 2026, DPDP Rules, Singapore Model AI Governance (incl. Agentic), Vietnam Law on AI, ASEAN bills |
+| `AI-Regulations-Australia.md` | Australian Standards for AI (2027 bill), Privacy Act ADM transparency, eSafety codes, AI6 guidance |
+| `AI-Regulations-NewZealand.md` | Privacy Act 2020 incl. IPP 3A, Biometrics Code, Responsible AI guidance |
+| `AI-Regulations-Mexico-LatinAmerica.md` | Peru Law 31814 + regulation, Brazil ECA Digital + PL 2338, Mexico sectoral AI rules, Chile rewrite |
+| `AI-Regulations-Africa.md` | South Africa POPIA, Nigeria Digital Economy Bill, Kenya AI Bill 2026, AU framework |
 | `AI-Regulations-World-Map.html` | Interactive D3.js global regulatory status visualization |
 
 When multiple jurisdictions apply, prioritize by enforcement risk and earliest deadline.
@@ -158,7 +158,7 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 | # | Template | Primary Regulations |
 |---|----------|---------------------|
-| 01 | System Transparency Document | EU AI Act Arts. 11-14, Colorado SB 24-205, UK DUA Act |
+| 01 | System Transparency Document | EU AI Act Arts. 11-14, Colorado SB 26-189, UK DUA Act |
 | 02 | User-Facing Disclosure Toolkit | EU AI Act Art. 50, Colorado, California, China |
 | 03 | Content Labeling Spec | EU AI Act, China Content Labeling, CA SB 942 |
 | 04 | Automated Decision Logic | EU, UK, Colorado, Australia |
@@ -203,21 +203,21 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 - When multiple jurisdictions apply, prioritize by enforcement risk.
 - Cite specific laws, articles, and provisions — do not generalize.
 - Include a disclaimer that this is research output, not legal advice.
-- If a regulation's status may have changed since March 2026, note that caveat.
+- If a regulation's status may have changed since October 2026, note that caveat.
 - Use the four-tier classification consistently: **Enacted** / **Active Sector** / **Proposed** / **Voluntary**.
 
 ---
 
 ## Jurisdiction Coverage
 
-> *Sources current as of 2026-05. Authority-version pins: EU AI Act (Regulation (EU) 2024/1689, in force 2024-08-01; prohibitions + AI Literacy Art. 4 effective 2025-02-02; GPAI obligations 2025-08-02; full applicability for high-risk Annex III systems 2026-08-02); GDPR (Regulation (EU) 2016/679); NIST AI Risk Management Framework 1.0 (2023-01) + Generative AI Profile NIST AI 600-1 (2024-07); ISO/IEC 42001:2023 (AI management systems) + ISO/IEC 23894:2023 (AI risk management); EEOC AI guidance (2023-05); CO AI Act SB 24-205 (effective 2026-06); NYC Local Law 144 (effective 2023-07); IL HB 3773; TX HB 2060; CA SB 53 + AB 2013 (effective 2026-01); UK DUA Act (2026-02); AU Privacy Act ADM provisions (2026-12). Verify status before using in any binding legal context.*
+> *Sources current as of 2026-10-11. Authority-version pins: EU AI Act (Regulation (EU) 2024/1689, in force 2024-08-01, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744, in force 2026-07-27; prohibitions + AI Literacy Art. 4 effective 2025-02-02; GPAI obligations 2025-08-02; Art. 50 transparency and penalties 2026-08-02; Annex III high-risk 2027-12-02; Annex I 2028-08-02); GDPR (Regulation (EU) 2016/679); NIST AI Risk Management Framework 1.0 (2023-01) + Generative AI Profile NIST AI 600-1 (2024-07); ISO/IEC 42001:2023 + 42005:2025 + 42006:2025 + ISO/IEC 23894:2023; EEOC AI guidance (2023-05); CO SB 26-189 (signed 2026-05-14, effective 2027-01-01, replaces SB 24-205); NY RAISE Act (effective 2027-01-01); IL HB 3773 (2026-01-01) + SB 315 (2027-01-01); CT Public Act 26-15 (phased from 2026-10-01); WA HB 2225 (2027-01-01); TX TRAIGA HB 149 (2026-01-01); NYC Local Law 144 (2023-07); CA SB 53 + AB 2013 + SB 243 (2026-01-01), SB 942 (2026-08-02), CCPA ADMT regulations (2027-01-01); KR AI Basic Act (2026-01-22); VN Law on AI 134/2025/QH15 (2026-03-01); IN IT Amendment Rules 2026 (2026-02-20); UK DUA Act (2026-02); AU Privacy Act ADM provisions (2026-12-10). Verify status before using in any binding legal context.*
 
 | Tier | Jurisdictions |
 |------|----------------|
-| **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam, Brazil |
-| **Active Sector** | China, United Kingdom, United States (CO, CA, NYC, IL, TX, UT) |
-| **Proposed** | Canada, India, Japan, Nigeria, Mexico, Colombia, Chile |
-| **Voluntary** | Australia, New Zealand, Singapore |
+| **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam |
+| **Active Sector** | China, United Kingdom, United States (CA, NY, IL, CT, WA, TX, CO, NYC, UT), Brazil, Mexico, India, Australia |
+| **Proposed** | Canada, Japan, Nigeria, Kenya, Colombia, Chile, Thailand, Malaysia, Indonesia, Philippines |
+| **Voluntary** | New Zealand, Singapore, Egypt, South Africa |
 
 ---
 
@@ -229,9 +229,17 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 | Aug 2, 2025 | EU AI Act — GPAI model obligations enforceable |
 | Jan 2026 | US-CA — SB 53 (safety) + AB 2013 (training data) effective |
 | Feb 2026 | UK — DUA Act automated decision-making reforms |
-| Jun 2026 | US-CO — Colorado AI Act (SB 24-205) effective |
-| Aug 2, 2026 | EU AI Act — Full applicability (high-risk AI systems) |
-| Dec 2026 | AU — Privacy Act automated decision-making obligations |
+| Jan 22, 2026 | KR — AI Basic Act in force (fines deferred to about Jan 2027) |
+| Feb 20, 2026 | IN — IT Amendment Rules 2026 (synthetic content labelling) |
+| Mar 1, 2026 | VN — Law on AI in force |
+| Jul 27, 2026 | EU — Digital Omnibus on AI in force (high-risk dates moved) |
+| Aug 2, 2026 | EU AI Act — Art. 50 transparency, penalties, AI Office GPAI enforcement |
+| Dec 2, 2026 | EU AI Act — machine-readable marking grace period ends |
+| Dec 10, 2026 | AU — Privacy Act automated decision-making obligations |
+| Jan 1, 2027 | US — CO SB 26-189, NY RAISE Act, IL SB 315, WA HB 2225, CA CCPA ADMT and SB 947 |
+| May 13, 2027 | IN — DPDP Rules core obligations |
+| Dec 2, 2027 | EU AI Act — Annex III high-risk applicability |
+| Aug 2, 2028 | EU AI Act — Annex I embedded high-risk applicability |
 
 ---
 
