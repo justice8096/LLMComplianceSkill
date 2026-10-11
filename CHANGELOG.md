@@ -15,6 +15,9 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+### Changed `[authority]`
+- Synced ai-regulatory-knowledge-base v1.1.1: the Sep 29, 2026 executive order "Inaugurating the Era of Super Intelligence" (executive-branch terminology change from AI to SI, defined by reference to 15 U.S.C. 9401(3); no statute or regulation changed; legislative language due about Nov 28, 2026; voluntary White House Accord on Super Intelligence). Two deadline entries added (`us.superIntelligenceOrder`, `us.superIntelligenceOrder.legislativeLanguage`); SKILL.md authority table and key-deadline table updated.
+
 ### Changed `[voice]`
 - SKILL.md opens with a "Data current as of 2026-10-11" banner and a "Where each part runs" note (knowledge half works in claude.ai and Cowork; the HTML tools open in any browser; only the three Node scripts need Claude Code or a terminal; Codex P2 on PR #9). Jurisdiction counts corrected to 25 in README, manifest, plugin.json and SKILL.md.
 - Authority-version pins rewritten from one 1,000-character paragraph into a 19-row table; jurisdiction-lookup command lists codes in a table grouped by region. Driven by the dyslexia and dyscalculia content checks (audits/accessibility-gates.md).

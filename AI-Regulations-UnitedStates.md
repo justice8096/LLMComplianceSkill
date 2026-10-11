@@ -1,13 +1,13 @@
 # AI & LLM Software Development Regulations - United States
 
-**Last Updated:** 2026-10-11
+**Last Updated:** 2026-10-11 (rev. 2: Super Intelligence executive order added)
 **Tags:** #ai-regulation #united-states #state-laws #federal-policy #software-development
 
 ---
 
 ## Overview
 
-The United States has **no comprehensive federal AI law**. The regulatory landscape is defined by a growing patchwork of state-level laws, federal executive orders, agency guidance, and voluntary frameworks. The Trump administration (since Jan 2025) has pursued an "innovation-first" federal posture, revoking Biden-era safety requirements and actively pushing to preempt state regulations. States have continued to fill the gap: over 1,000 AI-related bills were introduced in 2025, and by July 2026 some 84 AI laws had been enacted in 27 states during the 2026 sessions. Three states (California, New York, Illinois) now regulate frontier model developers directly, and the only comprehensive cross-sector state law (Colorado) was repealed and replaced with a narrower notice regime in May 2026 while federal litigation against it was pending.
+The United States has **no comprehensive federal AI law**. The regulatory landscape is defined by a growing patchwork of state-level laws, federal executive orders, agency guidance, and voluntary frameworks. The Trump administration (since Jan 2025) has pursued an "innovation-first" federal posture, revoking Biden-era safety requirements and actively pushing to preempt state regulations. States have continued to fill the gap: over 1,000 AI-related bills were introduced in 2025, and by July 2026 some 84 AI laws had been enacted in 27 states during the 2026 sessions. On 29 Sep 2026 an executive order directed the executive branch to use the terms "Super Intelligence" and "SI" in place of "Artificial Intelligence" and "AI"; it is a terminology change with no effect on any statute, regulation or state law (see below). Three states (California, New York, Illinois) now regulate frontier model developers directly, and the only comprehensive cross-sector state law (Colorado) was repealed and replaced with a narrower notice regime in May 2026 while federal litigation against it was pending.
 
 ---
 
@@ -38,6 +38,14 @@ The United States has **no comprehensive federal AI law**. The regulatory landsc
   - **FTC policy statement** - issued Jul 1, 2026 as a *proposed* "Policy Statement Concerning the Suppression of Accuracy in AI Systems", arguing that state laws forcing output changes (naming Colorado) may be preempted by FTC Act section 5; comments closed Jul 31, 2026; not finalized
 - **Carved-out areas** (exempt from preemption): child safety, AI infrastructure/data centers, state government AI procurement
 - **Legal reality:** Executive orders cannot independently preempt state law; only Congress can do that
+
+### Executive Order "Inaugurating the Era of Super Intelligence" (Sep 29, 2026)
+- Directs executive departments and agencies to use **"Super Intelligence" and "SI"** in place of "Artificial Intelligence" and "AI" in official correspondence, public communications, websites, reports, policy documents and other non-statutory documents, "to the maximum extent permitted by law" (Secs. 1, 2(a))
+- **Terminology only.** Sec. 3(a) defines SI as the technologies covered by the existing statutory definition of artificial intelligence in 15 U.S.C. 9401(3). Sec. 2(b) exempts previously issued regulations, Presidential actions, contracts, grants and historical documents. Sec. 4(c) creates no enforceable right. No statute, federal regulation, NIST publication, OMB memorandum or state law is changed
+- **Deadline:** within 60 days (about **Nov 28, 2026**) the Assistant to the President for Science and Technology must submit proposed legislative language on whether the SI definition should supersede the statutory one, conforming amendments to statutory references, and further executive action (Sec. 3(b))
+- A separate **White House Accord on Super Intelligence** was announced the same day: voluntary commitments by major US AI labs to internal controls and layered internal and external review. Signatories were not published; the House Speaker described the commitments as voluntary industry standards
+- **Practical effect for developers:** federal procurement language, agency guidance and RFPs will start saying "SI"; statutes (CA SB 53, NY RAISE, IL SB 315, TX TRAIGA, CO SB 26-189), the EU AI Act and your contracts keep saying "AI". Treat the terms as synonyms in federal-facing documents and keep statutory names in compliance evidence
+- Federal Register public inspection document 2026-20321
 
 ### White House National Policy Framework for AI (Mar 20, 2026)
 - Non-binding legislative recommendations to Congress: preempt "unduly burdensome" state laws, limit state regulation of model development, limit developer liability for third-party misuse
@@ -179,7 +187,9 @@ Federal agencies continue applying existing authority to AI:
 | Jan 1, 2026 | CA SB 53, CA AB 2013, CA SB 243, TX TRAIGA, IL HB 3773 (in force) |
 | May 19, 2026 | TAKE IT DOWN Act platform compliance (in force) |
 | Aug 2, 2026 | CA SB 942 AI Transparency Act (in force; amended Sep 30, 2026) |
+| Sep 29, 2026 | Executive order: "Super Intelligence" / "SI" terminology for the executive branch (in force; no legal change) |
 | Oct 1, 2026 | CT Public Act 26-15 phase 1 |
+| ~Nov 28, 2026 | APST proposed legislative language on an SI definition due to the President |
 | Jan 1, 2027 | CO SB 26-189; NY RAISE Act; IL SB 315; WA HB 2225; CT phase 2; CA CCPA ADMT rules; most California Sep 2026 signings |
 | Oct 1, 2027 | CT employer AEDT notices |
 | Apr 1, 2028 | First CCPA risk-assessment submissions |
@@ -191,6 +201,8 @@ Federal agencies continue applying existing authority to AI:
 - [NIST AI RMF](https://www.nist.gov/artificial-intelligence)
 - [NCSL AI Legislation Database](https://www.ncsl.org/technology-and-communication/artificial-intelligence-2026-legislation)
 - [Colorado General Assembly](https://leg.colorado.gov/)
+- [Executive Order: Inaugurating the Era of Super Intelligence (Sep 29, 2026)](https://www.whitehouse.gov/presidential-actions/2026/09/inaugurating-the-era-of-super-intelligence/)
+- [IAPP analysis of the SI order](https://iapp.org/news/a/ai-by-any-other-name-white-house-directs-federal-agencies-to-enter-the-era-of-super-intelligence)
 - [FTC proposed policy statement on AI accuracy (Jul 2026)](https://www.ftc.gov/legal-library/browse/federal-trade-commissions-proposed-policy-statement-concerning-suppression-accuracy-artificial)
 - [FTC TAKE IT DOWN Act enforcement](https://www.ftc.gov/news-events/news/press-releases/2026/05/ftc-begins-enforcing-take-it-down-act)
 - [Governor Newsom, Sep 30, 2026 AI signings](https://www.gov.ca.gov/2026/09/30/californias-nation-leading-ai-framework-just-got-stronger-governor-newsom-signs-more-first-in-the-nation-worker-protections-and-more/)

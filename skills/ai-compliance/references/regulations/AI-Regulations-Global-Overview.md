@@ -13,7 +13,7 @@ This folder contains research on AI and LLM software development regulations acr
 |--------|------|--------|-------------|
 | **European Union** | [[AI-Regulations-EU]] | Enacted (phased, amended) | EU AI Act; Digital Omnibus (Reg. 2026/1744) delayed high-risk rules to Dec 2027 / Aug 2028; transparency and penalties live since Aug 2026 |
 | **United Kingdom** | [[AI-Regulations-UK]] | Sector-specific + DUA Act | No AI Bill (none in the May 2026 King's Speech); DUA Act in force; Ofcom and CMA enforcing |
-| **United States** | [[AI-Regulations-UnitedStates]] | Patchwork | No federal law; frontier-model laws in CA, NY, IL; Colorado narrowed and paused; preemption fight in court |
+| **United States** | [[AI-Regulations-UnitedStates]] | Patchwork | No federal law; frontier-model laws in CA, NY, IL; Colorado narrowed and paused; preemption fight in court; Sep 2026 order renames AI to "SI" in federal documents (terminology only) |
 | **Canada** | [[AI-Regulations-Canada]] | In transition | AIDA dead; AI for All strategy (Jun 2026) rules out an AI act; Bill C-36 privacy and C-34 chatbot bills tabled |
 | **China** | [[AI-Regulations-China]] | Actively enforced | Binding GenAI, labeling and companion-AI rules; algorithm filing mandatory; comprehensive AI law still research-only |
 | **Japan & South Korea** | [[AI-Regulations-Japan-SouthKorea]] | Mixed | Japan: soft law plus 2026 APPI amendment; South Korea: AI Basic Act in force since Jan 22, 2026 |
@@ -45,8 +45,10 @@ Interactive map: [[AI-Regulations-World-Map.html]] (open in browser for hover to
 | **Jul 27, 2026** | EU | Digital Omnibus on AI (Reg. 2026/1744) in force |
 | **Aug 2, 2026** | EU | Article 50 transparency, penalty regime and AI Office GPAI enforcement apply |
 | **Sep 10, 2026** | Peru | First mandatory phase of Law 31814 regulation |
+| **Sep 29, 2026** | US | Executive order renames "AI" to "Super Intelligence" / "SI" in executive-branch documents; terminology only, no legal change; voluntary White House Accord on Super Intelligence |
 | **Nov 2026** | Brazil | ECA Digital sanctions begin (formal enforcement Jan 2027) |
 | **Nov 1, 2026** | Egypt | PDPL full enforcement deadline |
+| **~Nov 28, 2026** | US | Proposed legislative language on a federal "Super Intelligence" definition due to the President |
 | **Dec 2, 2026** | EU | Machine-readable marking grace period ends; new Art. 5 prohibition fully applies |
 | **Dec 10, 2026** | Australia | Privacy Act ADM transparency obligations commence |
 | **Jan 1, 2027** | US | CO SB 26-189, NY RAISE Act, IL SB 315, WA HB 2225, CA CCPA ADMT rules, most Sep 2026 California signings |

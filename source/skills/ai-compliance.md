@@ -232,6 +232,7 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 | ISO/IEC | 42001:2023, 42005:2025, 42006:2025, 23894:2023 | Voluntary |
 | EEOC AI guidance | 2023-05 | Guidance |
 | Colorado | SB 26-189 (signed 2026-05-14; replaces SB 24-205) | Effective 2027-01-01 |
+| US executive branch | Executive order "Inaugurating the Era of Super Intelligence" (2026-09-29) | Terminology: agencies use "SI" for "AI"; defined by reference to 15 U.S.C. 9401(3); no statute or regulation changed; legislative language due about 2026-11-28 |
 | New York | RAISE Act | Effective 2027-01-01 |
 | Illinois | HB 3773; SB 315 | 2026-01-01; 2027-01-01 |
 | Connecticut | Public Act 26-15 | Phased from 2026-10-01 |
@@ -269,6 +270,7 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 | Aug 2, 2026 | EU AI Act — Art. 50 transparency, penalties, AI Office GPAI enforcement |
 | Dec 2, 2026 | EU AI Act — machine-readable marking grace period ends |
 | Dec 10, 2026 | AU — Privacy Act automated decision-making obligations |
+| Sep 29, 2026 | US — Executive order renames AI to "Super Intelligence" (SI) in federal documents; terminology only |
 | Jan 1, 2027 | US — CO SB 26-189, NY RAISE Act, IL SB 315, WA HB 2225, CA CCPA ADMT and SB 947 |
 | May 13, 2027 | IN — DPDP Rules core obligations |
 | Dec 2, 2027 | EU AI Act — Annex III high-risk applicability |
