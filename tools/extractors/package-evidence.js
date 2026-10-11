@@ -18,9 +18,16 @@
  *   T23 — Supply Chain Risk Management (sections 1, 3.3, 9)
  *   T15 — Security Assessment (vulnerability evidence)
  *
- * Security note: execSync is used with hardcoded CLI commands only (npm audit,
- * pip-audit, git ls-files). The --repo argument is passed as cwd, never
- * interpolated into command strings.
+ * Security note: external tools (npm, pip-audit, git) are started with
+ * execFileSync and an argv array, never through a shell, and always by the
+ * absolute path resolved from the operator's PATH before any directory
+ * change, so a scanned repository cannot plant an npm.cmd of its own
+ * (CWE-427). npm audit runs in a private temporary directory holding only
+ * copies of package.json and the lockfile, so the scanned repository's
+ * .npmrc cannot redirect, proxy or disable TLS on the audit request
+ * (CWE-918). git runs with repository-local hooks, fsmonitor and external
+ * diff drivers disabled (CWE-426). Point --repo only at repositories you
+ * trust; the extractors read their contents but should never execute them.
  *
  * Metadata:
  *   Author: Claude (Anthropic)
@@ -29,7 +36,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process'); // safe: only hardcoded commands, user input only as cwd
+const os = require('os');
+const { execFileSync } = require('child_process');
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -167,25 +175,113 @@ function readText(filePath) {
 
 /**
  * Run a CLI command safely.
- * Commands are hardcoded strings — the repo path is only ever passed as the
- * cwd option, never interpolated into the command string, so there is no
- * injection vector.
+ * Locate an executable on the operator's PATH and return its absolute path,
+ * or null when it is not installed. The lookup never consults the current
+ * directory, so a file of the same name inside the scanned repository is
+ * never chosen (on Windows, cmd.exe would otherwise search cwd first).
  */
-function runCmd(cmd, cwd, timeoutMs) {
+function resolveBinary(name) {
+  var dirs = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
+  var exts = [''];
+  if (process.platform === 'win32') {
+    exts = (process.env.PATHEXT || '.COM;.EXE;.BAT;.CMD').split(';').filter(Boolean);
+    exts.unshift('');
+  }
+  for (var i = 0; i < dirs.length; i++) {
+    // Relative PATH entries (including "." and "") would reintroduce
+    // cwd-first resolution; skip them.
+    if (!path.isAbsolute(dirs[i])) continue;
+    for (var j = 0; j < exts.length; j++) {
+      var candidate = path.join(dirs[i], name + exts[j]);
+      try {
+        if (fs.statSync(candidate).isFile()) return candidate;
+      } catch (_e) { /* keep looking */ }
+    }
+  }
+  return null;
+}
+
+/**
+ * Run an external tool by absolute path with an argv array and no shell.
+ * `file` must come from resolveBinary() or be process.execPath; `args`
+ * entries are passed to the OS as discrete arguments, so a space or quote
+ * inside one of them can never become a second argument.
+ */
+function runTool(file, args, cwd, timeoutMs, extraEnv) {
   timeoutMs = timeoutMs || 60000;
+  if (!file || !path.isAbsolute(file)) {
+    return { ok: false, stdout: '', stderr: 'tool not found', code: null };
+  }
+  var env = Object.assign({}, process.env, extraEnv || {});
   try {
-    var result = execSync(cmd, {
+    var result = execFileSync(file, args, {
       cwd: cwd,
+      env: env,
       timeout: timeoutMs,
       stdio: ['pipe', 'pipe', 'pipe'],
       encoding: 'utf8',
       windowsHide: true,
+      shell: false,
     });
     return { ok: true, stdout: result };
   } catch (e) {
-    // execSync throws on non-zero exit code; stdout may still be useful
+    // execFileSync throws on non-zero exit code; stdout may still be useful
     return { ok: false, stdout: e.stdout || '', stderr: e.stderr || '', code: e.status };
   }
+}
+
+/**
+ * Resolve how to start npm without a shell. On Windows the PATH entry is
+ * npm.cmd, which cannot be spawned shell-free, so prefer the npm-cli.js that
+ * ships beside it and run it with the current Node binary. Returns
+ * { file, prefixArgs } or null when npm is not installed.
+ */
+function resolveNpm() {
+  var npmPath = resolveBinary('npm');
+  if (!npmPath) return null;
+  var ext = path.extname(npmPath).toLowerCase();
+  if (ext === '.cmd' || ext === '.bat' || ext === '.ps1') {
+    var cli = path.join(path.dirname(npmPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+    if (fileExists(cli)) return { file: process.execPath, prefixArgs: [cli] };
+    // Also try the npm bundled with the running Node binary.
+    cli = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+    if (fileExists(cli)) return { file: process.execPath, prefixArgs: [cli] };
+    return null;
+  }
+  return { file: npmPath, prefixArgs: [] };
+}
+
+/**
+ * Hardened git runner: argv array, no shell, and overrides that stop a
+ * repository-local .git/config from making git execute programs.
+ */
+function runGit(args, repoPath, timeoutMs) {
+  var gitPath = resolveBinary('git');
+  var hardening = [
+    '-c', 'core.fsmonitor=false',
+    '-c', 'core.hooksPath=' + os.devNull,
+    '-c', 'diff.external=',
+    '-c', 'protocol.allow=never',
+  ];
+  return runTool(gitPath, ['-C', repoPath].concat(hardening, args), repoPath, timeoutMs);
+}
+
+/**
+ * Create a private temporary directory holding copies of only the named
+ * files from the repository, so a package manager run there sees no
+ * repository-supplied configuration (.npmrc, .yarnrc, scripts).
+ */
+function makeIsolatedDir(repoPath, fileNames) {
+  var dir = fs.mkdtempSync(path.join(os.tmpdir(), 'package-evidence-'));
+  for (var i = 0; i < fileNames.length; i++) {
+    var src = path.join(repoPath, fileNames[i]);
+    if (fileExists(src)) fs.copyFileSync(src, path.join(dir, fileNames[i]));
+  }
+  return dir;
+}
+
+function removeDir(dir) {
+  try { fs.rmSync(dir, { recursive: true, force: true }); } catch (_e) { /* best effort */ }
 }
 
 function getFileAgeDays(filePath) {
@@ -198,9 +294,9 @@ function getFileAgeDays(filePath) {
 
 function isGitTracked(filePath, repoPath) {
   var rel = path.relative(repoPath, filePath).replace(/\\/g, '/');
-  // Command is constructed from the relative file path derived from two
-  // path.resolve'd values — not from raw user input.
-  var result = runCmd('git ls-files --error-unmatch "' + rel + '"', repoPath, 5000);
+  // The path is one argv entry after "--", so a name containing spaces,
+  // quotes or a leading dash is still a pathspec and never an option.
+  var result = runGit(['ls-files', '--error-unmatch', '--', rel], repoPath, 5000);
   return result.ok;
 }
 
@@ -782,10 +878,44 @@ function detectSbomFiles(repoPath) {
 
 function runNpmAudit(repoPath) {
   if (!fileExists(path.join(repoPath, 'package.json'))) return null;
+  var npm = resolveNpm();
+  if (!npm) {
+    log('  npm not found on PATH - skipping npm audit');
+    return null;
+  }
   log('Running npm audit...');
-  var result = runCmd('npm audit --json', repoPath, 30000);
+  // Audit from a private directory that holds only the manifest and
+  // lockfile. The scanned repository's .npmrc never loads, and the
+  // operator's own user/global npm config is replaced by empty files so
+  // the request goes to the public registry with TLS verification on.
+  var isolated = makeIsolatedDir(repoPath, ['package.json', 'package-lock.json', 'npm-shrinkwrap.json']);
+  // npm refuses to load one file as both user and global config, so two
+  // distinct empty files are needed.
+  var emptyUserConfig = path.join(isolated, '.empty-user-npmrc');
+  var emptyGlobalConfig = path.join(isolated, '.empty-global-npmrc');
+  fs.writeFileSync(emptyUserConfig, '');
+  fs.writeFileSync(emptyGlobalConfig, '');
+  var result;
+  try {
+    result = runTool(
+      npm.file,
+      npm.prefixArgs.concat([
+        'audit', '--json', '--ignore-scripts', '--no-fund', '--no-update-notifier',
+        '--userconfig', emptyUserConfig,
+        '--globalconfig', emptyGlobalConfig,
+      ]),
+      isolated,
+      30000,
+      {
+        npm_config_registry: 'https://registry.npmjs.org/',
+        npm_config_strict_ssl: 'true',
+      }
+    );
+  } finally {
+    removeDir(isolated);
+  }
   if (!result.stdout) {
-    log('  npm audit produced no output (npm may not be installed)');
+    log('  npm audit produced no output' + (result.stderr ? ': ' + String(result.stderr).split('\n')[0] : ''));
     return null;
   }
   try {
@@ -827,8 +957,13 @@ function runPipAudit(repoPath) {
                fileExists(path.join(repoPath, 'pyproject.toml'));
   if (!hasPip) return null;
 
+  var pipAudit = resolveBinary('pip-audit');
+  if (!pipAudit) {
+    log('  pip-audit not found on PATH - skipping');
+    return null;
+  }
   log('Running pip-audit...');
-  var result = runCmd('pip-audit --format json', repoPath, 60000);
+  var result = runTool(pipAudit, ['--format', 'json'], repoPath, 60000);
   if (!result.ok && !result.stdout) {
     log('  pip-audit not available or failed - skipping');
     return null;

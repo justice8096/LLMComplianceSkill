@@ -20,6 +20,7 @@
 
 const { execFileSync } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 // ---------------------------------------------------------------------------
@@ -70,36 +71,82 @@ function validateRepoPath(repoPath) {
 }
 
 /**
+ * Full or abbreviated hex object id. Anything that is not one of these must
+ * never be placed in a git argv, because any value derived from repository
+ * content (commit messages, tag names, ref names) is attacker-controlled.
+ */
+const HASH_RE = /^[0-9a-f]{7,40}$/i;
+
+function isHash(value) {
+  return typeof value === 'string' && HASH_RE.test(value);
+}
+
+/**
+ * Configuration overrides applied to every git invocation so that a
+ * repository supplied by someone else cannot make git run programs on the
+ * operator's machine through its own .git/config (CWE-426):
+ *   core.fsmonitor   - never spawn a filesystem monitor command
+ *   core.hooksPath   - point hooks at the null device so none are found
+ *   diff.external    - never spawn an external diff driver
+ *   protocol.allow   - no remote protocol handlers (extraction is local-only)
+ */
+const GIT_HARDENING = [
+  '-c', 'core.fsmonitor=false',
+  '-c', 'core.hooksPath=' + os.devNull,
+  '-c', 'diff.external=',
+  '-c', 'protocol.allow=never'
+];
+
+/**
  * Run a git command in the given repository.
  *
- * Uses execFileSync with an explicit argument array so that repoPath and
- * all git sub-command tokens are passed directly to the OS without any
- * shell expansion — eliminating CWE-78 shell-injection risk.
+ * `args` is an explicit argv array. It is never split or joined, so a space
+ * or quote inside a value (a date, a grep pattern, a format string) reaches
+ * git as part of that one argument and can never become a second one
+ * (CWE-88). repoPath is passed as the value of -C. execFileSync is used with
+ * no shell, so there is no shell expansion either (CWE-78).
  */
-function git(cmd, repoPath) {
-  // Split the flat command string into individual tokens so callers do not
-  // need to be refactored.  repoPath is never part of cmd; it is passed
-  // as the value of the -C flag, which execFileSync delivers as a discrete
-  // argv element with no shell involvement.
-  const args = ['-C', repoPath, ...cmd.split(/\s+/).filter(Boolean)];
-  return execFileSync('git', args, {
+function git(args, repoPath) {
+  if (!Array.isArray(args)) {
+    throw new Error('git() requires an argv array, not a command string');
+  }
+  for (const a of args) {
+    if (typeof a !== 'string') {
+      throw new Error('git() argv entries must be strings');
+    }
+  }
+  const argv = ['-C', repoPath, ...GIT_HARDENING, ...args];
+  return execFileSync('git', argv, {
     encoding: 'utf8',
     maxBuffer: 50 * 1024 * 1024,
     timeout: 60000,
-    stdio: ['pipe', 'pipe', 'pipe']
+    stdio: ['pipe', 'pipe', 'pipe'],
+    windowsHide: true
   }).trim();
 }
 
-function gitLines(cmd, repoPath) {
-  const out = git(cmd, repoPath);
+function gitLines(args, repoPath) {
+  const out = git(args, repoPath);
   if (!out) return [];
   return out.split('\n').filter(Boolean);
+}
+
+/**
+ * The commit record separator used when reading several commits in one
+ * `git log` call. A NUL byte cannot appear inside a commit message, so a
+ * commit body can never forge a record boundary the way a literal marker
+ * line could (the previous separator was a plain word on its own line).
+ */
+const RECORD_SEP = '\0';
+
+function splitRecords(out) {
+  return out.split(RECORD_SEP).map(s => s.replace(/^\n/, '')).filter(Boolean);
 }
 
 function sinceArg(days) {
   const d = new Date();
   d.setDate(d.getDate() - days);
-  return `--since="${d.toISOString().split('T')[0]}"`;
+  return '--since=' + d.toISOString().split('T')[0];
 }
 
 function fileExists(filePath) {
@@ -135,13 +182,13 @@ function extractCodeReview(repoPath, since) {
 
   try {
     // Total commits in period
-    const allHashes = gitLines(`log ${since} --format=%H`, repoPath);
+    const allHashes = gitLines(['log', since, '--format=%H'], repoPath);
     result.totalCommits = allHashes.length;
 
     if (result.totalCommits === 0) return result;
 
     // Merge commits
-    const mergeHashes = gitLines(`log ${since} --merges --format=%H`, repoPath);
+    const mergeHashes = gitLines(['log', since, '--merges', '--format=%H'], repoPath);
     result.mergeCommits = mergeHashes.length;
     result.mergePercentage = Math.round((result.mergeCommits / result.totalCommits) * 100);
 
@@ -155,10 +202,10 @@ function extractCodeReview(repoPath, since) {
     let reviewedCount = 0;
 
     // Get full commit messages for trailer scanning
-    const commitMessages = git(
-      `log ${since} --format=COMMIT_SEP%n%B`,
+    const commitMessages = splitRecords(git(
+      ['log', since, '--format=%x00%B'],
       repoPath
-    ).split('COMMIT_SEP\n').filter(Boolean);
+    ));
 
     for (const msg of commitMessages) {
       let hasReview = false;
@@ -203,7 +250,7 @@ function extractChangeManagement(repoPath, since, days) {
 
   try {
     // Commit frequency
-    const totalCommits = gitLines(`log ${since} --format=%H`, repoPath).length;
+    const totalCommits = gitLines(['log', since, '--format=%H'], repoPath).length;
     const weeksInPeriod = Math.max(1, Math.ceil(days / 7));
     const monthsInPeriod = Math.max(1, Math.ceil(days / 30));
     result.commitFrequency.daily = parseFloat((totalCommits / Math.max(1, days)).toFixed(2));
@@ -216,7 +263,8 @@ function extractChangeManagement(repoPath, since, days) {
   try {
     // Release tags with dates
     const tagLines = gitLines(
-      `tag -l --sort=-creatordate --format="%(refname:short)|||%(creatordate:iso-strict)|||%(objectname:short)"`,
+      ['tag', '-l', '--sort=-creatordate',
+        '--format=%(refname:short)|||%(creatordate:iso-strict)|||%(objectname:short)'],
       repoPath
     );
     for (const line of tagLines) {
@@ -255,7 +303,7 @@ function extractChangeManagement(repoPath, since, days) {
 
   try {
     // Conventional commits analysis
-    const subjects = gitLines(`log ${since} --format=%s`, repoPath);
+    const subjects = gitLines(['log', since, '--format=%s'], repoPath);
     const conventionalRe = /^(feat|fix|chore|docs|refactor|test|ci|perf|style|build|revert)(\(.+?\))?[!]?:/i;
     let conventionalCount = 0;
 
@@ -331,10 +379,12 @@ function extractAiCodeGeneration(repoPath, since) {
     const aiCommitHashes = [];
 
     // Get commit messages with hashes
-    const commitData = git(
-      `log ${since} --format=COMMIT_START%n%H%n%B`,
+    // NUL-separated records: a commit body cannot contain NUL, so it cannot
+    // forge a record whose first line would be taken as a hash.
+    const commitData = splitRecords(git(
+      ['log', since, '--format=%x00%H%n%B'],
       repoPath
-    ).split('COMMIT_START\n').filter(Boolean);
+    ));
 
     const totalCommits = commitData.length;
 
@@ -342,6 +392,8 @@ function extractAiCodeGeneration(repoPath, since) {
       const lines = block.split('\n');
       const hash = lines[0];
       const body = lines.slice(1).join('\n');
+      // Defence in depth: only a hex object id may ever reach a git argv.
+      if (!isHash(hash)) continue;
 
       let isAi = false;
       for (const { pattern, tool } of aiPatterns) {
@@ -374,7 +426,7 @@ function extractAiCodeGeneration(repoPath, since) {
         const batch = aiCommitHashes.slice(i, i + batchSize);
         for (const hash of batch) {
           try {
-            const files = gitLines(`diff-tree --no-commit-id --name-only -r ${hash}`, repoPath);
+            const files = gitLines(['diff-tree', '--no-commit-id', '--name-only', '-r', '--', hash], repoPath);
             for (const f of files) {
               fileCounts[f] = (fileCounts[f] || 0) + 1;
             }
@@ -562,7 +614,7 @@ function extractSecurityPractices(repoPath, since) {
 
   try {
     // Signed commits
-    const sigLines = gitLines(`log ${since} --format=%G?`, repoPath);
+    const sigLines = gitLines(['log', since, '--format=%G?'], repoPath);
     const signed = sigLines.filter(s => s === 'G' || s === 'U' || s === 'E').length;
     result.signedCommits = signed;
     result.signedPercentage = sigLines.length > 0
@@ -586,7 +638,7 @@ function extractIncidentResponse(repoPath, since) {
 
   try {
     // Hotfix/emergency branches
-    const branchLines = gitLines('branch -a', repoPath);
+    const branchLines = gitLines(['branch', '-a'], repoPath);
     const hotfixPatterns = /\b(hotfix|bugfix|emergency|patch|urgent)\b/i;
     for (const line of branchLines) {
       const name = line.replace(/^\*?\s+/, '').replace(/^remotes\/origin\//, '').trim();
@@ -602,7 +654,7 @@ function extractIncidentResponse(repoPath, since) {
 
   try {
     // Revert commits
-    const revertLines = gitLines(`log ${since} --format=%H|||%s --grep="^Revert "`, repoPath);
+    const revertLines = gitLines(['log', since, '--format=%H|||%s', '--grep=^Revert '], repoPath);
     result.revertCommits = revertLines.length;
     result.revertDetails = revertLines.slice(0, 50).map(line => {
       const parts = line.split('|||');
@@ -615,7 +667,7 @@ function extractIncidentResponse(repoPath, since) {
   try {
     // Average release interval (from tags)
     const tagDateLines = gitLines(
-      `tag -l --sort=-creatordate --format="%(creatordate:iso-strict)"`,
+      ['tag', '-l', '--sort=-creatordate', '--format=%(creatordate:iso-strict)'],
       repoPath
     );
     const tagDates = tagDateLines
@@ -733,7 +785,7 @@ function extractGovernance(repoPath) {
 
   try {
     // Contributors
-    const authorLines = gitLines('log --format=%aN|||%aE', repoPath);
+    const authorLines = gitLines(['log', '--format=%aN|||%aE'], repoPath);
     const contributors = new Map();
     for (const line of authorLines) {
       const parts = line.split('|||');
@@ -762,7 +814,7 @@ function extractAccessControl(repoPath, since) {
 
   try {
     // Unique committer emails
-    const committerEmails = gitLines(`log ${since} --format=%cE`, repoPath);
+    const committerEmails = gitLines(['log', since, '--format=%cE'], repoPath);
     result.uniqueCommitterEmails = [...new Set(committerEmails)].filter(Boolean);
   } catch (e) {
     log(`  Warning: committer email extraction failed: ${e.message}`);
@@ -770,7 +822,7 @@ function extractAccessControl(repoPath, since) {
 
   try {
     // Author vs committer mismatches
-    const lines = gitLines(`log ${since} --format=%aE|||%cE`, repoPath);
+    const lines = gitLines(['log', since, '--format=%aE|||%cE'], repoPath);
     let mismatches = 0;
     for (const line of lines) {
       const parts = line.split('|||');
@@ -910,7 +962,7 @@ function main() {
 
   // Verify this is a git repository
   try {
-    git('rev-parse --git-dir', opts.repo);
+    git(['rev-parse', '--git-dir'], opts.repo);
   } catch {
     process.stderr.write(`Error: "${opts.repo}" is not a git repository.\n`);
     process.exit(1);
