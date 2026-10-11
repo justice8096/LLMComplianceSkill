@@ -126,6 +126,24 @@ function buildJurisdictionMap(enData, localeData) {
   return map;
 }
 
+/**
+ * Build a map of English table-intro sentences to translated sentences.
+ * Keys in the tableIntros section are the exact English line.
+ */
+function buildTableIntroMap(enData, localeData) {
+  var map = {};
+  var enIntros = enData.tableIntros || {};
+  var locIntros = localeData.tableIntros || {};
+  var keys = Object.keys(enIntros);
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    if (locIntros[k] && locIntros[k] !== enIntros[k]) {
+      map[enIntros[k]] = locIntros[k];
+    }
+  }
+  return map;
+}
+
 // --- Translation engine ---
 
 /**
@@ -226,7 +244,26 @@ function translateJurisdictions(md, jurMap) {
 /**
  * Full translation pipeline for one template.
  */
+/**
+ * Translate the one-line sentences that introduce template tables.
+ * Only whole lines that exactly match a known sentence are replaced, so
+ * running prose and table cells are never touched.
+ */
+function translateTableIntros(md, introMap) {
+  if (!introMap || Object.keys(introMap).length === 0) return md;
+  var lines = md.split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    var trimmed = lines[i].replace(/\r$/, '').trim();
+    if (Object.prototype.hasOwnProperty.call(introMap, trimmed)) {
+      lines[i] = lines[i].replace(trimmed, introMap[trimmed]);
+    }
+  }
+  return lines.join('\n');
+}
+
 function translateTemplate(md, maps) {
+  // Intros first, before term replacement can alter words inside them.
+  md = translateTableIntros(md, maps.tableIntros);
   md = translateTitle(md, maps.templateNames);
   md = translateTableFields(md, maps.fields);
   md = translateCheckboxes(md, maps.checkboxes);
@@ -282,7 +319,8 @@ function main() {
     checkboxes: buildCheckboxMap(enData, localeData),
     templateNames: buildTemplateNameMap(enData, localeData),
     common: buildCommonMap(enData, localeData),
-    jurisdictions: buildJurisdictionMap(enData, localeData)
+    jurisdictions: buildJurisdictionMap(enData, localeData),
+    tableIntros: buildTableIntroMap(enData, localeData)
   };
 
   var fieldCount = Object.keys(maps.fields).length;
@@ -305,8 +343,8 @@ function main() {
     var md = fs.readFileSync(templatePath, 'utf8');
 
     if (file === '00-Evidence-Collection-Kit-README.md') {
-      // Copy README as-is (or translate title only)
-      fs.writeFileSync(path.join(outputDir, file), md, 'utf8');
+      // README prose stays English; only the table intro lines are translated.
+      fs.writeFileSync(path.join(outputDir, file), translateTableIntros(md, maps.tableIntros), 'utf8');
       process.stderr.write('  - ' + file + ' (copied)\n');
       continue;
     }
