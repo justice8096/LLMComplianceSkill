@@ -66,6 +66,23 @@ function readText(p) {
   try { return fs.readFileSync(p, 'utf8'); } catch (e) { return null; }
 }
 
+/**
+ * Remove YAML comments so commented-out steps, jobs and keywords are not
+ * counted as evidence. Naive: a '#' inside a quoted value after whitespace
+ * is also removed.
+ */
+function stripYamlComments(text) {
+  return text.split('\n').map(function(line) {
+    if (/^\s*#/.test(line)) return '';
+    return line.replace(/\s+#.*$/, '');
+  }).join('\n');
+}
+
+function readActive(p) {
+  var t = readText(p);
+  return t === null ? null : stripYamlComments(t);
+}
+
 /** List files under a directory, optionally filtered by extension. */
 function listFiles(dir, opts) {
   var results = [];
@@ -178,7 +195,7 @@ var SECURITY_TOOLS = {
 
 function detectSecurityScanning(ciFiles, repo) {
   // Combine all CI file contents
-  var combined = ciFiles.map(function(f) { return readText(f.file) || ''; }).join('\n');
+  var combined = ciFiles.map(function(f) { return readActive(f.file) || ''; }).join('\n');
 
   // Also check for Dependabot / Renovate config files that live outside CI
   var extraFiles = [
@@ -194,7 +211,7 @@ function detectSecurityScanning(ciFiles, repo) {
   for (var i = 0; i < extraFiles.length; i++) {
     var full = path.join(repo, extraFiles[i]);
     if (existsSync(full)) {
-      extraContent += (readText(full) || '') + '\n';
+      extraContent += (readActive(full) || '') + '\n';
       extraDetected.push(extraFiles[i]);
     }
   }
@@ -211,14 +228,14 @@ function detectSecurityScanning(ciFiles, repo) {
     // Track which CI files mention each tool
     var matchedFiles = [];
     for (var j = 0; j < ciFiles.length; j++) {
-      var content = readText(ciFiles[j].file) || '';
+      var content = readActive(ciFiles[j].file) || '';
       if (tools.some(function(t) { return has(content, t); })) {
         matchedFiles.push(ciFiles[j].relPath);
       }
     }
     // Also check extra config files
     for (var k = 0; k < extraDetected.length; k++) {
-      var econtent = readText(path.join(repo, extraDetected[k])) || '';
+      var econtent = readActive(path.join(repo, extraDetected[k])) || '';
       if (tools.some(function(t) { return has(econtent, t); })) {
         matchedFiles.push(extraDetected[k]);
       }
@@ -256,7 +273,7 @@ var COVERAGE_TOOLS = [
 ];
 
 function detectTesting(ciFiles) {
-  var combined = ciFiles.map(function(f) { return readText(f.file) || ''; }).join('\n');
+  var combined = ciFiles.map(function(f) { return readActive(f.file) || ''; }).join('\n');
 
   var testRunners = arrayUnique(findAll(combined, TEST_RUNNERS));
   var coverageTools = arrayUnique(findAll(combined, COVERAGE_TOOLS));
@@ -266,7 +283,7 @@ function detectTesting(ciFiles) {
   var testNamePattern = /(?:^|\n)\s*[-]?\s*(?:name|stage|step)\s*:\s*[^\n]*\btest/gi;
   var runTestPattern = /(?:run|script|command)\s*:\s*[^\n]*\b(?:test|spec|check)\b/gi;
   for (var i = 0; i < ciFiles.length; i++) {
-    var content = readText(ciFiles[i].file) || '';
+    var content = readActive(ciFiles[i].file) || '';
     var nameMatches = content.match(testNamePattern) || [];
     var runMatches = content.match(runTestPattern) || [];
     testJobCount += nameMatches.length + runMatches.length;
@@ -287,10 +304,13 @@ function detectTesting(ciFiles) {
 // Build provenance  (T23 s8.3)
 // ---------------------------------------------------------------------------
 
-var ATTESTATION_TOOLS = [
-  'sigstore', 'cosign', 'slsa-verifier', 'slsa-generator',
-  'provenance', 'attestation'
-];
+// Matches only real signing or attestation actions and commands. Bare words such
+// as "provenance" or "attestation" (comments, "provenance: false") do not count.
+var ATTESTATION_PATTERN = /(actions\/attest[\w.\/-]*|slsa-github-generator[\w.\/-]*|slsa-verifier|cosign\s+(?:sign|attest)|sigstore\s+sign)/gi;
+
+function findSigningTools(text) {
+  return (text.match(ATTESTATION_PATTERN) || []).map(function(s) { return s.toLowerCase(); });
+}
 
 var PUBLISH_PATTERNS = ['npm publish', 'docker push', 'twine upload'];
 
@@ -303,9 +323,9 @@ function hasBuildSteps(text) {
 }
 
 function detectBuildProvenance(ciFiles) {
-  var combined = ciFiles.map(function(f) { return readText(f.file) || ''; }).join('\n');
+  var combined = ciFiles.map(function(f) { return readActive(f.file) || ''; }).join('\n');
 
-  var signingTools = arrayUnique(findAll(combined, ATTESTATION_TOOLS));
+  var signingTools = arrayUnique(findSigningTools(combined));
   var hasAttestation = signingTools.length > 0;
   var hasPublish = PUBLISH_PATTERNS.some(function(p) { return has(combined, p); });
 
@@ -314,7 +334,7 @@ function detectBuildProvenance(ciFiles) {
   var selfHostedRunners = false;
 
   for (var i = 0; i < ciFiles.length; i++) {
-    var content = readText(ciFiles[i].file) || '';
+    var content = readActive(ciFiles[i].file) || '';
     // GitHub Actions: runs-on: ubuntu-latest, windows-latest, macos-latest, etc.
     if (/runs-on\s*:\s*(?:ubuntu|windows|macos|buildjet)/i.test(content)) {
       hostedRunners = true;
@@ -380,8 +400,11 @@ function detectCodeReview(ciFiles, repo) {
   for (var i = 0; i < protectionFiles.length; i++) {
     var full = path.join(repo, protectionFiles[i]);
     if (existsSync(full)) {
-      branchProtectionConfig = true;
-      var content = readText(full) || '';
+      var content = readActive(full) || '';
+      // A settings file only counts when it actually declares protection rules.
+      if (has(content, 'required_pull_request_reviews') || has(content, 'branch_protection') || has(content, 'protection:')) {
+        branchProtectionConfig = true;
+      }
 
       var reviewMatch = content.match(/required_approving_review_count\s*:\s*(\d+)/i);
       if (reviewMatch) {
@@ -395,17 +418,18 @@ function detectCodeReview(ciFiles, repo) {
 
   // Check workflow files for review-gated conditions
   for (var j = 0; j < ciFiles.length; j++) {
-    var wcontent = readText(ciFiles[j].file) || '';
+    var wcontent = readActive(ciFiles[j].file) || '';
     if (has(wcontent, "review.state == 'approved'") || has(wcontent, 'review.state == "approved"')) {
       prOnlyMerge = true;
     }
-    if (has(wcontent, 'required_reviewers') || has(wcontent, 'required-reviewers')) {
-      branchProtectionConfig = true;
-    }
+    // required_reviewers in a workflow gates a deployment environment, not the
+    // branch, so it is not evidence of branch protection.
   }
 
   return {
     branchProtectionConfig: branchProtectionConfig,
+    // Declared in repo files only; never checked against the hosting platform.
+    branchProtectionVerified: false,
     requiredReviewers: requiredReviewers,
     prOnlyMerge: prOnlyMerge
   };
@@ -423,7 +447,7 @@ function detectDeploymentControls(ciFiles) {
                   'qa', 'uat', 'preprod', 'pre-prod', 'canary'];
 
   for (var i = 0; i < ciFiles.length; i++) {
-    var content = readText(ciFiles[i].file) || '';
+    var content = readActive(ciFiles[i].file) || '';
 
     // Detect environment declarations
     var envPatternInline = /environment\s*:\s*(\S+)/gi;
@@ -518,7 +542,7 @@ function detectAiCodeControls(ciFiles, repo) {
   var sastOnPRs = false;
   var sastTools = SECURITY_TOOLS.sast;
   for (var k = 0; k < ciFiles.length; k++) {
-    var content = readText(ciFiles[k].file) || '';
+    var content = readActive(ciFiles[k].file) || '';
     var hasPR = has(content, 'pull_request') || has(content, 'merge_request');
     var hasSAST = sastTools.some(function(t) { return has(content, t); });
     if (hasPR && hasSAST) {

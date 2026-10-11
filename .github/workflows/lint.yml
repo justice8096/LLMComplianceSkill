@@ -1,5 +1,8 @@
 name: Lint
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
@@ -10,6 +13,7 @@ jobs:
   lint-js:
     name: JavaScript syntax check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
 
@@ -23,3 +27,20 @@ jobs:
             echo "Checking: $f"
             node --check "$f" || exit 1
           done
+
+  dependency-audit:
+    name: Dependency vulnerability audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: '22.18.0'
+
+      - name: Install from lockfile without running install scripts
+        run: npm ci --ignore-scripts
+
+      - name: Audit for high-severity advisories
+        run: npm audit --audit-level=high

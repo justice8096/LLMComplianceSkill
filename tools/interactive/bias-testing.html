@@ -450,8 +450,9 @@
     container.appendChild(statsDiv);
 
     // Overall result
-    var overall = (failCount === 0 && criticalFindings === 0) ? t('common.status.pass', 'PASS') : t('common.status.fail', 'FAIL');
-    var alertType = (failCount === 0 && criticalFindings === 0) ? 'success' : 'danger';
+    var allPassed = enabledChars.length > 0 && enabledChars.every(function(c) { return state.characteristics[c.id].result === 'pass'; });
+    var overall = (failCount > 0 || criticalFindings > 0) ? t('common.status.fail', 'FAIL') : (allPassed ? t('common.status.pass', 'PASS') : 'INCOMPLETE');
+    var alertType = overall === t('common.status.pass', 'PASS') ? 'success' : 'danger';
     container.appendChild(createAlert(alertType, 'Overall Result: ' + overall + ' | Domain: ' + state.domain + ' | Jurisdictions: ' + state.jurisdictions.join(', ')));
 
     // Characteristics table
@@ -524,7 +525,9 @@
     var characteristics = getCharacteristics();
     var enabledChars = characteristics.filter(function(c) { return state.characteristics[c.id] && state.characteristics[c.id].enabled; });
     var failCount = enabledChars.filter(function(c) { return state.characteristics[c.id].result === 'fail'; }).length;
-    var overall = (failCount === 0 && state.findings.filter(function(f) { return f.severity === 'critical'; }).length === 0) ? 'PASS' : 'FAIL';
+    var criticalCount = state.findings.filter(function(f) { return f.severity === 'critical'; }).length;
+    var allPassed = enabledChars.length > 0 && enabledChars.every(function(c) { return state.characteristics[c.id].result === 'pass'; });
+    var overall = (failCount > 0 || criticalCount > 0) ? 'FAIL' : (allPassed ? 'PASS' : 'INCOMPLETE');
 
     lines.push('## Overall Result: ' + overall);
     lines.push('');

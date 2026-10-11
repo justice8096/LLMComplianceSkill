@@ -88,7 +88,8 @@ function fillTableField(md, fieldName, value) {
       const trimmed = oldVal.trim();
       // Only fill if empty or contains a placeholder like [YYYY-MM-DD]
       if (trimmed === '' || trimmed.startsWith('[') || trimmed === 'Value') {
-        return `${prefix} ${value} ${suffix}`;
+        const safeValue = String(value).replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ');
+        return `${prefix} ${safeValue} ${suffix}`;
       }
       return match;
     });
