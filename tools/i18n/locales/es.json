@@ -58,7 +58,7 @@
     "test-framework":                    "Marco de pruebas",
     "coverage-tool":                     "Herramienta de cobertura",
     "eu-ai-act":                         "EU AI Act",
-    "colorado-sb-24-205":                "Colorado SB 24-205",
+    "colorado-sb-26-189":                "Colorado SB 26-189",
     "classification-justification":      "Justificación de la clasificación",
     "oversight-model":                   "Modelo de supervisión",
     "explainability-method":             "Método de explicabilidad",
@@ -363,7 +363,7 @@
 
     "impactRiskScoring": {
       "title":    "Herramienta de puntuación de evaluación de impacto y riesgo",
-      "subtitle": "Plantilla 06 — EU AI Act Art. 9, Colorado SB 24-205, South Korea AI Basic Act",
+      "subtitle": "Plantilla 06 — EU AI Act Art. 9, Colorado SB 26-189, South Korea AI Basic Act",
       "step1":    "Derechos fundamentales",
       "step2":    "Dimensiones de riesgo",
       "step3":    "Mitigación",
@@ -672,7 +672,7 @@
 
     "transparencyDocumentation": {
       "title":    "Documentación de transparencia del sistema",
-      "subtitle": "Plantilla 01 — EU AI Act Arts. 11-14, 50; Colorado SB 24-205; UK DUA Act; South Korea AI Basic Act",
+      "subtitle": "Plantilla 01 — EU AI Act Arts. 11-14, 50; Colorado SB 26-189; UK DUA Act; South Korea AI Basic Act",
       "step1":    "Finalidad y alcance",
       "step2":    "Arquitectura",
       "step3":    "Limitaciones",

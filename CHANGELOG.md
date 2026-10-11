@@ -28,6 +28,7 @@ Regulatory refresh to October 2026, synced from ai-regulatory-knowledge-base v1.
 - `README.md`, `Evidence-Requirements.md`, `Law-Evidence-Matrix.md`: Colorado, EU and new state-law rows updated.
 
 ### Fixed `[defect]`
+- Interactive wizards for templates 01, 04 and 06 (`tools/interactive/*.html`) and their localized subtitles no longer cite the repealed Colorado SB 24-205 in export text (Codex P2 on PR #8); the i18n field key `colorado-sb-24-205` is now `colorado-sb-26-189`, and `riskClassification.coloradoSB26189` is the config key (the old `coloradoSB24205` key is still read).
 - `tools/autofill.js` jurisdiction checkbox filler no longer prefix-matches: selecting `US-NY` (United States - New York) used to also tick New York City in template 21.
 - `tools/autofill.js` now honors `--output <dir>` (it previously always wrote to `output/`, so `evidence-checker.js --output` could never find the files).
 - `tools/autofill.js` and `tools/evidence-checker.js` strip a UTF-8 BOM before `JSON.parse`; configs saved by Notepad or PowerShell `Set-Content -Encoding UTF8` no longer crash with "Unexpected token".

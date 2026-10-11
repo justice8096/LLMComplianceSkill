@@ -58,7 +58,7 @@
     "test-framework":                    "テストフレームワーク",
     "coverage-tool":                     "カバレッジツール",
     "eu-ai-act":                         "EU AI Act",
-    "colorado-sb-24-205":                "Colorado SB 24-205",
+    "colorado-sb-26-189":                "Colorado SB 26-189",
     "classification-justification":      "分類の根拠",
     "oversight-model":                   "監督モデル",
     "explainability-method":             "説明可能性の手法",
@@ -363,7 +363,7 @@
 
     "impactRiskScoring": {
       "title":    "影響・リスク評価スコアリングツール",
-      "subtitle": "テンプレート06 — EU AI Act Art. 9、Colorado SB 24-205、韓国AIBasic Actに対応",
+      "subtitle": "テンプレート06 — EU AI Act Art. 9、Colorado SB 26-189、韓国AIBasic Actに対応",
       "step1":    "基本的権利",
       "step2":    "リスクの次元",
       "step3":    "緩和策",
@@ -672,7 +672,7 @@
 
     "transparencyDocumentation": {
       "title":    "システム透明性文書",
-      "subtitle": "テンプレート01 — EU AI Act Arts. 11-14, 50；Colorado SB 24-205；UK DUA Act；韓国AIBasic Act",
+      "subtitle": "テンプレート01 — EU AI Act Arts. 11-14, 50；Colorado SB 26-189；UK DUA Act；韓国AIBasic Act",
       "step1":    "目的とスコープ",
       "step2":    "アーキテクチャ",
       "step3":    "制限事項",

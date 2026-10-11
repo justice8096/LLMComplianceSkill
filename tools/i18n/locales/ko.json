@@ -58,7 +58,7 @@
     "test-framework":                    "테스트 프레임워크",
     "coverage-tool":                     "커버리지 도구",
     "eu-ai-act":                         "EU AI Act",
-    "colorado-sb-24-205":                "Colorado SB 24-205",
+    "colorado-sb-26-189":                "Colorado SB 26-189",
     "classification-justification":      "분류 근거",
     "oversight-model":                   "감독 모델",
     "explainability-method":             "설명 가능성 방법",
@@ -363,7 +363,7 @@
 
     "impactRiskScoring": {
       "title":    "영향 및 위험 평가 채점 도구",
-      "subtitle": "Template 06 — EU AI Act Art. 9, Colorado SB 24-205, 대한민국 AI 기본법 준수",
+      "subtitle": "Template 06 — EU AI Act Art. 9, Colorado SB 26-189, 대한민국 AI 기본법 준수",
       "step1":    "기본권",
       "step2":    "위험 차원",
       "step3":    "완화",
@@ -672,7 +672,7 @@
 
     "transparencyDocumentation": {
       "title":    "시스템 투명성 문서",
-      "subtitle": "Template 01 — EU AI Act Arts. 11-14, 50; Colorado SB 24-205; UK DUA Act; 대한민국 AI 기본법",
+      "subtitle": "Template 01 — EU AI Act Arts. 11-14, 50; Colorado SB 26-189; UK DUA Act; 대한민국 AI 기본법",
       "step1":    "목적 및 범위",
       "step2":    "아키텍처",
       "step3":    "한계",

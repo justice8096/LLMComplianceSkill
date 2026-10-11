@@ -58,7 +58,7 @@
     "test-framework":                    "测试框架",
     "coverage-tool":                     "覆盖率工具",
     "eu-ai-act":                         "EU AI Act",
-    "colorado-sb-24-205":                "Colorado SB 24-205",
+    "colorado-sb-26-189":                "Colorado SB 26-189",
     "classification-justification":      "分类依据",
     "oversight-model":                   "监督模型",
     "explainability-method":             "可解释性方法",
@@ -363,7 +363,7 @@
 
     "impactRiskScoring": {
       "title":    "影响与风险评估评分工具",
-      "subtitle": "模板06 — 适用于 EU AI Act Art. 9、Colorado SB 24-205、韩国AI基本法",
+      "subtitle": "模板06 — 适用于 EU AI Act Art. 9、Colorado SB 26-189、韩国AI基本法",
       "step1":    "基本权利",
       "step2":    "风险维度",
       "step3":    "缓解措施",
@@ -672,7 +672,7 @@
 
     "transparencyDocumentation": {
       "title":    "系统透明度文件",
-      "subtitle": "模板01 — EU AI Act Arts. 11-14, 50；Colorado SB 24-205；UK DUA Act；韩国AI基本法",
+      "subtitle": "模板01 — EU AI Act Arts. 11-14, 50；Colorado SB 26-189；UK DUA Act；韩国AI基本法",
       "step1":    "目的与范围",
       "step2":    "架构",
       "step3":    "局限性",

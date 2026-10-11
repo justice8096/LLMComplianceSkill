@@ -474,7 +474,8 @@ function fillTemplate(templatePath, config, matrix, deadlines) {
   if (itr.riskClassification && tplNum === '17') {
     const rc = itr.riskClassification;
     if (rc.euAiAct) md = fillTableField(md, 'EU AI Act', `[x] ${rc.euAiAct}`);
-    if (rc.coloradoSB24205) md = fillTableField(md, 'Colorado SB 24-205', `[x] ${rc.coloradoSB24205}`);
+    const coValue = rc.coloradoSB26189 || rc.coloradoSB24205; // SB 26-189 replaced SB 24-205 (2026-05-14); old key still honored
+    if (coValue) md = fillTableField(md, 'Colorado SB 26-189', `[x] ${coValue}`);
     if (rc.overallRisk) md = fillTableField(md, 'Assigned risk level', rc.overallRisk);
     if (rc.justification) md = fillTableField(md, 'Classification justification', rc.justification);
   }
