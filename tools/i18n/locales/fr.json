@@ -58,7 +58,7 @@
     "test-framework":                    "Cadre de test",
     "coverage-tool":                     "Outil de couverture",
     "eu-ai-act":                         "EU AI Act (Règlement européen sur l'IA)",
-    "colorado-sb-24-205":                "Colorado SB 24-205",
+    "colorado-sb-26-189":                "Colorado SB 26-189",
     "classification-justification":      "Justification de la classification",
     "oversight-model":                   "Modèle de surveillance",
     "explainability-method":             "Méthode d'explicabilité",
@@ -149,6 +149,9 @@
     "US-IL":  "États-Unis — Illinois",
     "US-TX":  "États-Unis — Texas",
     "US-UT":  "États-Unis — Utah",
+    "US-NY":  "États-Unis — État de New York",
+    "US-CT":  "États-Unis — Connecticut",
+    "US-WA":  "États-Unis — État de Washington",
     "CA":     "Canada",
     "BR":     "Brésil",
     "IN":     "Inde",
@@ -360,7 +363,7 @@
 
     "impactRiskScoring": {
       "title":    "Outil de notation d'impact et de risque",
-      "subtitle": "Modèle 06 — Conforme à EU AI Act Art. 9, Colorado SB 24-205, Loi fondamentale IA Corée du Sud",
+      "subtitle": "Modèle 06 — Conforme à EU AI Act Art. 9, Colorado SB 26-189, Loi fondamentale IA Corée du Sud",
       "step1":    "Droits fondamentaux",
       "step2":    "Dimensions de risque",
       "step3":    "Atténuation",
@@ -669,7 +672,7 @@
 
     "transparencyDocumentation": {
       "title":    "Documentation de transparence du système",
-      "subtitle": "Modèle 01 — EU AI Act Arts. 11-14, 50 ; Colorado SB 24-205 ; UK DUA Act ; Loi fondamentale IA Corée du Sud",
+      "subtitle": "Modèle 01 — EU AI Act Arts. 11-14, 50 ; Colorado SB 26-189 ; UK DUA Act ; Loi fondamentale IA Corée du Sud",
       "step1":    "Objet et portée",
       "step2":    "Architecture",
       "step3":    "Limitations",

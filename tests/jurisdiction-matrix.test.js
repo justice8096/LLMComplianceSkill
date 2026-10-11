@@ -13,7 +13,7 @@ var path = require('path');
 var matrix = require(path.join(__dirname, '..', 'tools', 'data', 'jurisdiction-matrix.json'));
 
 var EXPECTED_JURISDICTIONS = [
-  'EU', 'CN', 'KR', 'UK', 'US-CO', 'US-CA', 'US-NYC', 'US-IL', 'US-TX', 'US-UT',
+  'EU', 'CN', 'KR', 'UK', 'US-CO', 'US-CA', 'US-NYC', 'US-IL', 'US-TX', 'US-UT', 'US-NY', 'US-CT', 'US-WA',
   'CA', 'BR', 'IN', 'JP', 'SG', 'AU', 'NZ', 'PE', 'NG', 'ZA', 'MX', 'VN'
 ];
 
@@ -29,11 +29,11 @@ test('matrix has required top-level keys', function() {
 
 // ── Jurisdictions ─────────────────────────────────────────────────────────────
 
-test('jurisdictions has all 22 expected entries', function() {
+test('jurisdictions has all 25 expected entries', function() {
   EXPECTED_JURISDICTIONS.forEach(function(j) {
     assert.ok(matrix.jurisdictions[j], 'missing jurisdiction: ' + j);
   });
-  assert.equal(Object.keys(matrix.jurisdictions).length, 22);
+  assert.equal(Object.keys(matrix.jurisdictions).length, 25);
 });
 
 test('each jurisdiction has required fields', function() {

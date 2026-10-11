@@ -12,7 +12,7 @@ var path = require('path');
 var TOOLS_DIR = __dirname;
 var DATA_DIR = path.join(TOOLS_DIR, 'data');
 
-function loadJSON(fp) { return JSON.parse(fs.readFileSync(fp, 'utf8')); }
+function loadJSON(fp) { return JSON.parse(fs.readFileSync(fp, 'utf8').replace(/^\uFEFF/, '')); } // BOM-safe for Windows editors
 function today() { return new Date().toISOString().split('T')[0]; }
 function safeReadFile(fp) { try { return fs.readFileSync(fp, 'utf8'); } catch (e) { return null; } }
 function progressBar(pct, w) {

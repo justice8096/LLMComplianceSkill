@@ -88,7 +88,7 @@ These evidence items are required or strongly expected in virtually every jurisd
 
 ### 2.1 European Union — EU AI Act
 
-**Deadline:** Full applicability 2 Aug 2026
+**Deadline:** Art. 50 transparency and penalties in force since 2 Aug 2026; Annex III high-risk from 2 Dec 2027 and Annex I from 2 Aug 2028 (Digital Omnibus, Regulation (EU) 2026/1744)
 
 | Evidence | Phase | Specific Requirement |
 |----------|-------|---------------------|
@@ -144,18 +144,29 @@ These evidence items are required or strongly expected in virtually every jurisd
 
 ### 2.3 United States — State Laws
 
-#### Colorado AI Act (SB 24-205) — Effective June 30, 2026
+#### Colorado SB 26-189 — Effective January 1, 2027 (replaces SB 24-205, which never took effect)
 
 | Evidence | Phase | Specific Requirement |
 |----------|-------|---------------------|
-| Documentation of reasonable care to prevent algorithmic discrimination | Design, Testing | Core obligation for developers |
 | Technical documentation provided to deployers | Design, Coding | Developer must provide to deployers |
-| Disclosed known system limitations | Design, Testing | Developer disclosure obligation |
-| Impact assessments for consequential consumer decisions | Design, Testing | Deployer obligation |
-| Consumer disclosure documentation | Design, Coding | Deployer obligation |
-| Risk management plan | Design, Testing | Deployer obligation |
+| Pre-use notice to consumers that ADMT is used in a consequential decision | Design, Coding | Deployer obligation (seven domains: education, employment, financial services, government services, healthcare, housing, insurance) |
+| Adverse-decision notice with reasons and a 30-day reconsideration window | Coding, Testing | Deployer obligation |
+| Human review process for contested decisions | Design | Deployer obligation |
+| Three-year record retention | Deployment | Developers and deployers |
 
-**Penalties:** Up to $20,000 per violation
+**Dropped from SB 24-205:** duty of reasonable care, impact assessments, risk-management program.
+**Penalties:** Up to $20,000 per violation; AG enforcement only; 60-day cure period until 2030. Enforcement paused under the stipulated order in xAI v. Colorado pending a preliminary-injunction ruling.
+
+#### New York RAISE Act and Illinois SB 315 — Effective January 1, 2027
+
+| Evidence | Phase | Specific Requirement |
+|----------|-------|---------------------|
+| Published safety framework and transparency reports | Design | Frontier developers (>10^26 FLOPS; NY: >$500M revenue) |
+| Safety incident reports within 72 hours | Testing, Deployment | NY RAISE Act; IL SB 315 incident reporting |
+| Annual independent third-party audit | Deployment | IL SB 315 (first in the nation) |
+| Whistleblower channel | Design, Coding | Both |
+
+**Penalties:** NY $1M first violation / $3M subsequent.
 
 #### California — Frontier AI (SB 53) — Effective Jan 1, 2026
 
@@ -489,13 +500,18 @@ These evidence items are required or strongly expected in virtually every jurisd
 | **Jan 1, 2026** | US (CA, TX, IL) | Multiple state AI laws effective |
 | **Jan 22, 2026** | South Korea | AI Basic Act effective |
 | **Feb 5-6, 2026** | UK | DUA Act ADM reforms + deepfake offence |
-| **Mar 2026** | Nigeria | Digital Economy Bill targeted for passage |
-| **Jun 30, 2026** | US (CO) | Colorado AI Act effective |
-| **Aug 2, 2026** | EU | **Full applicability** — high-risk, transparency, conformity |
+| **Feb 20, 2026** | India | IT Amendment Rules 2026 — synthetic content labelling |
+| **Mar 1, 2026** | Vietnam | Law on AI in force |
+| **Jul 27, 2026** | EU | Digital Omnibus on AI in force |
+| **Aug 2, 2026** | EU | **Art. 50 transparency, penalties, AI Office GPAI enforcement** |
 | **Aug 2, 2026** | US (CA) | AI Transparency Act (SB 942) |
 | **Nov 1, 2026** | Egypt | PDPL full enforcement |
-| **Dec 2026** | Australia | Privacy Act ADM transparency obligations |
-| **Aug 2, 2027** | EU | High-risk AI in regulated products |
+| **Dec 2, 2026** | EU | Machine-readable marking grace period ends |
+| **Dec 10, 2026** | Australia | Privacy Act ADM transparency obligations |
+| **Jan 1, 2027** | US | CO SB 26-189, NY RAISE Act, IL SB 315, WA HB 2225, CA CCPA ADMT |
+| **May 13, 2027** | India | DPDP Rules core obligations |
+| **Dec 2, 2027** | EU | Annex III high-risk applicability |
+| **Aug 2, 2028** | EU | High-risk AI in regulated products (Annex I) |
 
 ---
 

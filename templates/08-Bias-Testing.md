@@ -1,6 +1,6 @@
 # Bias Testing Methodology and Results
 
-> **Laws served:** EU AI Act (high-risk); South Korea AI Basic Act; Colorado SB 24-205; NYC Local Law 144; Illinois HB 3773; California Civil Rights AI Employment; Australia AI6 Guidance; Canada Ontario Workers Act; Singapore MAS FEAT; New Zealand Human Rights Act 1993
+> **Laws served:** EU AI Act (high-risk); South Korea AI Basic Act; Colorado SB 26-189; NYC Local Law 144; Illinois HB 3773; California Civil Rights AI Employment; Australia AI6 Guidance; Canada Ontario Workers Act; Singapore MAS FEAT; New Zealand Human Rights Act 1993
 > **Template version:** 1.0 | **Last updated:** 2026-03-14
 
 ---

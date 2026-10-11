@@ -1,6 +1,6 @@
 # Risk Classification Decision Tree
 
-> **Laws served:** EU AI Act Art. 6 + Annex III; South Korea AI Basic Act; Brazil PL 2338/2023; Peru Law No. 31814; Colorado SB 24-205; Vietnam Digital Technology Industry Law; Nigeria Digital Economy Bill (proposed)
+> **Laws served:** EU AI Act Art. 6 + Annex III; South Korea AI Basic Act; Brazil PL 2338/2023; Peru Law No. 31814; Colorado SB 26-189; Vietnam Law on AI 134/2025/QH15; Nigeria Digital Economy Bill (proposed)
 > **Template version:** 1.0 | **Last updated:** 2026-03-14
 
 ---
@@ -56,7 +56,9 @@
 | Migration/border | Risk assessment at borders, visa/asylum applications | [ ] |
 | Justice/democracy | Legal interpretation assistance, influence on elections/referendums | [ ] |
 
-### 2.2 Colorado SB 24-205 — Consequential Decisions
+### 2.2 Colorado SB 26-189 — Automated Decision-Making Technology (effective 1 Jan 2027)
+
+> SB 26-189 (signed 14 May 2026) repealed SB 24-205. It covers ADMT used for consequential decisions in seven domains and requires pre-use notice, adverse-decision notice, a 30-day reconsideration window and human review. Enforcement is paused pending xAI v. Colorado.
 
 | Decision Area | Description | Your System? |
 |--------------|-----------|:---:|
@@ -65,7 +67,7 @@
 | Financial services | Lending, credit, insurance underwriting | [ ] |
 | Healthcare | Diagnosis, treatment, cost/coverage decisions | [ ] |
 | Housing | Rental, sale, mortgage decisions | [ ] |
-| Legal services | Legal rights, immigration, parole/sentencing | [ ] |
+| Insurance | Underwriting, claims decisions | [ ] |
 | Essential government services | Benefits, licensing, permits | [ ] |
 
 ### 2.3 South Korea AI Basic Act — High-Impact AI
@@ -118,7 +120,9 @@ If **all** NO → **Minimal risk** — no specific EU AI Act obligations (genera
 | Framework | Classification | Justification |
 |-----------|---------------|---------------|
 | EU AI Act | [ ] Prohibited [ ] High-risk [ ] Limited [ ] Minimal | |
-| Colorado SB 24-205 | [ ] High-risk (consequential) [ ] Not high-risk | |
+| Colorado SB 26-189 | [ ] ADMT for consequential decision [ ] Not covered | |
+| Frontier-model regimes (CA SB 53 / NY RAISE / IL SB 315) | [ ] Frontier developer (>10^26 FLOPS) [ ] Not covered | |
+| Vietnam Law on AI 134/2025 | [ ] High-risk [ ] Medium [ ] Low | |
 | South Korea AI Basic Act | [ ] High-impact [ ] General | |
 | Brazil PL 2338/2023 | [ ] Prohibited [ ] High-risk [ ] General | |
 | Peru Law No. 31814 | [ ] Prohibited [ ] High-risk [ ] Low-risk | |

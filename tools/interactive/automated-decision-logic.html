@@ -127,7 +127,7 @@
 
   var wizard = createWizard({
     title: t(T + 'title', 'Automated Decision Logic'),
-    subtitle: 'Template 04 \u2014 GDPR Art. 22; EU AI Act Arts. 14, 86; Colorado SB 24-205; Canada Directive on ADM',
+    subtitle: 'Template 04 \u2014 GDPR Art. 22; EU AI Act Arts. 14, 86; Colorado SB 26-189; Canada Directive on ADM',
     totalSteps: 6,
     stepLabels: ['Load Config', 'Map Decisions', 'Classify Significance', 'Human Review', 'Explainability', 'Review & Export'],
     renderStep: function(step, container) {
@@ -255,7 +255,7 @@
 
   function renderStep4(container) {
     var items = [];
-    items.push(createAlert('info', 'Design the human review and appeal mechanism. Required under GDPR Art. 22(3), EU AI Act Art. 14, and Colorado SB 24-205.'));
+    items.push(createAlert('info', 'Design the human review and appeal mechanism. Required under GDPR Art. 22(3), EU AI Act Art. 14, and Colorado SB 26-189 (human review of adverse ADMT decisions).'));
     items.push(createSelect('Oversight model', oversightModelOptions, state.humanReview.oversightModel, function(v) { state.humanReview.oversightModel = v; }));
     items.push(createTextArea('Appeal process description', state.humanReview.appealProcess, function(v) { state.humanReview.appealProcess = v; }, 'How can an affected individual contest an automated decision?'));
     items.push(createTextInput('Appeal contact / channel', state.humanReview.appealContact, function(v) { state.humanReview.appealContact = v; }, 'e.g. appeals@company.com, in-app form'));
@@ -440,7 +440,7 @@
     lines.push('# Automated Decision Logic Report (Template 04)');
     lines.push('');
     lines.push('**Date:** ' + r.completedDate);
-    lines.push('**Applicable Law:** GDPR Art. 22; EU AI Act Arts. 14, 86; Colorado SB 24-205; Canada Directive on ADM');
+    lines.push('**Applicable Law:** GDPR Art. 22; EU AI Act Arts. 14, 86; Colorado SB 26-189; Canada Directive on ADM');
     lines.push('');
     lines.push('## 1. Automated Decisions');
     lines.push('');

@@ -1,12 +1,14 @@
 {
   "name": "llm-compliance-skill",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "AI/LLM compliance evidence collection toolkit",
   "author": "Justice",
   "license": "MIT",
   "private": true,
   "scripts": {
     "build": "tsx build.ts",
+    "sync:kb": "node tools/sync-kb.js",
+    "sync:kb:check": "node tools/sync-kb.js --check",
     "build:claude": "tsx build.ts --format claude-plugin",
     "build:openai": "tsx build.ts --format openai",
     "build:n8n": "tsx build.ts --format n8n",

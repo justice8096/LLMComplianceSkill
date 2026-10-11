@@ -85,7 +85,7 @@
 
   var wizard = createWizard({
     title: t(T + 'title', 'System Transparency Documentation'),
-    subtitle: t(T + 'subtitle', 'Template 01 \u2014 EU AI Act Arts. 11-14, 50; Colorado SB 24-205; UK DUA Act; South Korea AI Basic Act'),
+    subtitle: t(T + 'subtitle', 'Template 01 \u2014 EU AI Act Arts. 11-14, 50; Colorado SB 26-189; UK DUA Act; South Korea AI Basic Act'),
     totalSteps: 7,
     stepLabels: [t(T + 'step1', 'Purpose & Scope'), t(T + 'step2', 'Architecture'), t(T + 'step3', 'Limitations'), t(T + 'step4', 'Metrics'), t(T + 'step5', 'Oversight'), t(T + 'step6', 'Disclosures'), t(T + 'step7', 'Summary')],
     renderStep: function(step, container) {
@@ -221,7 +221,7 @@
 
   function renderStep5(container) {
     var items = [];
-    items.push(createAlert('info', 'Human oversight is required for high-risk AI systems under EU AI Act Arts. 14 and Colorado SB 24-205.'));
+    items.push(createAlert('info', 'Human oversight is required for high-risk AI systems under EU AI Act Art. 14, and human review of adverse decisions under Colorado SB 26-189.'));
     items.push(createSelect('Oversight model', [
       { value: '', label: '-- Select --' }, { value: 'hitl', label: 'Human-in-the-Loop (HITL)' },
       { value: 'hotl', label: 'Human-on-the-Loop (HOTL)' }, { value: 'hic', label: 'Human-in-Command (HIC)' }
@@ -358,7 +358,7 @@
     var r = buildResults(); var lines = [];
     lines.push('# System Transparency Documentation (Template 01)'); lines.push('');
     lines.push('**Date:** ' + r.completedDate);
-    lines.push('**Applicable Law:** EU AI Act Arts. 11-14, 50; Colorado SB 24-205; UK DUA Act; South Korea AI Basic Act');
+    lines.push('**Applicable Law:** EU AI Act Arts. 11-14, 50; Colorado SB 26-189; UK DUA Act; South Korea AI Basic Act');
     lines.push(''); lines.push('## 1. System Purpose & Scope'); lines.push('');
     lines.push('- **System purpose:** ' + (r.purpose.systemPurpose || 'N/A'));
     lines.push('- **Intended use cases:** ' + (r.purpose.useCases || 'N/A'));

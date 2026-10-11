@@ -15,6 +15,31 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-11
+
+Regulatory refresh to October 2026, synced from ai-regulatory-knowledge-base v1.1.0 (commit 89f3a6a). Prior outputs generated against v1.2.0 cite deadlines and laws that have since changed (Colorado, EU high-risk dates); downstream consumers should file addenda for any template 17, 21 or 22 produced before this release.
+
+### Changed `[authority]`
+- All 12 root `AI-Regulations-*.md` files and `AI-Regulations-World-Map.html` replaced with the October 2026 knowledge-base versions (EU Digital Omnibus, Regulation (EU) 2026/1744; Colorado SB 26-189; NY RAISE Act; IL SB 315; CT Public Act 26-15; WA HB 2225; Korea AI Basic Act in force; Vietnam Law on AI; India IT Amendment Rules 2026; China anthropomorphic AI measures; Australia AI standards announcement; Peru regulation phases; Brazil ECA Digital; Kenya AI Bill; South Africa policy withdrawal).
+- `tools/data/deadline-data.json` regenerated: 21 entries became 47. EU full applicability (`eu.aiAct.full`) moved from 2026-08-02 to 2027-12-02 with a new `eu.aiAct.transparency` entry for what actually applied on 2026-08-02; Colorado entry replaced by `usCo.sb26189` (2027-01-01); added Korea, Vietnam, India, Peru, Brazil, Connecticut, New York, Illinois, Washington, Japan APPI, EU Data Act and CCPA entries.
+- `tools/data/jurisdiction-matrix.json`: statuses and keyDeadlines updated (Brazil, Mexico, India, Australia to active-sector; EU keyDeadline 2027-12-02; Colorado 2027-01-01). Jurisdiction set unchanged at 22.
+- Templates 00, 03, 17, 20, 21, 22 and the "Laws served" headers of 01, 02, 04, 06, 08 updated: SB 24-205 references replaced by SB 26-189 (with the dropped duties noted), frontier-model regimes added to the classification table, deadline tables rebuilt for 2026-2028, Vietnam and Kenya rows added to the jurisdiction selector.
+- `source/skills/ai-compliance.md` (and the built `skills/ai-compliance/SKILL.md`): file-contents table, tier table, key-deadline table and the authority-version pin paragraph updated; "sources current as of 2026-10-11".
+- `README.md`, `Evidence-Requirements.md`, `Law-Evidence-Matrix.md`: Colorado, EU and new state-law rows updated.
+
+### Fixed `[defect]`
+- Interactive wizards for templates 01, 04 and 06 (`tools/interactive/*.html`) and their localized subtitles no longer cite the repealed Colorado SB 24-205 in export text (Codex P2 on PR #8); the i18n field key `colorado-sb-24-205` is now `colorado-sb-26-189`, and `riskClassification.coloradoSB26189` is the config key (the old `coloradoSB24205` key is still read).
+- `tools/autofill.js` jurisdiction checkbox filler no longer prefix-matches: selecting `US-NY` (United States - New York) used to also tick New York City in template 21.
+- `tools/autofill.js` now honors `--output <dir>` (it previously always wrote to `output/`, so `evidence-checker.js --output` could never find the files).
+- `tools/autofill.js` and `tools/evidence-checker.js` strip a UTF-8 BOM before `JSON.parse`; configs saved by Notepad or PowerShell `Set-Content -Encoding UTF8` no longer crash with "Unexpected token".
+- Em dashes in `deadline-data.json` (which rendered as mojibake on Windows) replaced with hyphens; a test now guards against their return.
+
+### Added `[structural]`
+- `tools/data/jurisdiction-matrix.json` gains three jurisdictions (22 -> 25): `US-NY` (RAISE Act), `US-CT` (Public Act 26-15) and `US-WA` (HB 2225), with template requirements mapped on an inclusive basis (binding duties plus strongly advisable evidence). Locale names added in all seven locales; tests updated to 25.
+- Template requirements re-mapped for the 2026 laws: `US-CO` (SB 26-189: notices, ADM logic and human review in; impact assessment kept as advisable), `US-CA` (adds CCPA ADMT, SB 947, SB 243 and SB 53 governance/security templates) and `US-IL` (adds SB 315 frontier templates incl. 19 Conformity Assessment for the third-party audit).
+- `tools/sync-kb.js` (`npm run sync:kb`, `npm run sync:kb:check`): copies the regulation files and world map from a sibling or `--from` checkout of ai-regulatory-knowledge-base, so the knowledge base is the single source of truth and this repo can be checked for drift in CI.
+- Tests: `eu.aiAct.transparency` presence, no `usCo.sb24205`, ASCII-only law names.
+
 ## [1.2.0] — 2026-05-16
 
 Skill Versioning and Addendum Framework integration. Aligns LLMComplianceSkill with the framework piloted in dyscalculia-support-skill v1.3.0–v1.3.2 and applied to dyslexia-support-skill v1.3.0. Adds the build-time root-canonical sync that prevents the drift defect we've now seen in three repos.

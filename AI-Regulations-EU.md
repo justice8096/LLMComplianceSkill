@@ -1,32 +1,49 @@
-# AI & LLM Software Development Regulations â€” European Union
+# AI & LLM Software Development Regulations - European Union
 
-**Last Updated:** 2026-03-13
+**Last Updated:** 2026-10-11
 **Tags:** #ai-regulation #eu #eu-ai-act #compliance #software-development
 
 ---
 
 ## Overview
 
-The EU AI Act (Regulation 2024/1689) is the world's first comprehensive AI-specific law. It entered into force on 1 August 2024 and is being phased in through August 2027. It applies to any organization that develops, deploys, or distributes AI systems in the EU market â€” regardless of where the organization is based.
+The EU AI Act (Regulation 2024/1689) is the world's first comprehensive AI-specific law. It entered into force on 1 August 2024 and is being phased in through August 2028. It applies to any organization that develops, deploys, or distributes AI systems in the EU market, regardless of where the organization is based.
+
+The **Digital Omnibus on AI** (Regulation (EU) 2026/1744, in force 27 July 2026) amended the Act before most of its obligations applied. It postponed the high-risk rules by 16 to 24 months, added one new prohibition, softened the AI literacy duty, and gave the AI Office direct enforcement powers. The transparency duties in Article 50 and the penalty regime applied on schedule on 2 August 2026.
 
 ---
 
 ## Key Legislation
 
-### EU AI Act â€” Phased Implementation Timeline
+### EU AI Act - Phased Implementation Timeline (as amended by the Digital Omnibus)
 
 | Date | What Applies |
 |------|-------------|
 | **2 Feb 2025** | Prohibited AI practices banned; AI literacy obligations begin for all providers and deployers |
 | **2 Aug 2025** | Governance infrastructure operational; obligations for general-purpose AI (GPAI) model providers begin |
-| **2 Aug 2026** | Full applicability for most operators â€” high-risk AI system rules, transparency duties (Art. 50) |
-| **2 Aug 2027** | Rules for high-risk AI systems embedded in regulated products (e.g., medical devices, machinery) |
+| **2 Aug 2026** | Article 50 transparency duties (chatbot disclosure, deepfake and synthetic content labelling, emotion recognition notices); Article 99 penalty regime; Commission and AI Office enforcement powers over GPAI providers (Arts. 91-101) |
+| **2 Dec 2026** | End of the grace period for Article 50(2) machine-readable marking on systems placed on the market before 2 Aug 2026; new prohibition on intimate-imagery and CSAM generators fully applies |
+| **2 Aug 2027** | GPAI models placed on the market before 2 Aug 2025 must comply; Member State regulatory sandboxes must be operational |
+| **2 Dec 2027** | Stand-alone high-risk AI systems (Annex III): conformity assessment, risk management, documentation, registration, human oversight |
+| **2 Aug 2028** | High-risk AI systems embedded in regulated products (Annex I: medical devices, vehicles, aviation and similar) |
 
-> **Note:** The Nov 2025 "Digital Omnibus" proposal may push high-risk obligation dates to Dec 2027 / Aug 2028 if adopted.
+> **Note:** The Omnibus set fixed dates. The Commission's earlier idea of tying the high-risk start to the availability of harmonised standards was dropped during trilogue. Machinery Regulation products were largely carved out of the Annex I list.
 
-### EU Cloud and AI Development Act (Proposed Q1 2026)
-- Aims to strengthen European computing infrastructure for AI
+### Digital Omnibus on AI - Regulation (EU) 2026/1744 (Enacted)
+- Political agreement 6 May 2026; signed 8 Jul 2026; published in the Official Journal 24 Jul 2026; in force 27 Jul 2026
+- Postpones Annex III high-risk obligations to 2 Dec 2027 and Annex I to 2 Aug 2028
+- Adds a new Article 5 prohibition on AI systems built to generate non-consensual intimate imagery or child sexual abuse material (transition to 2 Dec 2026)
+- Softens Article 4 AI literacy from "ensure" to "take measures to support"
+- Gives the AI Office exclusive competence over AI systems built on a provider's own GPAI model and over systems integrated in very large online platforms and search engines, with inspection and fining powers
+
+### EU Cloud and AI Development Act (Proposed)
+- Commission proposal COM(2026) 502 adopted 3 Jun 2026; in first reading in Parliament and Council
+- Aims to triple EU data-centre capacity and create an EU-wide cloud and AI sovereignty assessment framework
 - Complements the AI Act with cloud capacity and data sovereignty provisions
+
+### Data Act (In force)
+- Applicable since 12 Sep 2025; the ban on cloud switching charges takes full effect 12 Jan 2027
+- The data strand of the Digital Omnibus proposes amendments (trade-secret refusals, transitional switching exemptions, folding in the Data Governance Act); Council compromise text July 2026, not yet adopted
 
 ---
 
@@ -41,8 +58,9 @@ The AI Act categorizes AI systems into four tiers:
 - Predictive policing based solely on profiling
 - Emotion recognition in workplace/education settings
 - Untargeted scraping of facial images for databases
+- AI systems designed to generate non-consensual intimate imagery or child sexual abuse material (added by the Omnibus, 2026)
 
-### 2. High-Risk AI Systems
+### 2. High-Risk AI Systems (obligations from 2 Dec 2027 / 2 Aug 2028)
 Systems used in critical areas requiring conformity assessments, technical documentation, risk management, human oversight, and EU database registration:
 - Biometric identification and categorization
 - Critical infrastructure management
@@ -52,10 +70,13 @@ Systems used in critical areas requiring conformity assessments, technical docum
 - Law enforcement and border control
 - Administration of justice
 
-### 3. Limited Risk (Transparency Obligations)
+Draft Commission guidelines on high-risk classification (Art. 6) were published 19 May 2026 for consultation; the final version had not been adopted as of October 2026.
+
+### 3. Limited Risk (Transparency Obligations - in force since 2 Aug 2026)
 - Chatbots must disclose they are AI
 - AI-generated content must be labeled (deepfakes, synthetic text for public interest)
 - Emotion recognition / biometric categorization systems must inform users
+- Final Commission guidelines on Article 50 adopted 20 Jul 2026; a voluntary Code of Practice on marking and labelling AI-generated content was published 10 Jun 2026 and found adequate by the Commission on 8 Jul 2026
 
 ### 4. Minimal / No Risk
 - No specific obligations (e.g., spam filters, AI in video games)
@@ -77,7 +98,13 @@ Effective since August 2025, providers of GPAI models must:
 - Cybersecurity protections
 - Energy consumption reporting
 
-A **Code of Practice** for GPAI models has been developed to provide a compliance pathway.
+A **Code of Practice** for GPAI models (July 2025) provides a compliance pathway. Since 2 Aug 2026 the AI Office can enforce GPAI obligations directly. On 1 Sep 2026 it sent its first Article 91 requests for information to more than 30 GPAI providers covering safety, copyright and transparency. No fines had been issued under the AI Act as of October 2026. Updated GPAI guidelines set an indicative threshold of 10^23 FLOPs for a model to count as general-purpose.
+
+---
+
+## Harmonised Standards
+
+CEN/CENELEC JTC 21 is drafting the harmonised standards that give a presumption of conformity for high-risk systems under standardisation request M/613 (expires 28 Feb 2027). As of mid-2026 the quality management standard (EN 18286) was at formal vote and the risk management, logging and cybersecurity standards were at enquiry stage. None had been cited in the Official Journal as of October 2026, so no presumption of conformity is yet available.
 
 ---
 
@@ -95,9 +122,9 @@ The AI Act provides limited exemptions for open-source AI:
 ### If You Build AI Systems (Provider):
 1. **Classify your system's risk level** per Annex III
 2. **Conduct conformity assessments** for high-risk systems
-3. **Implement risk management systems** â€” ongoing, iterative process
-4. **Maintain technical documentation** â€” data governance, training data, testing
-5. **Ensure human oversight** â€” design for meaningful human control
+3. **Implement risk management systems** - ongoing, iterative process
+4. **Maintain technical documentation** - data governance, training data, testing
+5. **Ensure human oversight** - design for meaningful human control
 6. **Register high-risk systems** in EU database before deployment
 7. **Affix CE marking** upon compliance
 8. **Report serious incidents** to market surveillance authorities
@@ -109,9 +136,15 @@ The AI Act provides limited exemptions for open-source AI:
 4. **Conduct fundamental rights impact assessments** for high-risk public-sector uses
 5. **Inform individuals** when subject to high-risk AI decisions
 
-### AI Literacy (All Operators â€” Effective Feb 2025):
-- Ensure sufficient AI literacy among staff involved in AI operations
+### AI Literacy (All Operators - Effective Feb 2025, softened Jul 2026):
+- Take measures to support sufficient AI literacy among staff involved in AI operations
 - Consider technical knowledge, experience, education, and training context
+
+---
+
+## National Authorities
+
+Member States had to designate market surveillance authorities by 2 Aug 2025. As of August 2026 the following had enacted implementing laws or designations: Cyprus, Denmark (partial), Finland, Germany (KI-MIG, in force 29 Jul 2026, Bundesnetzagentur), Hungary, Ireland (Regulation of AI Act 2026, signed 21 Jul 2026), Italy (Law 132/2025, ACN), Lithuania, Malta, Poland (in force 11 Aug 2026, penalties from 28 Oct 2026) and Sweden. Spain's draft organic law was approved by the government on 26 May 2026; the Netherlands, Luxembourg, Slovenia and France were still pending.
 
 ---
 
@@ -119,20 +152,23 @@ The AI Act provides limited exemptions for open-source AI:
 
 | Violation | Maximum Fine |
 |-----------|-------------|
-| Prohibited AI practices | â‚¬35M or 7% of global annual turnover |
-| High-risk system non-compliance | â‚¬15M or 3% of global annual turnover |
-| Incorrect information to authorities | â‚¬7.5M or 1% of global annual turnover |
+| Prohibited AI practices | EUR 35M or 7% of global annual turnover |
+| High-risk system non-compliance | EUR 15M or 3% of global annual turnover |
+| Incorrect information to authorities | EUR 7.5M or 1% of global annual turnover |
 
-Individual Member States may impose additional penalties (e.g., Italy's Law No. 132/2025 adds disqualification measures).
+Individual Member States may impose additional penalties (e.g., Italy's Law No. 132/2025 adds disqualification measures). The penalty regime has applied since 2 Aug 2026.
 
 ---
 
-## Key Dates for Developers to Watch in 2026
+## Key Dates for Developers to Watch
 
-- **By June 2026:** Code of Practice for marking/labeling AI-generated content expected to be finalized
-- **2 Aug 2026:** Full applicability â€” high-risk AI, transparency duties, conformity assessments due
-- **Throughout 2026:** EU Member States appointing national regulators; country-specific laws (e.g., Italy) adding nuance
-- **Late 2026:** Digital Omnibus negotiations may adjust timelines
+- **2 Dec 2026:** Machine-readable marking grace period ends; new Article 5 prohibition fully applies
+- **12 Jan 2027:** Data Act switching-charge ban fully effective
+- **28 Feb 2027:** Harmonised standards request M/613 expires; standards expected in the Official Journal before then
+- **2 Aug 2027:** Legacy GPAI models must comply; sandboxes operational
+- **2 Dec 2027:** Annex III high-risk obligations apply
+- **2 Aug 2028:** Annex I embedded high-risk obligations apply
+- **Throughout 2026-2027:** Remaining Member States designating national regulators; Cloud and AI Development Act negotiations
 
 ---
 
@@ -140,9 +176,13 @@ Individual Member States may impose additional penalties (e.g., Italy's Law No. 
 
 - [EU AI Act Official Text](https://artificialintelligenceact.eu/)
 - [European Commission AI Page](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)
-- [GPAI Code of Practice](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)
+- [GPAI Code of Practice](https://digital-strategy.ec.europa.eu/en/policies/contents-code-gpai)
+- [Code of Practice on marking and labelling AI-generated content](https://digital-strategy.ec.europa.eu/en/news/commission-publishes-code-practice-marking-and-labelling-ai-generated-content)
+- [Draft guidelines on high-risk classification](https://digital-strategy.ec.europa.eu/en/library/draft-commission-guidelines-classification-high-risk-ai-systems)
+- [Cloud and AI Development Act proposal](https://digital-strategy.ec.europa.eu/en/library/proposal-cloud-and-ai-development-act-cada)
+- [Market surveillance authorities under the AI Act](https://digital-strategy.ec.europa.eu/en/policies/market-surveillance-authorities-under-ai-act)
 - [NIST AI RMF](https://www.nist.gov/artificial-intelligence) (complementary US framework)
-- [ISO/IEC 42001](https://www.iso.org/standard/81230.html) â€” AI Management System standard
+- [ISO/IEC 42001](https://www.iso.org/standard/81230.html) - AI Management System standard
 - [Regulations.ai - EU AI Act](https://regulations.ai) - global AI law and regulation database
 
 ---
@@ -150,9 +190,13 @@ Individual Member States may impose additional penalties (e.g., Italy's Law No. 
 ## Key Takeaway for Developers
 
 If you are building LLM-powered applications, chatbots, or AI-integrated software for EU users:
-- You **must** disclose AI interaction to users (transparency)
-- You **must** label AI-generated content
+- You **must** disclose AI interaction to users (transparency) - in force now
+- You **must** label AI-generated content, with machine-readable marking by 2 Dec 2026
 - You **must** have a risk classification for your system
-- High-risk deployments require full conformity assessment and documentation
-- GPAI model providers must document training data and comply with copyright
-- Start compliance now â€” August 2026 is the hard deadline for most obligations
+- High-risk deployments require full conformity assessment and documentation from 2 Dec 2027 (Annex III) or 2 Aug 2028 (Annex I)
+- GPAI model providers must document training data and comply with copyright; the AI Office is now actively requesting information
+- The high-risk delay is a reprieve, not a cancellation; harmonised standards are expected before Feb 2027
+
+---
+
+*This document is research, not legal advice.*

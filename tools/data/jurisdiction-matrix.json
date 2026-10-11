@@ -1,53 +1,454 @@
 {
   "jurisdictions": {
-    "EU": { "name": "European Union", "nameKey": "EU", "status": "enacted", "keyDeadline": "2026-08-02" },
-    "CN": { "name": "China", "nameKey": "CN", "status": "enacted", "keyDeadline": "now" },
-    "KR": { "name": "South Korea", "nameKey": "KR", "status": "enacted", "keyDeadline": "2026-01-22" },
-    "UK": { "name": "United Kingdom", "nameKey": "UK", "status": "active-sector", "keyDeadline": "2026-02-05" },
-    "US-CO": { "name": "United States — Colorado", "nameKey": "US-CO", "status": "enacted", "keyDeadline": "2026-06-30" },
-    "US-CA": { "name": "United States — California", "nameKey": "US-CA", "status": "active-sector", "keyDeadline": "2026-08-02" },
-    "US-NYC": { "name": "United States — New York City", "nameKey": "US-NYC", "status": "enacted", "keyDeadline": "now" },
-    "US-IL": { "name": "United States — Illinois", "nameKey": "US-IL", "status": "enacted", "keyDeadline": "now" },
-    "US-TX": { "name": "United States — Texas", "nameKey": "US-TX", "status": "enacted", "keyDeadline": "now" },
-    "US-UT": { "name": "United States — Utah", "nameKey": "US-UT", "status": "enacted", "keyDeadline": "now" },
-    "CA": { "name": "Canada", "nameKey": "CA", "status": "active-sector", "keyDeadline": "2026" },
-    "BR": { "name": "Brazil", "nameKey": "BR", "status": "proposed", "keyDeadline": "upon-passage" },
-    "IN": { "name": "India", "nameKey": "IN", "status": "active-sector", "keyDeadline": "now" },
-    "JP": { "name": "Japan", "nameKey": "JP", "status": "voluntary", "keyDeadline": "now" },
-    "SG": { "name": "Singapore", "nameKey": "SG", "status": "voluntary", "keyDeadline": "now" },
-    "AU": { "name": "Australia", "nameKey": "AU", "status": "voluntary", "keyDeadline": "2026-12" },
-    "NZ": { "name": "New Zealand", "nameKey": "NZ", "status": "voluntary", "keyDeadline": "now" },
-    "PE": { "name": "Peru", "nameKey": "PE", "status": "enacted", "keyDeadline": "now" },
-    "NG": { "name": "Nigeria", "nameKey": "NG", "status": "proposed", "keyDeadline": "2026-03" },
-    "ZA": { "name": "South Africa", "nameKey": "ZA", "status": "active-sector", "keyDeadline": "now" },
-    "MX": { "name": "Mexico", "nameKey": "MX", "status": "proposed", "keyDeadline": "2026" },
-    "VN": { "name": "Vietnam", "nameKey": "VN", "status": "enacted", "keyDeadline": "2026-03" }
+    "EU": {
+      "name": "European Union",
+      "nameKey": "EU",
+      "status": "enacted",
+      "keyDeadline": "2027-12-02"
+    },
+    "CN": {
+      "name": "China",
+      "nameKey": "CN",
+      "status": "enacted",
+      "keyDeadline": "now"
+    },
+    "KR": {
+      "name": "South Korea",
+      "nameKey": "KR",
+      "status": "enacted",
+      "keyDeadline": "now"
+    },
+    "UK": {
+      "name": "United Kingdom",
+      "nameKey": "UK",
+      "status": "active-sector",
+      "keyDeadline": "now"
+    },
+    "US-CO": {
+      "name": "United States — Colorado",
+      "nameKey": "US-CO",
+      "status": "enacted",
+      "keyDeadline": "2027-01-01"
+    },
+    "US-CA": {
+      "name": "United States — California",
+      "nameKey": "US-CA",
+      "status": "active-sector",
+      "keyDeadline": "2027-01-01"
+    },
+    "US-NYC": {
+      "name": "United States — New York City",
+      "nameKey": "US-NYC",
+      "status": "enacted",
+      "keyDeadline": "now"
+    },
+    "US-IL": {
+      "name": "United States — Illinois",
+      "nameKey": "US-IL",
+      "status": "enacted",
+      "keyDeadline": "now"
+    },
+    "US-TX": {
+      "name": "United States — Texas",
+      "nameKey": "US-TX",
+      "status": "enacted",
+      "keyDeadline": "now"
+    },
+    "US-UT": {
+      "name": "United States — Utah",
+      "nameKey": "US-UT",
+      "status": "enacted",
+      "keyDeadline": "now"
+    },
+    "US-NY": {
+      "name": "United States — New York",
+      "nameKey": "US-NY",
+      "status": "enacted",
+      "keyDeadline": "2027-01-01"
+    },
+    "US-CT": {
+      "name": "United States — Connecticut",
+      "nameKey": "US-CT",
+      "status": "enacted",
+      "keyDeadline": "2026-10-01"
+    },
+    "US-WA": {
+      "name": "United States — Washington",
+      "nameKey": "US-WA",
+      "status": "enacted",
+      "keyDeadline": "2027-01-01"
+    },
+    "CA": {
+      "name": "Canada",
+      "nameKey": "CA",
+      "status": "active-sector",
+      "keyDeadline": "2026"
+    },
+    "BR": {
+      "name": "Brazil",
+      "nameKey": "BR",
+      "status": "active-sector",
+      "keyDeadline": "2026-11-01"
+    },
+    "IN": {
+      "name": "India",
+      "nameKey": "IN",
+      "status": "active-sector",
+      "keyDeadline": "2027-05-13"
+    },
+    "JP": {
+      "name": "Japan",
+      "nameKey": "JP",
+      "status": "voluntary",
+      "keyDeadline": "now"
+    },
+    "SG": {
+      "name": "Singapore",
+      "nameKey": "SG",
+      "status": "voluntary",
+      "keyDeadline": "now"
+    },
+    "AU": {
+      "name": "Australia",
+      "nameKey": "AU",
+      "status": "active-sector",
+      "keyDeadline": "2026-12-10"
+    },
+    "NZ": {
+      "name": "New Zealand",
+      "nameKey": "NZ",
+      "status": "voluntary",
+      "keyDeadline": "now"
+    },
+    "PE": {
+      "name": "Peru",
+      "nameKey": "PE",
+      "status": "enacted",
+      "keyDeadline": "now"
+    },
+    "NG": {
+      "name": "Nigeria",
+      "nameKey": "NG",
+      "status": "proposed",
+      "keyDeadline": "upon-passage"
+    },
+    "ZA": {
+      "name": "South Africa",
+      "nameKey": "ZA",
+      "status": "active-sector",
+      "keyDeadline": "now"
+    },
+    "MX": {
+      "name": "Mexico",
+      "nameKey": "MX",
+      "status": "active-sector",
+      "keyDeadline": "now"
+    },
+    "VN": {
+      "name": "Vietnam",
+      "nameKey": "VN",
+      "status": "enacted",
+      "keyDeadline": "now"
+    }
   },
   "templateRequirements": {
-    "01": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "BR": true, "PE": true, "NG": true, "MX": true, "VN": true },
-    "02": { "EU": true, "CN": true, "KR": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "US-UT": true, "CA": true, "IN": true, "NZ": true },
-    "03": { "EU": true, "CN": true, "KR": true, "US-CA": true },
-    "04": { "EU": true, "UK": true, "US-CO": true, "US-NYC": true, "CA": true, "AU": true, "ZA": true },
-    "05": { "EU": true, "CN": true, "UK": true, "US-CA": true, "AU": true },
-    "06": { "EU": true, "KR": true, "US-CO": true, "CA": true, "BR": true, "PE": true, "NG": true },
-    "07": { "EU": true, "UK": true, "KR": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "NG": true, "ZA": true, "MX": true },
-    "08": { "EU": true, "UK": true, "KR": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "CA": true, "SG": true, "AU": true, "NZ": true },
-    "09": { "EU": true, "UK": true, "KR": true, "CA": true, "SG": true, "AU": true, "JP": true, "NG": true, "ZA": true },
-    "10": { "EU": true, "UK": true, "KR": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "ZA": true, "MX": true },
-    "11": { "EU": true, "UK": true, "KR": true, "CA": true, "BR": true, "IN": true, "SG": true, "AU": true, "NZ": true, "ZA": true, "MX": true },
-    "12": { "EU": true, "UK": true, "CA": true, "BR": true, "JP": true, "SG": true, "AU": true, "NZ": true, "US-TX": true },
-    "13": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CA": true },
-    "14": { "EU": true, "CN": true, "KR": true, "PE": true, "NG": true },
-    "15": { "EU": true, "CN": true, "KR": true, "UK": true },
-    "16": { "CN": true, "IN": true },
-    "17": { "EU": true, "KR": true, "US-CO": true, "BR": true, "PE": true, "NG": true, "MX": true, "VN": true },
-    "18": { "EU": true },
-    "19": { "EU": true },
-    "20": { "EU": true, "UK": true, "KR": true, "US-NYC": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "ZA": true },
-    "21": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "US-TX": true, "US-UT": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "PE": true, "NG": true, "ZA": true, "MX": true, "VN": true },
-    "22": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "US-NYC": true, "US-IL": true, "US-TX": true, "US-UT": true, "CA": true, "BR": true, "IN": true, "JP": true, "SG": true, "AU": true, "NZ": true, "PE": true, "NG": true, "ZA": true, "MX": true, "VN": true },
-    "23": { "EU": true, "CN": true, "KR": true, "UK": true, "US-CO": true, "US-CA": true, "CA": true, "SG": true, "AU": true, "JP": true },
-    "24": { "EU": true, "CN": true, "KR": true, "UK": true }
+    "01": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "UK": true,
+      "US-CO": true,
+      "US-IL": true,
+      "US-NY": true,
+      "BR": true,
+      "PE": true,
+      "NG": true,
+      "MX": true,
+      "VN": true
+    },
+    "02": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-NYC": true,
+      "US-IL": true,
+      "US-UT": true,
+      "US-CT": true,
+      "US-WA": true,
+      "CA": true,
+      "IN": true,
+      "NZ": true
+    },
+    "03": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "US-CA": true,
+      "US-CT": true
+    },
+    "04": {
+      "EU": true,
+      "UK": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-NYC": true,
+      "US-CT": true,
+      "CA": true,
+      "AU": true,
+      "ZA": true
+    },
+    "05": {
+      "EU": true,
+      "CN": true,
+      "UK": true,
+      "US-CA": true,
+      "AU": true
+    },
+    "06": {
+      "EU": true,
+      "KR": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true,
+      "US-CT": true,
+      "CA": true,
+      "BR": true,
+      "PE": true,
+      "NG": true
+    },
+    "07": {
+      "EU": true,
+      "KR": true,
+      "UK": true,
+      "CA": true,
+      "BR": true,
+      "IN": true,
+      "JP": true,
+      "SG": true,
+      "AU": true,
+      "NZ": true,
+      "NG": true,
+      "ZA": true,
+      "MX": true
+    },
+    "08": {
+      "EU": true,
+      "KR": true,
+      "UK": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-NYC": true,
+      "US-IL": true,
+      "US-CT": true,
+      "CA": true,
+      "SG": true,
+      "AU": true,
+      "NZ": true
+    },
+    "09": {
+      "EU": true,
+      "KR": true,
+      "UK": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-CT": true,
+      "CA": true,
+      "JP": true,
+      "SG": true,
+      "AU": true,
+      "NG": true,
+      "ZA": true
+    },
+    "10": {
+      "EU": true,
+      "KR": true,
+      "UK": true,
+      "CA": true,
+      "BR": true,
+      "IN": true,
+      "JP": true,
+      "SG": true,
+      "AU": true,
+      "NZ": true,
+      "ZA": true,
+      "MX": true
+    },
+    "11": {
+      "EU": true,
+      "KR": true,
+      "UK": true,
+      "US-CA": true,
+      "CA": true,
+      "BR": true,
+      "IN": true,
+      "SG": true,
+      "AU": true,
+      "NZ": true,
+      "ZA": true,
+      "MX": true
+    },
+    "12": {
+      "EU": true,
+      "UK": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-TX": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true,
+      "CA": true,
+      "BR": true,
+      "JP": true,
+      "SG": true,
+      "AU": true,
+      "NZ": true
+    },
+    "13": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "UK": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true
+    },
+    "14": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "PE": true,
+      "NG": true
+    },
+    "15": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "UK": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true
+    },
+    "16": {
+      "CN": true,
+      "US-CA": true,
+      "US-CT": true,
+      "US-WA": true,
+      "IN": true
+    },
+    "17": {
+      "EU": true,
+      "KR": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-IL": true,
+      "US-NY": true,
+      "BR": true,
+      "PE": true,
+      "NG": true,
+      "MX": true,
+      "VN": true
+    },
+    "18": {
+      "EU": true
+    },
+    "19": {
+      "EU": true,
+      "US-IL": true
+    },
+    "20": {
+      "EU": true,
+      "KR": true,
+      "UK": true,
+      "US-NYC": true,
+      "US-CT": true,
+      "CA": true,
+      "BR": true,
+      "IN": true,
+      "JP": true,
+      "SG": true,
+      "AU": true,
+      "ZA": true
+    },
+    "21": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "UK": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-NYC": true,
+      "US-IL": true,
+      "US-TX": true,
+      "US-UT": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true,
+      "CA": true,
+      "BR": true,
+      "IN": true,
+      "JP": true,
+      "SG": true,
+      "AU": true,
+      "NZ": true,
+      "PE": true,
+      "NG": true,
+      "ZA": true,
+      "MX": true,
+      "VN": true
+    },
+    "22": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "UK": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-NYC": true,
+      "US-IL": true,
+      "US-TX": true,
+      "US-UT": true,
+      "US-NY": true,
+      "US-CT": true,
+      "US-WA": true,
+      "CA": true,
+      "BR": true,
+      "IN": true,
+      "JP": true,
+      "SG": true,
+      "AU": true,
+      "NZ": true,
+      "PE": true,
+      "NG": true,
+      "ZA": true,
+      "MX": true,
+      "VN": true
+    },
+    "23": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "UK": true,
+      "US-CO": true,
+      "US-CA": true,
+      "US-NY": true,
+      "CA": true,
+      "JP": true,
+      "SG": true,
+      "AU": true
+    },
+    "24": {
+      "EU": true,
+      "CN": true,
+      "KR": true,
+      "UK": true,
+      "US-CA": true,
+      "US-NY": true
+    }
   },
   "templateNames": {
     "01": "System Transparency Document",

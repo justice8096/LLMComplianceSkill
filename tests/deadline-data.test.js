@@ -97,8 +97,16 @@ test('has EU AI Act full applicability deadline', function() {
     return e.jurisdiction === 'EU' && e.law.includes('Full applicability');
   });
   assert.ok(euFull, 'missing EU AI Act full applicability entry');
-  assert.equal(euFull.date, '2026-08-02');
+  // Digital Omnibus (Regulation (EU) 2026/1744) moved Annex III high-risk to 2 Dec 2027
+  assert.equal(euFull.date, '2027-12-02');
   assert.equal(euFull.lawKey, 'eu.aiAct.full');
+});
+
+test('EU Art. 50 transparency entry is in force on 2026-08-02', function() {
+  var tr = deadlines.find(function(e) { return e.lawKey === 'eu.aiAct.transparency'; });
+  assert.ok(tr, 'missing eu.aiAct.transparency entry');
+  assert.equal(tr.date, '2026-08-02');
+  assert.equal(tr.status, 'in-force');
 });
 
 test('has Colorado AI Act deadline', function() {
@@ -106,5 +114,18 @@ test('has Colorado AI Act deadline', function() {
     return e.jurisdiction === 'US-CO';
   });
   assert.ok(co, 'missing US-CO deadline entry');
-  assert.equal(co.date, '2026-06-30');
+  // SB 24-205 was repealed and replaced by SB 26-189 (signed 2026-05-14), effective 2027-01-01
+  assert.equal(co.date, '2027-01-01');
+  assert.equal(co.lawKey, 'usCo.sb26189');
+});
+
+test('no entry still cites the repealed Colorado SB 24-205 as its law', function() {
+  var stale = deadlines.filter(function(e) { return e.lawKey === 'usCo.sb24205'; });
+  assert.equal(stale.length, 0);
+});
+
+test('every entry uses plain ASCII hyphens (no em dashes or mojibake)', function() {
+  deadlines.forEach(function(e) {
+    assert.ok(!/[\u2013\u2014\u00e2]/.test(e.law), 'non-ASCII dash in: ' + e.law);
+  });
 });

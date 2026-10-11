@@ -5,7 +5,7 @@
  * Reads compliance-config.json, fills template fields that don't need human input,
  * writes filled templates to ../output/
  *
- * Usage: node autofill.js [--config path/to/config.json]
+ * Usage: node autofill.js [--config path/to/config.json] [--output path/to/output] [--locale xx]
  */
 
 const fs = require('fs');
@@ -33,7 +33,9 @@ function cb(enLabel) {
 
 // --- Load data ---
 function loadJSON(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  // Strip a UTF-8 BOM: Windows editors (Notepad, PowerShell Set-Content -Encoding UTF8) add one,
+  // and JSON.parse rejects it with "Unexpected token".
+  return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''));
 }
 
 const REQUIRED_CONFIG_KEYS = ['organization', 'system', 'jurisdictions'];
@@ -110,9 +112,10 @@ function fillCheckbox(md, itemText, checked) {
 }
 
 function fillJurisdictionCheckbox(md, jurisdictionName) {
-  // Match: [ ] **jurisdiction**  or  [ ] jurisdiction
+  // Match: [ ] **jurisdiction**  or  [ ] jurisdiction, but only the whole cell:
+  // "United States - New York" must not also tick "United States - New York City".
   const escaped = jurisdictionName.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&');
-  const re = new RegExp(`\\[ \\](\\s*\\*?\\*?${escaped})`, 'gi');
+  const re = new RegExp(`\\[ \\](\\s*\\*?\\*?${escaped}\\*?\\*?)(?=\\s*(\\||$))`, 'gim');
   return md.replace(re, `[x]$1`);
 }
 
@@ -471,7 +474,8 @@ function fillTemplate(templatePath, config, matrix, deadlines) {
   if (itr.riskClassification && tplNum === '17') {
     const rc = itr.riskClassification;
     if (rc.euAiAct) md = fillTableField(md, 'EU AI Act', `[x] ${rc.euAiAct}`);
-    if (rc.coloradoSB24205) md = fillTableField(md, 'Colorado SB 24-205', `[x] ${rc.coloradoSB24205}`);
+    const coValue = rc.coloradoSB26189 || rc.coloradoSB24205; // SB 26-189 replaced SB 24-205 (2026-05-14); old key still honored
+    if (coValue) md = fillTableField(md, 'Colorado SB 26-189', `[x] ${coValue}`);
     if (rc.overallRisk) md = fillTableField(md, 'Assigned risk level', rc.overallRisk);
     if (rc.justification) md = fillTableField(md, 'Classification justification', rc.justification);
   }
@@ -674,9 +678,12 @@ function main() {
   const args = process.argv.slice(2);
   let configPath = path.join(TOOLS_DIR, 'compliance-config.json');
   let locale = 'en';
+  let outputBase = OUTPUT_DIR;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--config' && args[i + 1]) {
       configPath = path.resolve(args[i + 1]);
+    } else if (args[i] === '--output' && args[i + 1]) {
+      outputBase = path.resolve(args[i + 1]);
     } else if (args[i] === '--locale' && args[i + 1]) {
       locale = args[i + 1];
     }
@@ -695,7 +702,7 @@ function main() {
 
   // When using a non-English locale, read from pre-translated templates if available
   let templatesDir = TEMPLATES_DIR;
-  const localeTemplatesDir = path.join(OUTPUT_DIR, locale);
+  const localeTemplatesDir = path.join(outputBase, locale);
   if (locale !== 'en' && fs.existsSync(localeTemplatesDir)) {
     templatesDir = localeTemplatesDir;
     console.log(`Using translated templates from: ${localeTemplatesDir}`);
@@ -705,7 +712,7 @@ function main() {
   }
 
   // Output directory — locale-specific when not English
-  const outputDir = locale !== 'en' ? path.join(OUTPUT_DIR, locale) : OUTPUT_DIR;
+  const outputDir = locale !== 'en' ? path.join(outputBase, locale) : outputBase;
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
   // Process each template

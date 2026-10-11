@@ -24,29 +24,34 @@ Check all jurisdictions where your AI system will operate:
 
 | Jurisdiction | Operating? | Regulatory Status | Key Deadline |
 |-------------|:---:|-----------------|-------------|
-| [ ] **European Union** | | Enacted — full AI Act | **2 Aug 2026** |
+| [ ] **European Union** | | Enacted — Art. 50 transparency live; high-risk from 2 Dec 2027 (Digital Omnibus) | **2 Dec 2026 (marking) / 2 Dec 2027 (high-risk)** |
 | [ ] **China** | | Enacted — actively enforced | **Now** |
-| [ ] **South Korea** | | Enacted — AI Basic Act | **22 Jan 2026** |
-| [ ] **United Kingdom** | | Sector-active — DUA Act | **Feb 2026** |
-| [ ] **United States — Colorado** | | Enacted | **30 Jun 2026** |
-| [ ] **United States — California** | | Multiple laws | **Various — now to Aug 2026** |
+| [ ] **South Korea** | | Enacted — AI Basic Act in force | **Now (fines from about Jan 2027)** |
+| [ ] **United Kingdom** | | Sector-active — DUA Act in force; no AI Bill | **Now** |
+| [ ] **United States — Colorado** | | Enacted — SB 26-189 (replaces SB 24-205; enforcement paused) | **1 Jan 2027** |
+| [ ] **United States — California** | | Multiple laws (SB 53, SB 243, SB 942 live; CCPA ADMT, SB 947 next) | **Now; 1 Jan 2027** |
+| [ ] **United States — New York** | | Enacted — RAISE Act (frontier models) + NYC LL 144 | **1 Jan 2027 / Now** |
+| [ ] **United States — Connecticut** | | Enacted — Public Act 26-15 (phased) | **1 Oct 2026 to 1 Jan 2028** |
+| [ ] **United States — Washington** | | Enacted — HB 2225 companion chatbots | **1 Jan 2027** |
 | [ ] **United States — New York City** | | Enacted — LL 144 | **Now** |
-| [ ] **United States — Illinois** | | Enacted | **Now** |
-| [ ] **United States — Texas** | | Enacted — RAIGA | **Now** |
+| [ ] **United States — Illinois** | | Enacted — HB 3773 (now); SB 315 frontier audits | **Now / 1 Jan 2027** |
+| [ ] **United States — Texas** | | Enacted — TRAIGA | **Now** |
 | [ ] **United States — Utah** | | Enacted | **Now** |
-| [ ] **Canada** | | Sector-active + provincial | **2026** |
-| [ ] **Brazil** | | Proposed — advanced | **Upon passage** |
-| [ ] **India** | | Sector-active — DPDPA | **Now (data protection)** |
+| [ ] **Canada** | | Sector-active + provincial; Bills C-36 and C-34 tabled | **Now (Ontario hiring disclosure)** |
+| [ ] **Brazil** | | Sector-active — ECA Digital, CFM, CVM; PL 2338 stalled | **Nov 2026 (ECA Digital sanctions)** |
+| [ ] **India** | | Sector-active — IT Amendment Rules 2026 (labelling), DPDP Rules | **Now / 13 May 2027** |
 | [ ] **Japan** | | Voluntary + soft law | **Now (voluntary)** |
 | [ ] **Singapore** | | Voluntary + finance binding | **Now (MAS finance)** |
-| [ ] **Australia** | | Voluntary — Privacy Act ADM | **Dec 2026** |
+| [ ] **Australia** | | Sector-active — ADM transparency; AI standards bill 2027 | **10 Dec 2026** |
 | [ ] **New Zealand** | | Voluntary | **Now (voluntary)** |
-| [ ] **Peru** | | Enacted | **Now** |
-| [ ] **Mexico** | | Proposed | **Expected 2026** |
+| [ ] **Peru** | | Enacted — regulation phase 1 live | **Now (since 10 Sep 2026)** |
+| [ ] **Mexico** | | Sector-active — performer AI consent (May 2026); general law stalled | **Now** |
+| [ ] **Vietnam** | | Enacted — Law on AI 134/2025 | **Now (since 1 Mar 2026)** |
 | [ ] **Colombia** | | Proposed — advanced | **Upon passage** |
 | [ ] **Chile** | | Proposed — advanced | **Upon passage** |
 | [ ] **Argentina** | | Data protection in force | **Now** |
-| [ ] **Nigeria** | | Proposed — NDPA in force | **Mar 2026 (Digital Economy Bill)** |
+| [ ] **Nigeria** | | Proposed — Digital Economy Bill at third reading; NDPA in force | **Upon passage** |
+| [ ] **Kenya** | | Proposed — AI Bill No. 4 of 2026 | **Upon passage** |
 | [ ] **South Africa** | | Sector-active — POPIA | **Now** |
 | [ ] **Kenya** | | Data protection in force | **Now** |
 | [ ] **Ethiopia** | | Data protection in force | **Now** |

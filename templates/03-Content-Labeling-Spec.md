@@ -91,7 +91,7 @@ All AI-generated content must embed metadata including:
 |-------------|--------------|
 | Machine-readable marking | [C2PA / IPTC / Custom metadata standard] |
 | Detectable by downstream systems | [Y/N — describe interoperability] |
-| Code of Practice alignment | [Expected June 2026 — track for updates] |
+| Code of Practice alignment | [EU Code of Practice on marking and labelling AI-generated content, published 10 Jun 2026 — state alignment] |
 
 ---
 
