@@ -109,6 +109,19 @@ The Artificial Intelligence and Data Act was part of Bill C-27 (Digital Charter 
 
 ---
 
+## Executive Instruments to Watch
+
+| Instrument class | Issuer | Where published | Current mandate ends |
+|------------------|--------|-----------------|----------------------|
+| Orders in Council, ministerial directives, strategy documents (AI for All) | Prime Minister Mark Carney; Minister of AI and Digital Innovation Evan Solomon | canada.ca, orders-in-council.canada.ca | Fixed election date Oct 2029 |
+| Treasury Board directives (Directive on Automated Decision-Making) | Treasury Board Secretariat | tbs-sct.canada.ca | Oct 2029 |
+| OPC findings and guidance | Privacy Commissioner | priv.gc.ca | Commissioner's 7-year term |
+| Provincial regulations (Ontario Bill 194 AI regulations, Quebec Law 25 rules) | Provincial cabinets | Ontario Gazette, Gazette officielle du Quebec | Varies |
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## Data Protection and AI
 
 Canada's privacy reform trajectory is key for AI developers:

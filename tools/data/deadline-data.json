@@ -147,6 +147,13 @@
     "status": "in-force"
   },
   {
+    "date": "2026-06-02",
+    "jurisdiction": "US",
+    "law": "EO 14409 Promoting Advanced AI Innovation and Security (federal cyber directives; voluntary pre-release frontier model review)",
+    "lawKey": "us.eo14409",
+    "status": "in-force"
+  },
+  {
     "date": "2026-07-15",
     "jurisdiction": "CN",
     "law": "Anthropomorphic AI Interactive Services Measures (CAC Order 21)",

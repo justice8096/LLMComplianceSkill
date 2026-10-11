@@ -139,6 +139,23 @@ Latin America is in the early-to-middle stages of AI regulation. Most countries 
 
 ---
 
+## Executive Instruments to Watch
+
+| Country | Instrument class | Issuer | Where published | Current mandate ends |
+|---------|------------------|--------|-----------------|----------------------|
+| Mexico | Decrees publishing law reforms, secretariat guidelines | President Claudia Sheinbaum; Secretaria Anticorrupcion y Buen Gobierno | Diario Oficial de la Federacion (dof.gob.mx) | Sep 30, 2030 |
+| Brazil | Presidential decrees (ECA Digital decrees 12.880-12.882/2026), ANPD resolutions, CFM and CVM resolutions | President Lula da Silva (incumbent); ANPD | Diario Oficial da Uniao (in.gov.br), gov.br/anpd | Dec 31, 2026; runoff Oct 25, 2026 (Flavio Bolsonaro vs Lula); inauguration Jan 1, 2027 |
+| Chile | Executive bill substitutions (indicacion sustitutiva), MinCTCI policy | President Jose Antonio Kast (inaugurated Mar 11, 2026) | diariooficial.interior.gob.cl | Mar 11, 2030 |
+| Peru | Supreme decrees (D.S. 115-2025-PCM), SGTD directives | President Keiko Fujimori (sworn in Jul 28, 2026); PCM | El Peruano (busquedas.elperuano.pe) | Jul 28, 2031 |
+| Colombia | CONPES documents, government bills, MinCiencias directives | President Abelardo de la Espriella (inaugurated Aug 7, 2026) | funcionpublica.gov.co, dnp.gov.co | Aug 7, 2030 |
+| Argentina | Decrees and AI Strategy updates | President Javier Milei | boletinoficial.gob.ar | Dec 10, 2027 |
+
+Three of the six executives changed in 2026 (Chile, Peru, Colombia) and Brazil's may change on Jan 1, 2027; every instrument above should be re-verified after each transition.
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## Regional Trends and Patterns
 
 ### EU AI Act Influence ("Brussels Effect")

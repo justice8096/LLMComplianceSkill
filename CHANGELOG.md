@@ -16,6 +16,7 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 ## [Unreleased]
 
 ### Changed `[authority]`
+- Synced ai-regulatory-knowledge-base v1.2.0: every regulation file gains an "Executive Instruments to Watch" section and the Global Overview a political-sunset table (22 executives, term-end dates); EO 14409 (Jun 2, 2026) added as `us.eo14409`; 2026 leadership changes recorded (UK, Vietnam, Chile, Peru, Colombia, Japan). A bimonthly scheduled sweep (1st of even months) now produces a change report.
 - Synced ai-regulatory-knowledge-base v1.1.1: the Sep 29, 2026 executive order "Inaugurating the Era of Super Intelligence" (executive-branch terminology change from AI to SI, defined by reference to 15 U.S.C. 9401(3); no statute or regulation changed; legislative language due about Nov 28, 2026; voluntary White House Accord on Super Intelligence). Two deadline entries added (`us.superIntelligenceOrder`, `us.superIntelligenceOrder.legislativeLanguage`); SKILL.md authority table and key-deadline table updated.
 
 ### Changed `[voice]`

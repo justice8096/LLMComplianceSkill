@@ -39,6 +39,12 @@ The United States has **no comprehensive federal AI law**. The regulatory landsc
 - **Carved-out areas** (exempt from preemption): child safety, AI infrastructure/data centers, state government AI procurement
 - **Legal reality:** Executive orders cannot independently preempt state law; only Congress can do that
 
+### Executive Order 14409 "Promoting Advanced Artificial Intelligence Innovation and Security" (Jun 2, 2026)
+- Primarily a federal cybersecurity directive: CISA Binding Operational Directives expanding AI-enabled defensive tools to agencies, states and critical infrastructure (due Jul 2, 2026); Treasury-led voluntary AI cybersecurity clearinghouse for vulnerability scanning and patch distribution (Jul 2, 2026); OPM cyber hiring pathways (Aug 1, 2026); classified benchmarking methodology for a "covered frontier model" threshold (Treasury, NSA, CISA with NIST; Aug 1, 2026)
+- **Voluntary pre-release review:** developers of models above the threshold may give the government up to 30 days of pre-release access for security assessment; no licensing, pre-clearance or permitting requirement is created
+- Directs federal prosecutors to pursue AI-enabled crime
+- Nothing binding on private companies; critical infrastructure operators are beneficiaries, not obligated parties. Federal Register Jun 5, 2026
+
 ### Executive Order "Inaugurating the Era of Super Intelligence" (Sep 29, 2026)
 - Directs executive departments and agencies to use **"Super Intelligence" and "SI"** in place of "Artificial Intelligence" and "AI" in official correspondence, public communications, websites, reports, policy documents and other non-statutory documents, "to the maximum extent permitted by law" (Secs. 1, 2(a))
 - **Terminology only.** Sec. 3(a) defines SI as the technologies covered by the existing statutory definition of artificial intelligence in 15 U.S.C. 9401(3). Sec. 2(b) exempts previously issued regulations, Presidential actions, contracts, grants and historical documents. Sec. 4(c) creates no enforceable right. No statute, federal regulation, NIST publication, OMB memorandum or state law is changed
@@ -186,6 +192,7 @@ Federal agencies continue applying existing authority to AI:
 |------|-----------|
 | Jan 1, 2026 | CA SB 53, CA AB 2013, CA SB 243, TX TRAIGA, IL HB 3773 (in force) |
 | May 19, 2026 | TAKE IT DOWN Act platform compliance (in force) |
+| Jun 2, 2026 | EO 14409 Promoting Advanced AI Innovation and Security (in force; agency deadlines Jul 2 and Aug 1, 2026) |
 | Aug 2, 2026 | CA SB 942 AI Transparency Act (in force; amended Sep 30, 2026) |
 | Sep 29, 2026 | Executive order: "Super Intelligence" / "SI" terminology for the executive branch (in force; no legal change) |
 | Oct 1, 2026 | CT Public Act 26-15 phase 1 |
@@ -209,6 +216,19 @@ Federal agencies continue applying existing authority to AI:
 - [Illinois SB 315 announcement](https://gov-pritzker-newsroom.prezly.com/gov-pritzker-signs-nation-leading-artificial-intelligence-safety-law)
 - [Transparency Coalition state tracker](https://www.transparencycoalition.ai/news)
 - [Regulations.ai - US AI Legislation](https://regulations.ai) - global AI law and regulation database
+
+## Executive Instruments to Watch
+
+| Instrument class | Issuer | Where published | Current mandate ends |
+|------------------|--------|-----------------|----------------------|
+| Executive orders, memoranda, proclamations | President Donald Trump | Federal Register (presidential documents), whitehouse.gov/presidential-actions | Jan 20, 2029 |
+| OMB memoranda (M-25-21, M-25-22 and successors) | Office of Management and Budget | whitehouse.gov/omb | Jan 20, 2029 |
+| NIST publications (AI RMF, AI 600-1, CAISI guidance) | NIST / CAISI | nist.gov | Not tied to a term; revision directed by the Jul 2025 AI Action Plan |
+| FTC policy statements, CISA Binding Operational Directives | FTC, CISA | ftc.gov, cisa.gov | Commissioners' staggered terms; CISA under DHS |
+
+AI-related executive orders in force as of Oct 2026: EO 14179 (Jan 20, 2025), EO 14365 (Dec 11, 2025), Genesis Mission (Nov 24, 2025), EO 14409 (Jun 2, 2026), Inaugurating the Era of Super Intelligence (Sep 29, 2026).
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
 
 ---
 

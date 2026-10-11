@@ -127,6 +127,20 @@ This remains the UK's most contested AI policy area:
 
 ---
 
+## Executive Instruments to Watch
+
+| Instrument class | Issuer | Where published | Current mandate ends |
+|------------------|--------|-----------------|----------------------|
+| Statutory instruments (DUA Act commencement orders, ICO code mandates) | Secretary of State for Science, Innovation and Technology | legislation.gov.uk | Parliament elected Jul 2024; election due by Aug 2029 |
+| Ministerial statements, King's Speech commitments, Action Plan updates | Prime Minister Andy Burnham (took office Jul 20, 2026 after Keir Starmer resigned Jun 22, 2026) | gov.uk, hansard.parliament.uk | Aug 2029 |
+| Regulator guidance and codes (ICO, Ofcom, CMA, FCA, MHRA) | Independent regulators | ico.org.uk, ofcom.org.uk, gov.uk/cma-cases, fca.org.uk | Not tied to the parliamentary term |
+
+The July 2026 change of Prime Minister did not alter the sector-led approach; no AI Bill was announced by the new government as of October 2026.
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## Cyber Security and Resilience Bill
 
 - Introduced to Parliament November 2025

@@ -36,6 +36,10 @@ Claude Code or a terminal.
 ## Knowledge Base
 
 Read the applicable regulation files before answering jurisdiction-specific questions.
+Each file ends with an "Executive Instruments to Watch" table (issuer, publication source,
+mandate end); the Global Overview carries the consolidated political-sunset table. Executive
+instruments survive a change of leader until revoked, so treat a mandate-end date as a
+re-verification trigger, not an expiry.
 Start with the Global Overview for cross-jurisdictional comparisons. The files live in
 `references/regulations/` next to this SKILL.md (mirrored to the repo root for the site and
 older tooling; `npm run sync:kb` keeps both copies identical to ai-regulatory-knowledge-base).
@@ -236,6 +240,7 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 | ISO/IEC | 42001:2023, 42005:2025, 42006:2025, 23894:2023 | Voluntary |
 | EEOC AI guidance | 2023-05 | Guidance |
 | Colorado | SB 26-189 (signed 2026-05-14; replaces SB 24-205) | Effective 2027-01-01 |
+| US executive branch | EO 14409 "Promoting Advanced AI Innovation and Security" (2026-06-02) | Federal cyber directives; voluntary 30-day pre-release review for covered frontier models; nothing binding on private companies |
 | US executive branch | Executive order "Inaugurating the Era of Super Intelligence" (2026-09-29) | Terminology: agencies use "SI" for "AI"; defined by reference to 15 U.S.C. 9401(3); no statute or regulation changed; legislative language due about 2026-11-28 |
 | New York | RAISE Act | Effective 2027-01-01 |
 | Illinois | HB 3773; SB 315 | 2026-01-01; 2027-01-01 |

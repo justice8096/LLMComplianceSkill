@@ -41,6 +41,7 @@ Interactive map: [[AI-Regulations-World-Map.html]] (open in browser for hover to
 | **May 1, 2026** | New Zealand | IPP 3A indirect-collection notice in force |
 | **May 15, 2026** | Council of Europe | EU deposits ratification of the Framework Convention on AI (first Party; not yet in force) |
 | **May 19, 2026** | US | TAKE IT DOWN Act platform compliance |
+| **Jun 2, 2026** | US | EO 14409 Promoting Advanced AI Innovation and Security (federal cyber, voluntary pre-release model review) |
 | **Jul 6-7, 2026** | UN | First Global Dialogue on AI Governance, Geneva |
 | **Jul 27, 2026** | EU | Digital Omnibus on AI (Reg. 2026/1744) in force |
 | **Aug 2, 2026** | EU | Article 50 transparency, penalty regime and AI Office GPAI enforcement apply |
@@ -79,6 +80,39 @@ Interactive map: [[AI-Regulations-World-Map.html]] (open in browser for hover to
 (2) Nigeria's Digital Economy Bill at third reading (Jul 2026); Kenya's AI Bill No. 4 of 2026 tabled in the Senate
 (3) POPIA Sec 71 (South Africa), NDPA Sec 37 (Nigeria), Kenya DPA, Ethiopia PDPP, Ghana DPA Sec 41
 (4) Nigeria: NGN 766M+ fines enforced; South Africa: POPIA penalties; Botswana: BWP 50M or 4% turnover
+
+---
+
+## Executive Instruments and Political Sunsets
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) carry most binding AI obligations outside the EU and a growing share inside it. They do not expire when the issuing leader leaves office; they remain in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and every instrument from that issuer should be re-verified. Each jurisdiction file has an "Executive Instruments to Watch" section naming the issuer and publication source; this table collects the sunset dates.
+
+| Jurisdiction | Executive | Mandate ends | Nearest trigger |
+|--------------|-----------|--------------|-----------------|
+| New Zealand | PM Christopher Luxon | Nov 7, 2026 election | Election |
+| Brazil | President Lula da Silva | Dec 31, 2026 | Runoff Oct 25, 2026; inauguration Jan 1, 2027 |
+| Nigeria | President Bola Tinubu | May 29, 2027 | Election Jan 16, 2027 |
+| Kenya | President William Ruto | Aug 2027 | Election Aug 10, 2027 |
+| Japan | PM Sanae Takaichi | Feb 2030 (lower house); LDP presidency Sep 2027 | LDP leadership vote 2027 |
+| Argentina | President Javier Milei | Dec 10, 2027 | Election Oct 2027 |
+| China | President Xi Jinping; Premier Li Qiang | Mar 2028 (14th NPC) | 15th NPC Mar 2028 |
+| Australia | PM Anthony Albanese | May 20, 2028 | Election by May 2028 |
+| United States | President Donald Trump | Jan 20, 2029 | Midterms Nov 3, 2026 (Congress only) |
+| India | PM Narendra Modi | Jun 2029 | Election 2029 |
+| United Kingdom | PM Andy Burnham (since Jul 20, 2026) | Aug 2029 | Election by Aug 2029 |
+| Canada | PM Mark Carney | Oct 2029 | Fixed election date |
+| South Africa | President Cyril Ramaphosa | 2029 | ANC presidency Dec 2027 |
+| European Union | Commission President Ursula von der Leyen | Oct 31, 2029 | Parliament election 2029 |
+| Chile | President Jose Antonio Kast | Mar 11, 2030 | |
+| South Korea | President Lee Jae-myung | Jun 3, 2030 | |
+| Egypt | President Abdel Fattah el-Sisi | Apr 2030 | |
+| Colombia | President Abelardo de la Espriella | Aug 7, 2030 | |
+| Mexico | President Claudia Sheinbaum | Sep 30, 2030 | |
+| Singapore | PM Lawrence Wong | About Nov 2030 | |
+| Vietnam | General Secretary To Lam; PM Le Minh Hung | 2031 | |
+| Peru | President Keiko Fujimori | Jul 28, 2031 | |
+
+Leadership changes in 2026 that this knowledge base now reflects: United Kingdom (Burnham), Vietnam (PM Le Minh Hung), Chile (Kast), Peru (K. Fujimori), Colombia (De la Espriella), Japan (snap election Feb 8, 2026, Takaichi retained).
 
 ---
 

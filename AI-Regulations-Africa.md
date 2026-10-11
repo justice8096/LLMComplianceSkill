@@ -180,6 +180,20 @@ Five pillars: capacity development, responsible governance, ethical/inclusive AI
 
 ---
 
+## Executive Instruments to Watch
+
+| Country | Instrument class | Issuer | Where published | Current mandate ends |
+|---------|------------------|--------|-----------------|----------------------|
+| Nigeria | NDPC directives (GAID), NITDA strategies, presidential assent to bills | President Bola Tinubu; NDPC, NITDA | ndpc.gov.ng, nitda.gov.ng, nass.gov.ng | May 29, 2027 (election Jan 16, 2027) |
+| South Africa | Gazetted policies (AI Policy, withdrawn Apr 2026), Information Regulator guidance | President Cyril Ramaphosa (GNU); DCDT | gpwonline.co.za (Government Gazette), inforegulator.org.za | 2029 (ANC presidency Dec 2027) |
+| Kenya | Presidential assent, KEBS codes, ODPC guidance | President William Ruto; ODPC | kenyalaw.org, odpc.go.ke | Election Aug 10, 2027 |
+| Egypt | NCAI frameworks, PDPL executive regulations | President Abdel Fattah el-Sisi; MCIT | mcit.gov.eg | Apr 2030 |
+| African Union | Continental AI Strategy phases, Africa AI Council outputs | AU Commission; Smart Africa | au.int, smartafrica.org | Phase 2 from 2028 |
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## Data Protection as De Facto AI Regulation
 
 Across Africa, data protection laws provide the most immediately enforceable AI governance:

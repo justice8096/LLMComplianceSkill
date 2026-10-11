@@ -62,6 +62,20 @@ New Zealand takes a deliberately **light-touch, principles-based approach** to A
 
 ---
 
+## Executive Instruments to Watch
+
+| Instrument class | Issuer | Where published | Current mandate ends |
+|------------------|--------|-----------------|----------------------|
+| Cabinet decisions, AI Strategy updates, regulatory guidance | Prime Minister Christopher Luxon; Minister for Science, Innovation and Technology | beehive.govt.nz, mbie.govt.nz | General election Nov 7, 2026 |
+| Privacy codes of practice (Biometric Processing Privacy Code) and commencement orders | Privacy Commissioner; Governor-General in Council | privacy.org.nz, legislation.govt.nz | Not tied to the parliamentary term |
+| Public Service AI Framework and GCDO guidance | Government Chief Digital Officer | digital.govt.nz | Not tied to the parliamentary term |
+
+The November 2026 election is the nearest political sunset in this knowledge base; re-verify the light-touch position after the new government forms.
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## OECD AI Principles Alignment
 
 New Zealand formally adopted the OECD AI Principles in June 2024. These guide how existing legal frameworks apply to AI:
