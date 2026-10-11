@@ -1,36 +1,31 @@
 {
   "name": "llm-compliance-skill",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "AI/LLM compliance evidence collection toolkit",
   "author": "Justice",
-  "license": "MIT",
+  "license": "CC0-1.0",
   "private": true,
   "scripts": {
-    "build": "tsx build.ts",
+    "setup": "npm ci --prefix tooling --ignore-scripts",
+    "build": "node tooling/node_modules/tsx/dist/cli.mjs build.ts",
     "sync:kb": "node tools/sync-kb.js",
     "sync:kb:check": "node tools/sync-kb.js --check",
-    "build:claude": "tsx build.ts --format claude-plugin",
-    "build:openai": "tsx build.ts --format openai",
-    "build:n8n": "tsx build.ts --format n8n",
-    "build:mcp": "tsx build.ts --format mcp",
-    "build:prompts": "tsx build.ts --format prompts",
-    "build:cli": "tsx build.ts --format cli",
-    "build:root-canonical": "tsx build.ts --format root-canonical",
-    "build:watch": "tsx --watch build.ts",
-    "clean": "rm -rf dist",
-    "validate": "tsx build.ts --validate-only",
-    "type-check": "tsc --noEmit",
+    "build:claude": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format claude-plugin",
+    "build:openai": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format openai",
+    "build:n8n": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format n8n",
+    "build:mcp": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format mcp",
+    "build:prompts": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format prompts",
+    "build:cli": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format cli",
+    "build:root-canonical": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format root-canonical",
+    "build:watch": "node tooling/node_modules/tsx/dist/cli.mjs --watch build.ts",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "validate": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --validate-only",
+    "type-check": "node tooling/node_modules/typescript/bin/tsc --noEmit",
     "test": "node --test tests/**/*.test.js",
     "test:watch": "node --test --watch tests/**/*.test.js",
     "test:verbose": "node --test --reporter=spec tests/**/*.test.js"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.10.0",
-    "typescript": "^5.3.3",
-    "tsx": "^4.7.0",
-    "zod": "^3.22.4"
   }
 }
