@@ -151,7 +151,7 @@ Fill in the Status column for each jurisdiction.
 
 ## 7. Cross-Sector Summary
 
-Add one row per your sector(s), with jurisdictions active in, key requirements and templates to complete.
+Add one row per sector you work in, with the jurisdictions you are active in, the key requirements and the templates to complete.
 
 | Your Sector(s) | Jurisdictions Active In | Key Requirements | Templates to Complete |
 |----------------|------------------------|-----------------|---------------------|

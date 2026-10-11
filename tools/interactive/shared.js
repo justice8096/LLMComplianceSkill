@@ -406,12 +406,13 @@ function aboutInTen(pct) {
   var n = Math.round(pct / 10);
   if (n === 0) return t('ui.pct.underOne', 'under 1 in 10');
   if (n === 10) return t('ui.pct.nearlyAll', 'nearly all');
-  return t('ui.pct.about', 'about') + ' ' + n + ' ' + t('ui.pct.inTen', 'in 10');
+  // Word order differs by language, so the whole phrase is one string.
+  return t('ui.pct.aboutInTen', 'about {n} in 10').replace('{n}', n);
 }
 
 function pctText(pct, done, total) {
   if (typeof done === 'number' && typeof total === 'number' && total > 0) {
-    return done + ' ' + t('ui.pct.of', 'of') + ' ' + total + ' (' + pct + '%)';
+    return t('ui.pct.countOf', '{done} of {total}').replace('{done}', done).replace('{total}', total) + ' (' + pct + '%)';
   }
   return pct + '% (' + aboutInTen(pct) + ')';
 }
