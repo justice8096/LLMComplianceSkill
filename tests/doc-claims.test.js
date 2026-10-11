@@ -93,3 +93,14 @@ test('skill and command frontmatter values are valid plain YAML scalars', functi
     });
   });
 });
+
+test('root package.json matches the plugin and has no dependencies', function() {
+  var pkg = json('package.json');
+  var plugin = json('.claude-plugin/plugin.json');
+  assert.equal(pkg.version, plugin.version);
+  assert.equal(pkg.license, plugin.license);
+  // Claude Code installs root dependencies when the plugin is installed;
+  // build tooling lives in tooling/package.json instead.
+  assert.equal(pkg.dependencies, undefined);
+  assert.equal(pkg.devDependencies, undefined);
+});

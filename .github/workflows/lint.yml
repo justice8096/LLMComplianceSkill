@@ -39,11 +39,18 @@ jobs:
         with:
           node-version: '22.18.0'
 
-      - name: Install from lockfile without running install scripts
-        run: npm ci --ignore-scripts
+      - name: Install build tooling from lockfile without running install scripts
+        run: npm ci --prefix tooling --ignore-scripts
 
       - name: Audit for high-severity advisories
-        run: npm audit --audit-level=high
+        run: npm audit --prefix tooling --audit-level=high
+
+      - name: Root package.json must stay dependency-free
+        run: |
+          node -e "const p=require('./package.json'); if (p.dependencies||p.devDependencies) { console.error('Add build dependencies to tooling/package.json, not the root: installing the plugin downloads root dependencies.'); process.exit(1); }"
+
+      - name: Build still runs from the tooling folder
+        run: npm run validate
 
   kb-sync-check:
     name: Regulation files match the knowledge base

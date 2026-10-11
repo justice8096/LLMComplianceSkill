@@ -92,6 +92,11 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - Security: use `execFileSync` with argument arrays, never string-interpolated shell commands and never `execSync`; `git-evidence.js` `git()` and `package-evidence.js` `runTool()`/`runGit()` take argv arrays only, resolve binaries to absolute paths from PATH, and apply `-c core.fsmonitor=false -c core.hooksPath=<null device>` to every git call. Any value read back from a repository (hash, ref, path) is validated (`isHash`) or placed after `--`
 - No `document.body.textContent = ''` — wizard framework handles DOM lifecycle
 
+## Building
+
+- The build (`build.ts`) needs tsx and TypeScript. They live in `tooling/package.json`, not the root, because Claude Code installs root dependencies whenever someone installs the plugin. Run `npm run setup` once, then `npm run build`, `npm run validate` or `npm run type-check`.
+- Never add `dependencies` or `devDependencies` to the root `package.json`; CI and `tests/doc-claims.test.js` fail if you do. The runtime scripts under `tools/` use Node built-ins only.
+
 ## Obsidian Integration
 - Knowledge base exports go to `D:/SecondBrainData/SoftwarePractices/`
 - Templates export to `AI-Compliance-Templates/` subfolder
