@@ -5,7 +5,10 @@
  * Validates evidence completeness across ALL 22 templates.
  * Template-specific deep checks + cross-reference validation + interactive tool integration.
  * Zero dependencies (Node.js built-in only).
- * Usage: node evidence-checker.js [--config path] [--output path] [--template NN] [--verbose] [--json]
+ * Usage: node evidence-checker.js [--config path] [--output path] [--template NN] [--verbose] [--json] [--strict]
+ *
+ * Exit codes: 0 no critical gaps; 1 critical gaps (or, with --strict, any HIGH
+ * finding or required template below 100% complete); 1 also on bad input.
  */
 var fs = require('fs');
 var path = require('path');
@@ -25,13 +28,14 @@ function progressBar(pct, w) {
 function parseArgs() {
   var args = process.argv.slice(2);
   var r = { configPath: path.join(TOOLS_DIR, 'compliance-config.json'),
-    outputDir: path.join(TOOLS_DIR, '..', 'output'), templateFilter: null, verbose: false, json: false };
+    outputDir: path.join(TOOLS_DIR, '..', 'output'), templateFilter: null, verbose: false, json: false, strict: false };
   for (var i = 0; i < args.length; i++) {
     if (args[i] === '--config' && args[i+1]) { r.configPath = path.resolve(args[++i]); }
     else if (args[i] === '--output' && args[i+1]) { r.outputDir = path.resolve(args[++i]); }
     else if (args[i] === '--template' && args[i+1]) { r.templateFilter = args[++i]; }
     else if (args[i] === '--verbose') { r.verbose = true; }
     else if (args[i] === '--json') { r.json = true; }
+    else if (args[i] === '--strict') { r.strict = true; }
   }
   return r;
 }
@@ -422,7 +426,7 @@ function main() {
   var crossRef = crossReferenceChecks(config, parsed.outputDir, outputFiles);
   var report = generateReport(config, matrix, tplResults, crossRef, { verbose: parsed.verbose });
   if (parsed.json) {
-    var json = { date: today(), organization: config.organization, system: config.system, templates: tplResults, crossReferences: crossRef, summary: { templates: Object.keys(tplResults).length, critical: 0, high: 0, medium: 0 } };
+    var json = { schemaVersion: 1, tool: 'evidence-checker', date: today(), organization: config.organization, system: config.system, templates: tplResults, crossReferences: crossRef, summary: { templates: Object.keys(tplResults).length, critical: 0, high: 0, medium: 0 } };
     for (var k in tplResults) { if (tplResults[k].deepCheck) { for (var fi = 0; fi < tplResults[k].deepCheck.findings.length; fi++) { var s = tplResults[k].deepCheck.findings[fi].severity; if (s === 'CRITICAL') json.summary.critical++; else if (s === 'HIGH') json.summary.high++; else if (s === 'MEDIUM') json.summary.medium++; } } }
     console.log(JSON.stringify(json, null, 2));
   } else {
@@ -431,7 +435,18 @@ function main() {
     try { fs.writeFileSync(rp, report.text, 'utf8'); console.log('Report written to: ' + rp); }
     catch (e) { console.error('WARNING: Could not write report: ' + e.message); }
   }
-  process.exit(report.hasCritical ? 1 : 0);
+  // --strict also fails on HIGH findings and on any checked template below 100%.
+  var strictFail = false;
+  if (parsed.strict) {
+    for (var sk in tplResults) {
+      var tr = tplResults[sk];
+      if (!tr.exists || tr.completeness < 100) strictFail = true;
+      var fs2 = (tr.deepCheck && tr.deepCheck.findings) || [];
+      for (var sf = 0; sf < fs2.length; sf++) { if (fs2[sf].severity === 'HIGH') strictFail = true; }
+    }
+    if (strictFail && !parsed.json) console.log('Strict mode: failing because a template is incomplete or has HIGH findings.');
+  }
+  process.exit(report.hasCritical || strictFail ? 1 : 0);
 }
 
 main();

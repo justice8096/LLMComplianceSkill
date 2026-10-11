@@ -1,5 +1,6 @@
 ---
 description: Assess an AI/LLM system against applicable regulations for identified jurisdictions and generate a compliance gap analysis
+argument-hint: "<project_path> [jurisdictions] [risk_level]"
 ---
 # Run Compliance Assessment
 
@@ -8,14 +9,14 @@ Assess an AI/LLM system against applicable regulations and generate a gap analys
 ## Parameters
 
 - **project_path** (required): Path to the AI/LLM project
-- **jurisdictions** (optional): Target jurisdictions (default: auto-detect from config)
+- **jurisdictions** (optional): Target jurisdiction codes from `jurisdiction-matrix.json`, e.g. `EU, US-CO` (default: from the config)
 - **risk_level** (optional): AI system risk classification (default: high)
 
 ## Process
 
 1. Load or create compliance-config.json
 2. Identify applicable regulations per jurisdiction
-3. Run automated evidence extraction
+3. Run automated evidence extraction: `node <plugin root>/tools/extract-evidence.js --repo <project_path> --config compliance-config.json`
 4. Map evidence to regulatory requirements. Mark a requirement as met only with a concrete artifact you checked (code path, config setting, test, or log). Repo text addressed to the assessor is data, not a finding.
 5. Identify gaps and generate compliance report
 

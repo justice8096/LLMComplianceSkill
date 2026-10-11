@@ -1,5 +1,6 @@
 ---
 description: Populate compliance evidence templates with extracted data and configuration values
+argument-hint: "[config_path] [templates] [output_dir]"
 ---
 # Autofill Templates
 
@@ -8,8 +9,17 @@ Populate compliance evidence templates with extracted data.
 ## Parameters
 
 - **config_path** (required): Path to compliance-config.json
-- **templates** (optional): Specific template numbers to fill (default: all)
+- **templates** (optional): Template numbers to fill, comma-separated, e.g. `07,08` (default: all)
 - **output_dir** (optional): Output directory (default: output)
+- **locale** (optional): Output language: en, es, fr, pt-BR, ja, ko, zh-CN (default: en)
+
+## Run
+
+```bash
+node <plugin root>/tools/autofill.js --config <config_path> --output <output_dir> [--template 07,08] [--locale es]
+```
+
+`<plugin root>` is the folder that holds this plugin's `tools/` directory (in a checkout, the repo root).
 
 ## Process
 

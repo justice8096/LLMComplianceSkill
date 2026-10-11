@@ -16,33 +16,32 @@ When you build an AI-powered application, you need evidence that it complies wit
 - **24 evidence templates** mapped to specific laws across 45+ regulations
 - **21 interactive HTML tools** for compliance areas requiring human judgment
 - **An autofill script** that populates templates from a single config file
-- **3 automated evidence extractors** for git, package, and CI/CD analysis
-- **Regulation research** covering 25 jurisdictions with specific provisions and 47 dated deadlines, synced from [ai-regulatory-knowledge-base](https://github.com/justice8096/ai-regulatory-knowledge-base) via `npm run sync:kb`
+- **4 automated evidence extractors** for git, package, CI/CD and SAST/DAST report analysis
+- **Regulation research** covering 25 jurisdictions with specific provisions and 50 dated deadlines, synced from [ai-regulatory-knowledge-base](https://github.com/justice8096/ai-regulatory-knowledge-base) via `npm run sync:kb`
 
 The output is designed to be **handed to your legal or compliance team** to help prove compliance.
 
 ## Installation
 
-```bash
-git clone git@github.com:justice8096/LLMComplianceSkill.git ~/.claude/plugins/LLMComplianceSkill
+In Claude Code, add this repository as a plugin marketplace and install the plugin:
+
+```
+/plugin marketplace add justice8096/LLMComplianceSkill
+/plugin install ai-compliance@llm-compliance-skill
 ```
 
-Or install alongside the full security audit suite:
+To update later, run `/plugin marketplace update llm-compliance-skill`, then reinstall.
+
+To run the scripts or open the interactive tools without Claude Code, clone the repo over HTTPS:
 
 ```bash
-git clone git@github.com:justice8096/sast-dast-scanner.git      ~/.claude/plugins/sast-dast-scanner
-git clone git@github.com:justice8096/supply-chain-security.git   ~/.claude/plugins/supply-chain-security
-git clone git@github.com:justice8096/cwe-mapper.git              ~/.claude/plugins/cwe-mapper
-git clone git@github.com:justice8096/post-commit-audit.git       ~/.claude/plugins/post-commit-audit
-git clone git@github.com:justice8096/LLMComplianceSkill.git      ~/.claude/plugins/LLMComplianceSkill
+git clone https://github.com/justice8096/LLMComplianceSkill.git
 ```
-
-Claude Code auto-discovers skills in `~/.claude/plugins/`. No further configuration needed.
 
 ## Quick Start
 
 ```bash
-git clone git@github.com:justice8096/LLMComplianceSkill.git
+git clone https://github.com/justice8096/LLMComplianceSkill.git
 cd LLMComplianceSkill
 
 # 1. Create your project config
@@ -117,6 +116,7 @@ Each template below collects one kind of evidence. The last column lists the mai
 | 21 | Jurisdiction Selector | Select countries → get required template list |
 | 22 | Compliance Deadline Tracker | All deadlines through 2027+ |
 | 23 | Supply Chain Risk | Foundation model provenance, vendor assessments |
+| 24 | SAST/DAST Scan Evidence | EU AI Act Art. 15, NIST SSDF, OWASP |
 
 ## Interactive Tools
 
@@ -152,10 +152,10 @@ Jurisdictions are grouped by how far their AI rules have got, from enacted law t
 
 | Tier | Jurisdictions |
 |------|--------------|
-| **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam, Brazil |
-| **Active Sector** | China, United Kingdom, United States (CO, CA, NYC, IL, TX, UT) |
-| **Proposed** | Canada, India, Japan, Nigeria, Mexico, Colombia, Chile |
-| **Voluntary** | Australia, New Zealand, Singapore |
+| **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam |
+| **Active Sector** | China, United Kingdom, United States (CA, NY, IL, CT, WA, TX, CO, NYC, UT), Brazil, Mexico, India, Australia |
+| **Proposed** | Canada, Japan, Nigeria, Kenya, Colombia, Chile, Thailand, Malaysia, Indonesia, Philippines |
+| **Voluntary** | New Zealand, Singapore, Egypt, South Africa |
 
 ## Key Deadlines
 
@@ -177,21 +177,21 @@ These are the dates that matter most, earliest first.
 
 Add this as a skill to your Claude Code sessions when building AI-powered applications:
 
-1. Install to `~/.claude/plugins/` (see [Installation](#installation))
+1. Install the plugin from its marketplace (see [Installation](#installation))
 2. When planning features, Claude will reference applicable regulations
 3. Use the templates and tools to gather evidence alongside development
 4. The skill prioritizes actionable requirements and cites specific laws
 
 ## AI Attribution
 
-This project was built with [Claude Sonnet 4.6](https://www.anthropic.com/claude) (Anthropic) as an implementation assistant. Approximately 62% of the source code and templates were AI-generated under human direction and review. All commits include `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>` attribution. AI-generated source files are marked with `@ai-generated` in their file headers.
+This project was built with [Claude Sonnet 4.6](https://www.anthropic.com/claude) (Anthropic) as an implementation assistant. Approximately 62% of the source code and templates were AI-generated under human direction and review. Commits include a `Co-Authored-By` trailer naming the Claude model used. AI-generated source files are marked with `@ai-generated` in their file headers.
 
 See [`audits/contribution-analysis.md`](audits/contribution-analysis.md) for the full collaboration breakdown per component.
 
 ## Disclaimer
 
-This toolkit supports compliance evidence gathering. **It is not legal advice.** Always have completed templates reviewed by qualified legal counsel. Regulations may have changed since the last research update (March 2026).
+This toolkit supports compliance evidence gathering. **It is not legal advice.** Always have completed templates reviewed by qualified legal counsel. Regulations may have changed since the last research update (11 Oct 2026).
 
 ## License
 
-MIT
+CC0 1.0 Universal (public domain dedication). See [LICENSE](LICENSE).
