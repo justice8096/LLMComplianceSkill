@@ -1,13 +1,29 @@
 {
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "ai-compliance",
   "version": "1.3.0",
-  "description": "AI & LLM compliance evidence collection kit. Identifies applicable regulations, required disclosures, risk classifications, and compliance deadlines across 16+ jurisdictions.",
-  "author": "Justin",
-  "skills": [
-    {
-      "id": "ai-compliance",
-      "name": "AI Compliance Evidence Collection",
-      "path": "skills/ai-compliance/SKILL.md"
-    }
+  "description": "Answer AI-regulation questions and classify risk for an AI or LLM product across 25 jurisdictions (EU AI Act as amended by the Digital Omnibus, US state laws incl. CA, NY, IL, CT, WA, CO, TX, UK, Korea, Vietnam, India, China, Canada, Australia, Brazil and more), with dated deadlines current as of 2026-10-11. In Claude Code it also drives a 24-template compliance evidence pipeline (config, interactive tools, autofill, checker). Research output, not legal advice.",
+  "author": {
+    "name": "Justice"
+  },
+  "license": "CC0-1.0",
+  "homepage": "https://github.com/justice8096/LLMComplianceSkill",
+  "repository": "https://github.com/justice8096/LLMComplianceSkill",
+  "keywords": [
+    "ai-compliance",
+    "eu-ai-act",
+    "ai-regulation",
+    "compliance-evidence",
+    "risk-classification",
+    "gdpr",
+    "colorado-sb-26-189",
+    "raise-act",
+    "ai-basic-act",
+    "transparency",
+    "bias-testing",
+    "human-oversight",
+    "privacy-impact-assessment",
+    "incident-management",
+    "governance"
   ]
 }

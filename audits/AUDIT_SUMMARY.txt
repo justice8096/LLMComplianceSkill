@@ -1,7 +1,7 @@
 POST-COMMIT AUDIT SUMMARY
 ==========================
 Date:   2026-10-11
-Commit: (this commit) v1.3.0 regulatory refresh
+Commit: a5660cc (PR #8 squash, merged 2026-10-11) + directory-submission prep
 Branch: main
 Project: LLMComplianceSkill (AI Compliance Evidence Collection Kit)
 Audit Type: POST-MERGE Audit (content refresh + 2 defect fixes + sync script)
@@ -18,11 +18,12 @@ new tools/sync-kb.js, tests extended (112 pass).
 4. CWE Mapping:             PASS   -- no new CWEs; BOM fix removes a CWE-172 (encoding handling) class crash
 5. LLM Compliance:          PASS   -- authority pins updated to 2026-10-11; CHANGELOG driver tags applied
 6. Contribution Analysis:   AI-authored refresh, human-directed; @ai-generated marker on sync-kb.js
-7. Accessibility gates:     Regulation files FK grade 9.5-11.1, avg sentence 11-14.5 words (see KB audit)
+7. Accessibility gates:     PASS   -- dyslexia + dyscalculia checks on SKILL.md and commands (audits/accessibility-gates.md); authority pins moved to a table
 
 Overall: PASS
 
 Action Required: NO
+  - DONE (this pass): US-NY, US-CT, US-WA added to the matrix; Codex P1/P2 on PR #8 closed.
   - INFO: deadline-data.json now lists US-NY, US-CT, US-WA and US (federal) entries that are not
     jurisdictions in jurisdiction-matrix.json (test allows this). Add them to the matrix and
     templates 21/22 when the template requirements for those laws are decided.

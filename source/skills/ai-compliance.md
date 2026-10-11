@@ -1,8 +1,17 @@
 # AI Compliance Evidence Collection Skill
 
+> **Data current as of 2026-10-11.** Regulation files, deadlines and jurisdiction matrix were
+> synced from ai-regulatory-knowledge-base v1.1.0. Verify any deadline after that date.
+
 Identify applicable AI regulations for a given project, collect compliance evidence
-across 16+ jurisdictions, populate 24 evidence templates from a config file, and
+across 25 jurisdictions, populate 24 evidence templates from a config file, and
 produce a compliance package ready for legal review.
+
+**Where each part runs.** Jurisdiction lookup, risk classification, disclosure and deadline
+guidance work anywhere this skill loads, including claude.ai and Cowork, because they only
+read the regulation files. The evidence pipeline (interactive HTML tools, extract-evidence.js,
+autofill.js, evidence-checker.js) needs Node.js and a local checkout, so run it from Claude
+Code or a terminal.
 
 ---
 
@@ -210,7 +219,28 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 ## Jurisdiction Coverage
 
-> *Sources current as of 2026-10-11. Authority-version pins: EU AI Act (Regulation (EU) 2024/1689, in force 2024-08-01, as amended by the Digital Omnibus on AI, Regulation (EU) 2026/1744, in force 2026-07-27; prohibitions + AI Literacy Art. 4 effective 2025-02-02; GPAI obligations 2025-08-02; Art. 50 transparency and penalties 2026-08-02; Annex III high-risk 2027-12-02; Annex I 2028-08-02); GDPR (Regulation (EU) 2016/679); NIST AI Risk Management Framework 1.0 (2023-01) + Generative AI Profile NIST AI 600-1 (2024-07); ISO/IEC 42001:2023 + 42005:2025 + 42006:2025 + ISO/IEC 23894:2023; EEOC AI guidance (2023-05); CO SB 26-189 (signed 2026-05-14, effective 2027-01-01, replaces SB 24-205); NY RAISE Act (effective 2027-01-01); IL HB 3773 (2026-01-01) + SB 315 (2027-01-01); CT Public Act 26-15 (phased from 2026-10-01); WA HB 2225 (2027-01-01); TX TRAIGA HB 149 (2026-01-01); NYC Local Law 144 (2023-07); CA SB 53 + AB 2013 + SB 243 (2026-01-01), SB 942 (2026-08-02), CCPA ADMT regulations (2027-01-01); KR AI Basic Act (2026-01-22); VN Law on AI 134/2025/QH15 (2026-03-01); IN IT Amendment Rules 2026 (2026-02-20); UK DUA Act (2026-02); AU Privacy Act ADM provisions (2026-12-10). Verify status before using in any binding legal context.*
+> **Sources current as of 2026-10-11.** Verify status before using in any binding legal context.
+
+| Authority | Version | Key dates |
+|-----------|---------|-----------|
+| EU AI Act | Regulation (EU) 2024/1689, amended by Regulation (EU) 2026/1744 (Digital Omnibus, in force 2026-07-27) | Prohibitions and AI literacy 2025-02-02; GPAI 2025-08-02; Art. 50 transparency and penalties 2026-08-02; Annex III high-risk 2027-12-02; Annex I 2028-08-02 |
+| GDPR | Regulation (EU) 2016/679 | In force |
+| NIST AI RMF | 1.0 (2023-01) plus Generative AI Profile AI 600-1 (2024-07) | Voluntary |
+| ISO/IEC | 42001:2023, 42005:2025, 42006:2025, 23894:2023 | Voluntary |
+| EEOC AI guidance | 2023-05 | Guidance |
+| Colorado | SB 26-189 (signed 2026-05-14; replaces SB 24-205) | Effective 2027-01-01 |
+| New York | RAISE Act | Effective 2027-01-01 |
+| Illinois | HB 3773; SB 315 | 2026-01-01; 2027-01-01 |
+| Connecticut | Public Act 26-15 | Phased from 2026-10-01 |
+| Washington | HB 2225 | Effective 2027-01-01 |
+| Texas | TRAIGA (HB 149) | Effective 2026-01-01 |
+| New York City | Local Law 144 | Effective 2023-07 |
+| California | SB 53, AB 2013, SB 243; SB 942; CCPA ADMT regulations | 2026-01-01; 2026-08-02; 2027-01-01 |
+| South Korea | AI Basic Act | In force 2026-01-22 |
+| Vietnam | Law on AI 134/2025/QH15 | In force 2026-03-01 |
+| India | IT Amendment Rules 2026 | In force 2026-02-20 |
+| United Kingdom | Data (Use and Access) Act 2025 | ADM reforms 2026-02-05 |
+| Australia | Privacy Act ADM transparency | Commences 2026-12-10 |
 
 | Tier | Jurisdictions |
 |------|----------------|
@@ -253,5 +283,6 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 ---
 
-**Knowledge base last updated**: March 2026. Regulations change frequently — verify status
-of proposed frameworks before relying on them for compliance decisions.
+**Knowledge base last updated**: 2026-10-11 (ai-regulatory-knowledge-base v1.1.0). Regulations change
+frequently; verify the status of proposed frameworks and any deadline after that date before relying
+on them for compliance decisions. This is research output, not legal advice.
