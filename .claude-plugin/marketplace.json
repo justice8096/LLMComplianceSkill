@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "llm-compliance-skill",
+  "description": "Single-plugin marketplace for the ai-compliance (LLMComplianceSkill) plugin.",
+  "owner": {
+    "name": "Justice"
+  },
+  "plugins": [
+    {
+      "name": "ai-compliance",
+      "description": "AI and LLM compliance evidence collection kit: jurisdiction lookup across 25 jurisdictions, risk classification, disclosure and deadline guidance, and a 24-template evidence pipeline.",
+      "category": "legal",
+      "source": "./",
+      "homepage": "https://github.com/justice8096/LLMComplianceSkill"
+    }
+  ]
+}
