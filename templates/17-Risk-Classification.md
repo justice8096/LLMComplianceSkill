@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -45,6 +47,8 @@
 
 ### 2.1 EU AI Act — Annex III High-Risk Categories
 
+Fill in the Your System? column for each category.
+
 | Category | Description | Your System? |
 |----------|-----------|:---:|
 | Biometrics | Remote biometric identification, biometric categorization | [ ] |
@@ -72,6 +76,8 @@
 
 ### 2.3 South Korea AI Basic Act — High-Impact AI
 
+For each category below, fill in whether it applies to your system.
+
 | Category | Your System? |
 |----------|:---:|
 | Healthcare decisions | [ ] |
@@ -81,6 +87,8 @@
 | Essential services access | [ ] |
 
 ### 2.4 Brazil PL 2338/2023 — High-Risk
+
+For each category below, fill in whether it applies to your system.
 
 | Category | Your System? |
 |----------|:---:|
@@ -103,6 +111,8 @@
 
 ### EU AI Act — Limited Risk (Art. 50 transparency obligations only)
 
+Answer each question in the Answer column.
+
 | Question | Answer |
 |----------|:---:|
 | Does the system interact directly with humans (chatbot, conversational AI)? | [ ] Y [ ] N |
@@ -116,6 +126,8 @@ If **all** NO → **Minimal risk** — no specific EU AI Act obligations (genera
 ---
 
 ## 4. Classification Summary
+
+For each framework below, fill in classification and justification.
 
 | Framework | Classification | Justification |
 |-----------|---------------|---------------|
@@ -131,6 +143,8 @@ If **all** NO → **Minimal risk** — no specific EU AI Act obligations (genera
 
 ## 5. Obligations Triggered
 
+This table lists each classification with its obligations and templates to complete.
+
 | Classification | Obligations | Templates to Complete |
 |---------------|------------|----------------------|
 | **Prohibited** | Cannot deploy | N/A — redesign or abandon |
@@ -141,6 +155,8 @@ If **all** NO → **Minimal risk** — no specific EU AI Act obligations (genera
 ---
 
 ## 6. Classification Review
+
+For each review item below, fill in details.
 
 | Review Item | Details |
 |-------------|---------|

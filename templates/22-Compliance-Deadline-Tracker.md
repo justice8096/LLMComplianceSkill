@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | Organization | |
@@ -18,6 +20,8 @@
 ---
 
 ## 1. Already in Force — Comply Now
+
+Fill in the Your Status column for each jurisdiction.
 
 | Jurisdiction | Law | Effective Date | Key Obligation | Your Status |
 |-------------|-----|---------------|----------------|:---:|
@@ -50,6 +54,8 @@
 
 ## 2. Upcoming Deadlines — 2026
 
+Fill in the Your Status column for each date.
+
 | Date | Jurisdiction | Law | Obligation | Alert Date (90 days before) | Your Status |
 |------|-------------|-----|-----------|:---:|:---:|
 | **1 Nov 2026** | Egypt | PDPL | Full enforcement of personal data protection | 3 Aug 2026 | [ ] Ready [ ] In progress [ ] N/A |
@@ -60,6 +66,8 @@
 ---
 
 ## 3. Upcoming Deadlines — 2027 and Beyond
+
+This table lists each date with its jurisdiction, law, obligation and alert date.
 
 | Date | Jurisdiction | Law | Obligation | Alert Date |
 |------|-------------|-----|-----------|:---:|
@@ -105,6 +113,8 @@ Fill in for your project:
 ---
 
 ## 5. Monitoring — Pending Legislation
+
+This table lists each jurisdiction with its legislation, current status, expected timeline and monitor source.
 
 | Jurisdiction | Legislation | Current Status | Expected Timeline | Monitor Source |
 |-------------|------------|---------------|-------------------|---------------|

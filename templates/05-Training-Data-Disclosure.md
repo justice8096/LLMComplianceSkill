@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System / Model Name | |
@@ -23,6 +25,8 @@
 
 ### 1.1 Pre-Training Data Sources
 
+Add one row per dataset or source, with description, size, date range, acquisition method and license or terms.
+
 | Dataset / Source | Description | Size | Date Range | Acquisition Method | License / Terms |
 |-----------------|-------------|------|-----------|-------------------|----------------|
 | | | | | [Scraped / Licensed / Open / Proprietary / User-contributed] | |
@@ -31,11 +35,15 @@
 
 ### 1.2 Fine-Tuning Data Sources
 
+Add one row per dataset or source, with description, size, date range, acquisition method and license or terms.
+
 | Dataset / Source | Description | Size | Date Range | Acquisition Method | License / Terms |
 |-----------------|-------------|------|-----------|-------------------|----------------|
 | | | | | | |
 
 ### 1.3 Evaluation / Validation Data Sources
+
+Add one row per dataset or source, with description, size and purpose.
 
 | Dataset / Source | Description | Size | Purpose |
 |-----------------|-------------|------|---------|
@@ -44,6 +52,8 @@
 ---
 
 ## 2. Data Characteristics
+
+For each characteristic below, fill in details.
 
 | Characteristic | Details |
 |---------------|---------|
@@ -68,6 +78,8 @@
 | | | | | | |
 
 ### 3.1 Opt-Out Compliance
+
+For each aspect below, fill in details.
 
 | Aspect | Details |
 |--------|---------|
@@ -96,6 +108,8 @@
 ---
 
 ## 5. Data Governance
+
+For each governance aspect below, fill in details.
 
 | Governance Aspect | Details |
 |------------------|---------|

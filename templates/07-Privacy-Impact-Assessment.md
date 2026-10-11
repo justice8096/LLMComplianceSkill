@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -21,6 +23,8 @@
 ---
 
 ## 1. Processing Activity Description
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -39,6 +43,8 @@
 
 ## 2. Necessity and Proportionality
 
+Answer each question in the Answer and Justification columns.
+
 | Question | Answer | Justification |
 |----------|--------|---------------|
 | Is processing necessary for the stated purpose? | [Yes / No] | |
@@ -52,6 +58,8 @@
 ## 3. Risk Assessment
 
 ### 3.1 Risks to Data Subjects
+
+For each risk below, fill in likelihood, severity, overall risk and mitigation.
 
 | Risk | Likelihood | Severity | Overall Risk | Mitigation |
 |------|-----------|----------|:---:|------------|
@@ -67,6 +75,8 @@
 | Chilling effect on free expression | | | | |
 
 ### 3.2 AI-Specific Privacy Risks
+
+For each risk below, fill in likelihood, severity, overall risk and mitigation.
 
 | Risk | Likelihood | Severity | Overall Risk | Mitigation |
 |------|-----------|----------|:---:|------------|
@@ -100,6 +110,8 @@
 
 ## 5. Data Protection Measures
 
+For each measure below, fill in whether it is implemented and details.
+
 | Measure | Implemented? | Details |
 |---------|:---:|---------|
 | Encryption at rest | [ ] | [Algorithm, key management] |
@@ -126,6 +138,8 @@
 
 ### India DPDPA Data Localization
 
+Add one row per data category, with whether localization is required, storage location and compliance.
+
 | Data Category | Localization Required? | Storage Location | Compliance |
 |--------------|:---:|----------------|:---:|
 | | [ ] | | [ ] |
@@ -133,6 +147,8 @@
 ---
 
 ## 7. Consultation
+
+For each consultee below, fill in date, input received and whether it was addressed.
 
 | Consultee | Date | Input Received | Addressed? |
 |-----------|------|---------------|:---:|
@@ -146,6 +162,8 @@
 
 ## 8. Outcome and Sign-Off
 
+Fill in the Details column for each field.
+
 | Field | Details |
 |-------|---------|
 | Overall risk level after mitigation | [High / Medium / Low] |
@@ -157,6 +175,8 @@
 ---
 
 ## 9. Version History
+
+Add a row each time this document changes.
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|

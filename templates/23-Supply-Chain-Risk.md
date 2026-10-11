@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -21,6 +23,8 @@
 ---
 
 ## 1. AI Component Inventory
+
+Fill in the Provider, Version, Country of Origin, License and Risk Tier columns for each component.
 
 | Component | Type | Provider | Version | Country of Origin | License | Risk Tier |
 |-----------|------|----------|---------|-------------------|---------|-----------|
@@ -38,6 +42,8 @@
 
 ### 2.1 Model Provenance
 
+For each check below, fill in status and evidence.
+
 | Check | Status | Evidence |
 |-------|--------|---------|
 | Model source verified (official repo/registry) | [ ] | |
@@ -49,6 +55,8 @@
 | SBOM/AIBOM available | [ ] | |
 
 ### 2.2 Model Integrity Threats
+
+For each threat below, fill in whether it applies, likelihood, impact and controls.
 
 | Threat | Applicable? | Likelihood | Impact | Controls |
 |--------|:-----------:|-----------|--------|----------|
@@ -67,6 +75,8 @@
 
 ### 3.1 Vulnerable Code Patterns (OWASP LLM03, OpenSSF)
 
+For each risk below, fill in whether it applies, likelihood, impact and controls.
+
 | Risk | Applicable? | Likelihood | Impact | Controls |
 |------|:-----------:|-----------|--------|----------|
 | **Insecure code suggestions** - AI reproducing known CVE patterns from training data | | | | |
@@ -80,6 +90,8 @@
 
 ### 3.2 Dependency Hallucination / Slopsquatting (OWASP LLM03, ENISA 2025)
 
+For each risk below, fill in whether it applies, likelihood, impact and controls.
+
 | Risk | Applicable? | Likelihood | Impact | Controls |
 |------|:-----------:|-----------|--------|----------|
 | **Package hallucination** - AI suggesting nonexistent packages (about 1 in 5 suggested packages in one 2025 study of 16 code models) | | | | |
@@ -89,6 +101,8 @@
 
 ### 3.3 License Contamination (NIST AI 600-1 Risk #10)
 
+For each risk below, fill in whether it applies, likelihood, impact and controls.
+
 | Risk | Applicable? | Likelihood | Impact | Controls |
 |------|:-----------:|-----------|--------|----------|
 | **Copyleft injection** - AI reproducing GPL/AGPL code into permissive-licensed project | | | | |
@@ -97,6 +111,8 @@
 | **Patent exposure** - AI suggesting patented algorithms without disclosure | | | | |
 
 ### 3.4 CI/CD Pipeline Risks (ENISA 2025, GitHub/Pillar Security)
+
+For each risk below, fill in whether it applies, likelihood, impact and controls.
 
 | Risk | Applicable? | Likelihood | Impact | Controls |
 |------|:-----------:|-----------|--------|----------|
@@ -112,6 +128,8 @@
 
 ### 4.1 Data Provenance
 
+For each check below, fill in status and evidence.
+
 | Check | Status | Evidence |
 |-------|--------|---------|
 | Training data sources documented | [ ] | |
@@ -122,6 +140,8 @@
 | Data quality assessment performed | [ ] | |
 
 ### 4.2 Data Poisoning Threats
+
+For each threat below, fill in whether it applies, likelihood, impact and controls.
 
 | Threat | Applicable? | Likelihood | Impact | Controls |
 |--------|:-----------:|-----------|--------|----------|
@@ -135,6 +155,8 @@
 ---
 
 ## 5. Infrastructure Supply Chain Risk (MITRE ATLAS)
+
+For each threat below, fill in whether it applies, likelihood, impact and controls.
 
 | Threat | Applicable? | Likelihood | Impact | Controls |
 |--------|:-----------:|-----------|--------|----------|
@@ -151,6 +173,8 @@
 
 ### 6.1 Provider Due Diligence
 
+For each criterion below, fill in assessment and score (1-5).
+
 | Criterion | Assessment | Score (1-5) |
 |-----------|-----------|:-----------:|
 | Provider transparency (model cards, documentation) | | |
@@ -164,6 +188,8 @@
 | Exit strategy / data portability | | |
 
 ### 6.2 Contractual Requirements (EU AI Act Art. 25(4))
+
+For each requirement below, fill in whether it is in the contract and details.
 
 | Requirement | In Contract? | Details |
 |-------------|:---:|---------|
@@ -179,6 +205,8 @@
 
 ### 6.3 Ongoing Monitoring (ISO/IEC 42001 A.10.3)
 
+For each monitoring area below, fill in frequency, method and owner.
+
 | Monitoring Area | Frequency | Method | Owner |
 |----------------|-----------|--------|-------|
 | Model performance drift | | | |
@@ -190,6 +218,8 @@
 ---
 
 ## 7. Cross-Jurisdiction Supply Chain Flags
+
+For each flag below, fill in whether it applies and action required.
 
 | Flag | Applicable? | Action Required |
 |------|:-----------:|-----------------|
@@ -209,6 +239,8 @@
 
 ### 8.1 Pre-Generation Controls
 
+For each control below, fill in whether it is implemented and details.
+
 | Control | Implemented? | Details |
 |---------|:---:|---------|
 | AI coding tool vetted and approved | [ ] | |
@@ -218,6 +250,8 @@
 | AI instructed to prefer safe defaults (OpenSSF) | [ ] | |
 
 ### 8.2 Post-Generation Controls
+
+For each control below, fill in whether it is implemented and details.
 
 | Control | Implemented? | Details |
 |---------|:---:|---------|
@@ -229,6 +263,8 @@
 | Secret scanning (GitGuardian, etc.) | [ ] | |
 
 ### 8.3 SLSA Compliance for AI-Assisted Development
+
+For each slsa level below, fill in whether it is met and evidence.
 
 | SLSA Level | Met? | Evidence |
 |-----------|:---:|---------|
@@ -251,6 +287,8 @@
 
 ### 9.2 Software Bill of Materials (SBOM)
 
+For each SBOM below, mark whether you generate it and fill in its format, location and last update.
+
 | Generated? | Format | Location | Last Updated |
 |:---:|--------|----------|:---:|
 | [ ] | [SPDX / CycloneDX / SWID] | | |
@@ -258,6 +296,8 @@
 ---
 
 ## 10. Risk Summary and Mitigation Plan
+
+For each risk id below, fill in risk description, framework reference, severity, likelihood, current controls, residual risk, mitigation plan, owner and due date.
 
 | Risk ID | Risk Description | Framework Reference | Severity | Likelihood | Current Controls | Residual Risk | Mitigation Plan | Owner | Due Date |
 |---------|-----------------|---------------------|----------|-----------|-----------------|---------------|-----------------|-------|----------|
@@ -287,6 +327,8 @@
 ---
 
 ## Framework Reference Matrix
+
+This table lists each framework with its type, enforcement and key sections.
 
 | Framework | Type | Enforcement | Key Sections |
 |-----------|------|-------------|-------------|

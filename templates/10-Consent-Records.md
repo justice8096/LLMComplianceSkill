@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -19,6 +21,8 @@
 ---
 
 ## 1. Consent Requirements Mapping
+
+For each processing activity below, fill in legal basis, whether consent is required, jurisdiction(s) and consent type.
 
 | Processing Activity | Legal Basis | Consent Required? | Jurisdiction(s) | Consent Type |
 |--------------------|------------|:---:|----------------|-------------|
@@ -34,6 +38,8 @@
 ---
 
 ## 2. Consent Collection Design
+
+For each element below, fill in specification.
 
 | Element | Specification |
 |---------|--------------|
@@ -74,6 +80,8 @@ Each consent event must capture:
 ---
 
 ## 4. Consent Lifecycle Management
+
+Fill in the Record Updated? column for each event.
 
 | Event | Action | System Behavior | Record Updated? |
 |-------|--------|----------------|:---:|
@@ -117,11 +125,15 @@ Each consent event must capture:
 
 ### Consent Records Sample
 
+This sample shows the fields every consent record should hold, one row per consent.
+
 | consent_id | data_subject_id | timestamp | purpose | consent_given | consent_text_version | jurisdiction |
 |-----------|----------------|-----------|---------|:---:|---------------------|-------------|
 | | | | | | | |
 
 ### Consent Withdrawal Log
+
+Add one row per withdrawal: when and how it happened, what was done with the data, and whether the person was told.
 
 | consent_id | withdrawal_timestamp | withdrawal_method | data_action_taken | confirmed_to_subject |
 |-----------|---------------------|------------------|------------------|:---:|

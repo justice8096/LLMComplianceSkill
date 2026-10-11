@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -19,6 +21,8 @@
 ---
 
 ## 1. Rights Implementation Matrix
+
+Fill in the Implemented? column for each right.
 
 | Right | EU | UK | India | Brazil | S. Africa | Canada | Australia | S. Korea | Implemented? | Response Time |
 |-------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -39,6 +43,8 @@
 
 ### 2.1 Request Intake
 
+For each channel below, fill in whether it is available and how it works.
+
 | Channel | Available? | How It Works |
 |---------|:---:|-------------|
 | Online form / portal | [ ] | |
@@ -49,6 +55,8 @@
 
 ### 2.2 Identity Verification
 
+For each method below, fill in description.
+
 | Method | Description |
 |--------|-------------|
 | Verification required? | [Yes — describe method] |
@@ -56,6 +64,8 @@
 | Failed verification process | [Inform requestor, provide alternative] |
 
 ### 2.3 Processing Workflow
+
+Fill in the Responsible and SLA columns for each step.
 
 | Step | Action | Responsible | SLA |
 |------|--------|-------------|-----|
@@ -73,6 +83,8 @@
 ## 3. AI-Specific Considerations
 
 ### 3.1 Right to Erasure in AI Systems
+
+For each challenge below, fill in how addressed.
 
 | Challenge | How Addressed |
 |-----------|--------------|
@@ -96,6 +108,8 @@
 
 ### 3.3 Right to Data Portability for AI
 
+For each aspect below, fill in implementation.
+
 | Aspect | Implementation |
 |--------|---------------|
 | Data format provided | [JSON / CSV / XML / Machine-readable] |
@@ -105,6 +119,8 @@
 ---
 
 ## 4. Exemptions and Refusal
+
+This table lists each exemption, when it applies, where it applies and what you must document to use it.
 
 | Exemption | Applicable When | Jurisdiction | Documentation Required |
 |-----------|----------------|-------------|----------------------|
@@ -117,6 +133,8 @@
 ---
 
 ## 5. Request Log
+
+Add one row per request id, with date received, subject id, right exercised, whether it was verified, outcome, response date and days taken.
 
 | Request ID | Date Received | Subject ID | Right Exercised | Verified? | Outcome | Response Date | Days Taken |
 |-----------|--------------|-----------|----------------|:---:|---------|--------------|:---:|

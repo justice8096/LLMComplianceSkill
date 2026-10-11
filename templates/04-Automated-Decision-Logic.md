@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System / Decision Name | |
@@ -19,6 +21,8 @@
 ---
 
 ## 1. Decision Overview
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -34,6 +38,8 @@
 ## 2. Decision Logic
 
 ### 2.1 Input Factors
+
+Add one row per factor or feature, with data type, source, weight or importance and why included.
 
 | Factor / Feature | Data Type | Source | Weight / Importance | Why Included |
 |-----------------|-----------|--------|:---:|-------------|
@@ -56,6 +62,8 @@ Describe the pipeline from input to decision output:
 
 ### 2.3 Decision Rules and Thresholds
 
+For each rule or threshold below, fill in value and effect.
+
 | Rule / Threshold | Value | Effect |
 |-----------------|-------|--------|
 | Approval threshold | [e.g., score > 0.7] | [Approved] |
@@ -64,6 +72,8 @@ Describe the pipeline from input to decision output:
 | Override rules | [Business rules that override model output] | |
 
 ### 2.4 Factors Explicitly Excluded
+
+This table lists each excluded factor with its reason for exclusion.
 
 | Excluded Factor | Reason for Exclusion |
 |----------------|---------------------|
@@ -76,6 +86,8 @@ Describe the pipeline from input to decision output:
 ## 3. Explainability
 
 ### 3.1 Explanation Method
+
+For each method below, fill in whether it is used and description.
 
 | Method | Used? | Description |
 |--------|:---:|-------------|
@@ -114,6 +126,8 @@ Describe the pipeline from input to decision output:
 ---
 
 ## 5. Fairness and Non-Discrimination
+
+For each assessment below, fill in details.
 
 | Assessment | Details |
 |-----------|---------|
@@ -155,6 +169,8 @@ Describe the pipeline from input to decision output:
 ---
 
 ## 8. Version History
+
+Add a row each time this document changes.
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|

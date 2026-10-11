@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -21,6 +23,8 @@
 ---
 
 ## 1. System Purpose and Scope
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -37,6 +41,8 @@
 
 ### 2.1 Architecture Overview
 
+For each component below, fill in description.
+
 | Component | Description |
 |-----------|-------------|
 | Model type | [LLM / Classification / Regression / Generative / Multi-modal / Other] |
@@ -48,6 +54,8 @@
 
 ### 2.2 Decision-Making Logic
 
+For each aspect below, fill in description.
+
 | Aspect | Description |
 |--------|-------------|
 | How outputs are generated | [Describe the pipeline from input to output] |
@@ -56,6 +64,8 @@
 | Fallback behavior | [What happens when confidence is low or system fails] |
 
 ### 2.3 Data Used
+
+For each data category below, fill in description, source and retention.
 
 | Data Category | Description | Source | Retention |
 |--------------|-------------|--------|-----------|
@@ -85,6 +95,8 @@
 
 ## 4. Performance Metrics
 
+For each metric below, fill in value, measurement method and date measured.
+
 | Metric | Value | Measurement Method | Date Measured |
 |--------|-------|--------------------|---------------|
 | Accuracy | | | |
@@ -99,6 +111,8 @@
 
 ## 5. Risk Classification Justification
 
+For each criterion below, fill in assessment.
+
 | Criterion | Assessment |
 |-----------|-----------|
 | Assigned risk level | [Prohibited / High-risk / Limited / Minimal] |
@@ -109,6 +123,8 @@
 ---
 
 ## 6. Human Oversight Summary
+
+For each aspect below, fill in details.
 
 | Aspect | Details |
 |--------|---------|
@@ -121,6 +137,8 @@
 
 ## 7. Transparency Disclosures
 
+For each disclosure below, fill in whether it is implemented, location and screenshot or link.
+
 | Disclosure | Implemented? | Location | Screenshot/Link |
 |-----------|-------------|----------|-----------------|
 | User notification of AI interaction | [ ] Yes [ ] No | | |
@@ -132,6 +150,8 @@
 ---
 
 ## 8. Version History
+
+Add a row each time this document changes.
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|

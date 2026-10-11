@@ -90,6 +90,8 @@ No server required. Everything runs locally with zero external dependencies.
 
 ## Templates
 
+Each template below collects one kind of evidence. The last column lists the main laws that ask for it.
+
 | # | Template | Key Regulations |
 |---|---------|----------------|
 | 01 | System Transparency Document | EU AI Act Arts. 11-14, Colorado SB 26-189, UK DUA Act |
@@ -118,6 +120,8 @@ No server required. Everything runs locally with zero external dependencies.
 
 ## Interactive Tools
 
+Each tool below is a step-by-step form that fills in one template. Open the file in a browser; nothing needs to be installed.
+
 | Tool | Template | Purpose |
 |------|---------|---------|
 | `risk-classification.html` | 17 | Decision tree for prohibited/high-risk/limited classification |
@@ -144,6 +148,8 @@ No server required. Everything runs locally with zero external dependencies.
 
 ## Jurisdictions Covered
 
+Jurisdictions are grouped by how far their AI rules have got, from enacted law to voluntary guidance.
+
 | Tier | Jurisdictions |
 |------|--------------|
 | **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam, Brazil |
@@ -153,13 +159,15 @@ No server required. Everything runs locally with zero external dependencies.
 
 ## Key Deadlines
 
+These are the dates that matter most, earliest first.
+
 | Date | Jurisdiction | Event |
 |------|-------------|-------|
-| **Feb 2025** | EU | AI Act — Prohibited practices + AI Literacy |
-| **Aug 2025** | EU | AI Act — GPAI obligations |
-| **Jan 2026** | US-CA | SB 53 + AB 2013 |
-| **Feb 2026** | UK | DUA Act — ADM reforms |
-| **Jan 2026** | KR | AI Basic Act in force |
+| **2 Feb 2025** | EU | AI Act — Prohibited practices + AI Literacy |
+| **2 Aug 2025** | EU | AI Act — GPAI obligations |
+| **1 Jan 2026** | US-CA | SB 53 + AB 2013 |
+| **22 Jan 2026** | KR | AI Basic Act in force |
+| **5 Feb 2026** | UK | DUA Act — ADM reforms |
 | **2 Aug 2026** | EU | AI Act — Art. 50 transparency + penalties (high-risk delayed to Dec 2027 by Digital Omnibus) |
 | **10 Dec 2026** | AU | Privacy Act ADM obligations |
 | **1 Jan 2027** | US | CO SB 26-189, NY RAISE Act, IL SB 315, CA CCPA ADMT |

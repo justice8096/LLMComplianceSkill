@@ -18,6 +18,8 @@
 
 ### Core Evidence (complete these first — covers 90%+ of requirements)
 
+This table lists each template in this group, what it covers and its file name.
+
 | # | Template | Covers | File |
 |---|---------|--------|------|
 | 01 | **System Transparency Document** | EU, Colorado, UK, South Korea, Brazil, Peru, Vietnam | `01-System-Transparency-Document.md` |
@@ -29,6 +31,8 @@
 
 ### High-Frequency Evidence (required by 12+ laws each)
 
+This table lists each template in this group, what it covers and its file name.
+
 | # | Template | Covers | File |
 |---|---------|--------|------|
 | 07 | **Privacy Impact Assessment (PIA/DPIA)** | 20+ laws across 17 jurisdictions | `07-Privacy-Impact-Assessment.md` |
@@ -39,6 +43,8 @@
 | 12 | **Governance Framework** | EU, South Korea, Brazil, Chile, Colombia, Singapore, UK, Texas, Japan, NZ, Australia, Canada | `12-Governance-Framework.md` |
 
 ### Specialized Evidence
+
+This table lists each template in this group, what it covers and its file name.
 
 | # | Template | Covers | File |
 |---|---------|--------|------|
@@ -52,6 +58,8 @@
 | 20 | **Sector-Specific Matrix** | Finance, Healthcare, Employment, Education across 10+ jurisdictions | `20-Sector-Specific-Matrix.md` |
 
 ### Tools
+
+This table lists each interactive tool, what it is for and its file name.
 
 | # | Template | Purpose | File |
 |---|---------|---------|------|
@@ -71,6 +79,8 @@ Every template includes:
 ---
 
 ## Priority by Urgency
+
+This table lists what to do first, and why.
 
 | Priority | What | Why |
 |----------|------|-----|

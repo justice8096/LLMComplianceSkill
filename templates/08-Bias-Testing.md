@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -21,6 +23,8 @@
 
 ## 1. Testing Scope
 
+Fill in the Details column for each field.
+
 | Field | Details |
 |-------|---------|
 | System / model under test | |
@@ -32,6 +36,8 @@
 ---
 
 ## 2. Protected Characteristics Tested
+
+Fill in the Tested? and Test Group Sizes columns for each characteristic.
 
 | Characteristic | Tested? | Jurisdiction Requiring It | Test Group Sizes |
 |---------------|:---:|--------------------------|-----------------|
@@ -51,6 +57,8 @@
 
 ## 3. Bias Metrics Used
 
+Fill in the Applied? column for each metric.
+
 | Metric | Definition | Threshold | Applied? |
 |--------|-----------|-----------|:---:|
 | **Disparate impact ratio** | Selection rate of protected group / selection rate of majority group | ≥ 0.8 (4/5ths rule) | [ ] |
@@ -67,6 +75,8 @@
 
 ### 4.1 Summary Results
 
+Add one row per protected characteristic, with metric, group a (reference), group b, score, pass or fail and notes.
+
 | Protected Characteristic | Metric | Group A (Reference) | Group B | Score | Pass/Fail | Notes |
 |------------------------|--------|:---:|:---:|:---:|:---:|-------|
 | | | | | | | |
@@ -75,12 +85,16 @@
 
 ### 4.2 Intersectional Analysis
 
+For each intersection below, fill in metric, score and pass or fail.
+
 | Intersection | Metric | Score | Pass/Fail |
 |-------------|--------|:---:|:---:|
 | [e.g., Race × Gender] | | | |
 | [e.g., Age × Disability] | | | |
 
 ### 4.3 Detailed Findings
+
+For each finding below, fill in description, severity and characteristic affected.
 
 | Finding # | Description | Severity | Characteristic Affected |
 |-----------|-------------|----------|----------------------|
@@ -90,6 +104,8 @@
 ---
 
 ## 5. Remediation Plan
+
+Add one row per finding, with remediation action, owner, target date, status and verification method.
 
 | Finding # | Remediation Action | Owner | Target Date | Status | Verification Method |
 |-----------|-------------------|-------|-------------|--------|-------------------|
@@ -112,6 +128,8 @@
 
 ### Audit Summary (for public disclosure)
 
+For each category below, fill in selection rate and impact ratio.
+
 | Category | Selection Rate | Impact Ratio |
 |----------|:---:|:---:|
 | [Demographic category 1] | | |
@@ -121,6 +139,8 @@
 ---
 
 ## 7. Ongoing Monitoring Plan
+
+For each aspect below, fill in details.
 
 | Aspect | Details |
 |--------|---------|

@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -19,6 +21,8 @@
 ---
 
 ## 1. Applicability
+
+Answer each question in the Answer column.
 
 | Question | Answer |
 |----------|--------|
@@ -34,6 +38,8 @@
 
 ### 2.1 Risk Management System (Art. 9)
 
+For each requirement below, fill in evidence and status.
+
 | Requirement | Evidence | Status |
 |------------|---------|:---:|
 | Risk management system established and maintained | [Template 06 completed] | [ ] |
@@ -43,6 +49,8 @@
 | Testing procedures validate mitigation effectiveness | | [ ] |
 
 ### 2.2 Data Governance (Art. 10)
+
+For each requirement below, fill in evidence and status.
 
 | Requirement | Evidence | Status |
 |------------|---------|:---:|
@@ -54,6 +62,8 @@
 
 ### 2.3 Technical Documentation (Art. 11)
 
+For each requirement below, fill in evidence and status.
+
 | Requirement | Evidence | Status |
 |------------|---------|:---:|
 | System description and intended purpose documented | [Template 01 completed] | [ ] |
@@ -64,6 +74,8 @@
 
 ### 2.4 Record-Keeping / Logging (Art. 12)
 
+For each requirement below, fill in evidence and status.
+
 | Requirement | Evidence | Status |
 |------------|---------|:---:|
 | Automatic logging of operations implemented | | [ ] |
@@ -72,6 +84,8 @@
 | Logs retained for appropriate period | | [ ] |
 
 ### 2.5 Transparency and Information (Art. 13)
+
+For each requirement below, fill in evidence and status.
 
 | Requirement | Evidence | Status |
 |------------|---------|:---:|
@@ -82,6 +96,8 @@
 
 ### 2.6 Human Oversight (Art. 14)
 
+For each requirement below, fill in evidence and status.
+
 | Requirement | Evidence | Status |
 |------------|---------|:---:|
 | Human oversight measures designed into system | [Template 09 completed] | [ ] |
@@ -90,6 +106,8 @@
 | Measures against automation bias implemented | | [ ] |
 
 ### 2.7 Accuracy, Robustness, Cybersecurity (Art. 15)
+
+For each requirement below, fill in evidence and status.
 
 | Requirement | Evidence | Status |
 |------------|---------|:---:|
@@ -105,6 +123,8 @@
 
 ### 3.1 Internal Conformity Assessment (Annex VI)
 
+Fill in the Status and Evidence columns for each step.
+
 | Step | Action | Status | Evidence |
 |------|--------|:---:|---------|
 | 1 | Verify quality management system in place | [ ] | |
@@ -115,6 +135,8 @@
 | 6 | Register in EU database | [ ] | |
 
 ### 3.2 Third-Party Assessment (Annex VII) — If Required
+
+Fill in the Status and Evidence columns for each step.
 
 | Step | Action | Status | Evidence |
 |------|--------|:---:|---------|
@@ -131,6 +153,8 @@
 
 ## 4. EU Declaration of Conformity
 
+For each element below, fill in content.
+
 | Element | Content |
 |---------|---------|
 | Provider name and address | |
@@ -145,6 +169,8 @@
 
 ## 5. CE Marking
 
+For each aspect below, fill in details.
+
 | Aspect | Details |
 |--------|---------|
 | CE marking applied to system/documentation? | [ ] Yes |
@@ -155,6 +181,8 @@
 ---
 
 ## 6. Post-Market Monitoring
+
+For each obligation below, fill in implementation and status.
 
 | Obligation | Implementation | Status |
 |-----------|---------------|:---:|

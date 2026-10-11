@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -24,6 +26,8 @@
 
 ## 1. Scan Summary
 
+For each severity below, fill in count, resolved and active.
+
 | Severity | Count | Resolved | Active |
 |----------|:-----:|:--------:|:------:|
 | Critical | | | |
@@ -37,6 +41,8 @@
 
 ## 2. CWE Inventory
 
+Add one row per cwe id, with name, severity, status and remediation.
+
 | CWE ID | Name | Severity | Status | Remediation |
 |--------|------|----------|--------|-------------|
 | | | | [OPEN/RESOLVED/MITIGATED] | |
@@ -44,6 +50,8 @@
 ---
 
 ## 3. Test Suite Coverage Matrix
+
+For each test suite below, fill in whether it is covered, detail and gaps.
 
 | Test Suite | Covered? | Detail | Gaps |
 |-----------|:--------:|--------|------|
@@ -63,6 +71,8 @@
 
 ## 4. DAST Findings
 
+Add one row per finding, with severity, endpoint, status and remediation.
+
 | Finding | Severity | Endpoint | Status | Remediation |
 |---------|----------|----------|--------|-------------|
 | | | | | |
@@ -73,6 +83,8 @@
 
 ## 5. Coverage Gaps and Recommended Actions
 
+Add one row per gap, with recommended action, priority and target date.
+
 | Gap | Recommended Action | Priority | Target Date |
 |-----|-------------------|----------|-------------|
 | | | [High/Medium/Low] | |
@@ -80,6 +92,8 @@
 ---
 
 ## 6. Compliance Framework Cross-Reference
+
+For each framework below, fill in cwes mapped, active cwes and coverage notes.
 
 | Framework | CWEs Mapped | Active CWEs | Coverage Notes |
 |-----------|:-----------:|:-----------:|----------------|
@@ -95,6 +109,8 @@
 ---
 
 ## 7. Risk Trend
+
+Add one row per audit cycle so the trend in findings is visible over time.
 
 | Audit Cycle | Total CWEs | Critical | High | Medium | Low | Resolved |
 |-------------|:---------:|:--------:|:----:|:------:|:---:|:--------:|
