@@ -24,10 +24,10 @@
     '.model-btn.selected { border-color: #D4943A; background: #1E2D3D; }',
     '.mech-detail { margin-left: 16px; margin-bottom: 12px; padding: 8px 12px; border-left: 2px solid #2A7B7B; background: #0D1830; }',
     '.bias-score-box { padding: 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830; margin-bottom: 12px; }',
-    '.gap-item { padding: 8px 12px; margin-bottom: 4px; border-left: 3px solid #c0392b; background: #0D183088; font-size: 0.9em; color: #e74c3c; }',
-    '.model-desc { margin-top: 8px; font-size: 0.85em; color: #9AACBA; line-height: 1.5; }',
+    '.gap-item { padding: 8px 12px; margin-bottom: 4px; border-left: 3px solid #c0392b; background: #0D183088; font-size: 0.9rem; color: #F0705F; }',
+    '.model-desc { margin-top: 8px; font-size: 0.875rem; color: #9AACBA; line-height: 1.5; }',
     '.summary-model { padding: 12px; border: 1px solid #D4943A; border-radius: 4px; background: #0D1830; margin-bottom: 12px; }',
-    '.measure-check { padding: 2px 0 2px 12px; font-size: 0.85em; }'
+    '.measure-check { padding: 2px 0 2px 12px; font-size: 0.875rem; }'
   ].join('\n');
   document.head.appendChild(extraStyle);
 
@@ -344,10 +344,10 @@
     var modelBox = el('div', { className: 'summary-model' });
     modelBox.appendChild(el('span', { style: 'font-weight: 600; color: #E8B96A; font-size: 1.05em;' }, [modelLabel]));
     if (modelDesc) {
-      modelBox.appendChild(el('p', { style: 'color: #9AACBA; font-size: 0.85em; margin-top: 6px;' }, [modelDesc]));
+      modelBox.appendChild(el('p', { style: 'color: #9AACBA; font-size: 0.875rem; margin-top: 6px;' }, [modelDesc]));
     }
     if (state.modelJustification) {
-      modelBox.appendChild(el('p', { style: 'color: #6B7B8D; font-size: 0.8em; margin-top: 6px; font-style: italic;' }, ['Justification: ' + state.modelJustification]));
+      modelBox.appendChild(el('p', { style: 'color: #8A9AAB; font-size: 0.875rem; margin-top: 6px; font-style: italic;' }, ['Justification: ' + state.modelJustification]));
     }
     section.appendChild(modelBox);
 
@@ -432,7 +432,7 @@
     biasHeader.appendChild(el('span', { style: 'color: #9AACBA;' }, ['Automation Bias Prevention Score']));
     biasHeader.appendChild(el('span', { className: biasClass, style: 'font-size: 1.2em;' }, [biasPercent + '% (' + biasLevel + ')']));
     biasBox.appendChild(biasHeader);
-    biasBox.appendChild(el('p', { style: 'color: #6B7B8D; font-size: 0.8em; margin-top: 6px;' }, [biasCount + ' of ' + biasTotal + ' standard measures enabled']));
+    biasBox.appendChild(el('p', { style: 'color: #8A9AAB; font-size: 0.875rem; margin-top: 6px;' }, [biasCount + ' of ' + biasTotal + ' standard measures enabled']));
 
     for (var i = 0; i < biasMeasures.length; i++) {
       if (state.automationBias.measures[biasMeasures[i].id] === true) {
@@ -600,7 +600,7 @@
       lines.push('- [' + marker + '] ' + bm.text);
     }
     lines.push('');
-    lines.push('**Bias Prevention Score:** ' + results.summary.biasPreventionScore + '%');
+    lines.push('**Bias Prevention Score:** ' + pctText(results.summary.biasPreventionScore));
     lines.push('');
     if (state.automationBias.additionalMeasures) {
       lines.push('**Additional Measures:** ' + state.automationBias.additionalMeasures);

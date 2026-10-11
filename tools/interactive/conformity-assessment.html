@@ -142,9 +142,9 @@
       var info = config.systemInfo;
       var infoBox = el('div', { style: 'padding: 12px; border: 1px solid #2A7B7B55; border-radius: 4px; background: #2A7B7B11; margin-bottom: 12px;' });
       infoBox.appendChild(el('h3', {}, ['Loaded from config:']));
-      if (info.systemName) infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin: 4px 0;' }, ['System: ' + info.systemName]));
-      if (info.version) infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin: 4px 0;' }, ['Version: ' + info.version]));
-      if (config.organization && config.organization.name) infoBox.appendChild(el('p', { style: 'font-size: 0.85em; color: #9AACBA; margin: 4px 0;' }, ['Organization: ' + config.organization.name]));
+      if (info.systemName) infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin: 4px 0;' }, ['System: ' + info.systemName]));
+      if (info.version) infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin: 4px 0;' }, ['Version: ' + info.version]));
+      if (config.organization && config.organization.name) infoBox.appendChild(el('p', { style: 'font-size: 0.875rem; color: #9AACBA; margin: 4px 0;' }, ['Organization: ' + config.organization.name]));
       items.push(infoBox);
     }
     items.push(createTextInput('System name', state.systemInfo.systemName, function(v) { state.systemInfo.systemName = v; }, 'e.g. Customer Support AI v2.1'));
@@ -233,7 +233,7 @@
         var group = el('div', { style: 'margin-bottom: 8px; padding: 10px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         var header = el('div', { style: 'display: flex; align-items: center; gap: 8px;' });
         header.appendChild(el('span', { className: 'badge enacted' }, ['T' + tmpl.num]));
-        header.appendChild(el('span', { style: 'font-size: 0.9em;' }, [tmpl.label]));
+        header.appendChild(el('span', { style: 'font-size: 0.9rem;' }, [tmpl.label]));
         group.appendChild(header);
         group.appendChild(createToggle('Evidence available?', ev.available, function(v) { ev.available = v; wizard.saveNow(); }));
         group.appendChild(createTextInput('Evidence location', ev.location, function(v) { ev.location = v; }, 'File path, URL, or document reference'));
@@ -339,7 +339,7 @@
       var cls = pct >= 80 ? 'score-low' : pct >= 50 ? 'score-med' : 'score-high';
       var row = el('tr'); row.appendChild(el('td', {}, [s.label]));
       row.appendChild(el('td', {}, [score.filled + ' / ' + score.total]));
-      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '%']));
+      var scoreCell = el('td'); scoreCell.appendChild(el('span', { className: cls }, [pct + '% ' + completenessWord(pct)]));
       row.appendChild(scoreCell); tbody.appendChild(row);
     }
     table.appendChild(tbody); section.appendChild(table);
@@ -347,7 +347,7 @@
     var overallCls = overallPct >= 80 ? 'score-low' : overallPct >= 50 ? 'score-med' : 'score-high';
     var overallEl = el('div', { style: 'margin-top: 16px; text-align: center; font-size: 1.2em;' });
     overallEl.appendChild(document.createTextNode('Overall Completeness: '));
-    overallEl.appendChild(el('span', { className: overallCls }, [overallPct + '%']));
+    overallEl.appendChild(el('span', { className: overallCls }, [pctText(overallPct, totalFilled, totalAll) + ', ' + completenessWord(overallPct)]));
     section.appendChild(overallEl);
 
     var availableCount = 0; var assessedCount = 0;
@@ -356,7 +356,7 @@
       if (ev.available !== null) assessedCount++;
       if (ev.available === true) availableCount++;
     }
-    var evidenceEl = el('div', { style: 'margin-top: 12px; text-align: center; font-size: 0.9em; color: #9AACBA;' });
+    var evidenceEl = el('div', { style: 'margin-top: 12px; text-align: center; font-size: 0.9rem; color: #9AACBA;' });
     evidenceEl.appendChild(document.createTextNode('Evidence templates available: ' + availableCount + ' / ' + templateCrossRef.length + ' assessed'));
     section.appendChild(evidenceEl);
 

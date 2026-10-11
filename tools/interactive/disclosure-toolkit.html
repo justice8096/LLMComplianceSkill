@@ -232,7 +232,7 @@
         var group = el('div', { style: 'margin-bottom: 12px; padding: 12px; border: 1px solid #1E2D3D; border-radius: 4px; background: #0D1830;' });
         var header = el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;' });
         header.appendChild(el('h3', {}, ['Evidence Entry ' + (idx + 1)]));
-        header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.75em;', onClick: function() {
+        header.appendChild(el('button', { className: 'btn', textContent: 'Remove', style: 'padding: 4px 12px; font-size: 0.875rem;', onClick: function() {
           state.evidenceLog.splice(idx, 1); wizard.refreshStep();
         }}));
         group.appendChild(header);
@@ -295,7 +295,7 @@
     if (applicableCount > 0) { overallSum += discPct; overallParts++; }
     if (totalItems > 0) { overallSum += Math.round((totalChecked / totalItems) * 100); overallParts++; }
     if (overallParts > 0) overallPct = Math.round(overallSum / overallParts);
-    addRow(tbody, 'Overall score', overallPct + '%', overallPct >= 80 ? 'score-low' : overallPct >= 50 ? 'score-med' : 'score-high');
+    addRow(tbody, 'Overall score', pctText(overallPct) + ', ' + completenessWord(overallPct), overallPct >= 80 ? 'score-low' : overallPct >= 50 ? 'score-med' : 'score-high');
     table.appendChild(tbody); section.appendChild(table);
     if (overallPct < 50) section.appendChild(createAlert('danger', 'Disclosure implementation is incomplete. Address missing disclosures before deployment.'));
     else if (overallPct < 80) section.appendChild(createAlert('warning', 'Disclosure implementation is in progress. Complete remaining items for full compliance.'));

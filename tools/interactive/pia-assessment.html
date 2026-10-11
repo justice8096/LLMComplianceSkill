@@ -19,40 +19,40 @@
 
   var extraStyle = document.createElement('style');
   extraStyle.textContent = [
-    '.risk-badge { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 0.75em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }',
+    '.risk-badge { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }',
     '.risk-critical { background: #8B0000; color: #ff6b6b; border: 1px solid #c0392b; }',
-    '.risk-high { background: #c0392b33; color: #e74c3c; border: 1px solid #c0392b55; }',
+    '.risk-high { background: #c0392b33; color: #F0705F; border: 1px solid #c0392b55; }',
     '.risk-medium { background: #D4943A33; color: #E8B96A; border: 1px solid #D4943A55; }',
     '.risk-low { background: #2A7B7B33; color: #4DBFBF; border: 1px solid #2A7B7B55; }',
     '.risk-row { padding: 12px 16px; border: 1px solid #1E2D3D; border-radius: 4px; margin-bottom: 8px; background: #0D1830; }',
     '.risk-row-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }',
-    '.risk-row-title { font-size: 0.9em; font-weight: 500; flex: 1; }',
+    '.risk-row-title { font-size: 0.9rem; font-weight: 500; flex: 1; }',
     '.risk-selects { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }',
-    '.risk-selects select { padding: 4px 8px; background: #0D1830; border: 1px solid #3A4A5A; border-radius: 3px; color: #F0EBE0; font-size: 0.8em; }',
-    '.risk-selects label { font-size: 0.75em; color: #6B7B8D; }',
+    '.risk-selects select { padding: 4px 8px; background: #0D1830; border: 1px solid #3A4A5A; border-radius: 3px; color: #F0EBE0; font-size: 0.875rem; }',
+    '.risk-selects label { font-size: 0.875rem; color: #8A9AAB; }',
     '.cond-section { margin-top: 8px; padding: 10px 12px; border-left: 2px solid #3A4A5A; background: #0B142688; }',
     '.right-row { padding: 12px 16px; border: 1px solid #1E2D3D; border-radius: 4px; margin-bottom: 8px; background: #0D1830; }',
     '.right-row-header { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }',
-    '.right-row-title { font-size: 0.9em; font-weight: 500; flex: 1; }',
+    '.right-row-title { font-size: 0.9rem; font-weight: 500; flex: 1; }',
     '.right-fields { display: flex; gap: 12px; flex-wrap: wrap; }',
     '.right-fields .field-row { flex: 1; min-width: 200px; margin-bottom: 4px; }',
     '.measure-row { padding: 10px 16px; border: 1px solid #1E2D3D; border-radius: 4px; margin-bottom: 6px; background: #0D1830; }',
     '.measure-header { display: flex; align-items: center; gap: 12px; }',
-    '.measure-title { font-size: 0.9em; flex: 1; }',
+    '.measure-title { font-size: 0.9rem; flex: 1; }',
     '.consult-row { padding: 12px 16px; border: 1px solid #1E2D3D; border-radius: 4px; margin-bottom: 8px; background: #0D1830; }',
     '.consult-fields { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }',
     '.consult-fields .field-row { flex: 1; min-width: 180px; margin-bottom: 4px; }',
-    '.heatmap { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 2px; margin: 16px 0; font-size: 0.8em; }',
+    '.heatmap { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 2px; margin: 16px 0; font-size: 0.875rem; }',
     '.heatmap-cell { padding: 6px 8px; text-align: center; border-radius: 2px; }',
     '.heatmap-header { background: #1E2D3D; color: #9AACBA; font-weight: 600; }',
     '.heatmap-label { background: #1E2D3D; color: #9AACBA; text-align: right; padding-right: 12px; }',
     '.heatmap-critical { background: #8B0000; color: #ff6b6b; font-weight: 700; }',
-    '.heatmap-high { background: #c0392b44; color: #e74c3c; font-weight: 600; }',
+    '.heatmap-high { background: #c0392b44; color: #F0705F; font-weight: 600; }',
     '.heatmap-medium { background: #D4943A33; color: #E8B96A; }',
     '.heatmap-low { background: #2A7B7B33; color: #4DBFBF; }',
     '.summary-card { padding: 16px; border: 1px solid #1E2D3D; border-radius: 6px; background: #0D1830; margin-bottom: 12px; }',
     '.summary-card h3 { margin-bottom: 10px; }',
-    '.summary-stat { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1E2D3D11; font-size: 0.9em; }',
+    '.summary-stat { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1E2D3D11; font-size: 0.9rem; }',
     '.stat-label { color: #9AACBA; }',
     '.progress-bar-bg { height: 8px; background: #1E2D3D; border-radius: 4px; overflow: hidden; margin: 6px 0; }',
     '.progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }',
@@ -60,7 +60,7 @@
     '.data-type-grid .toggle-row { flex: 0 0 calc(50% - 3px); margin-bottom: 0; }',
     '.subjects-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }',
     '.subjects-grid .toggle-row { flex: 0 0 calc(50% - 3px); margin-bottom: 0; }',
-    '.jurisdiction-note { font-size: 0.8em; color: #6B7B8D; padding: 4px 0 4px 12px; border-left: 2px solid #3A4A5A; margin: 4px 0; }'
+    '.jurisdiction-note { font-size: 0.875rem; color: #8A9AAB; padding: 4px 0 4px 12px; border-left: 2px solid #3A4A5A; margin: 4px 0; }'
   ].join('\n');
   document.head.appendChild(extraStyle);
 
@@ -277,6 +277,17 @@
     }
     return counts;
   }
+
+  // Counts behind each completeness percentage, so the UI can show
+  // "13 of 20 (65%)" instead of a bare percentage (dyscalculia gate A-004).
+  function countDone(list, key) {
+    var done = 0;
+    for (var i = 0; i < list.length; i++) { if (list[i][key] === true) done++; }
+    return done;
+  }
+  function measureText() { return pctText(getMeasureCompleteness(), countDone(state.measures, 'implemented'), protectionMeasures.length); }
+  function rightsText() { return pctText(getRightsCompleteness(), countDone(state.rights, 'implemented'), dataSubjectRightsList.length); }
+  function consultText() { return pctText(getConsultationCompleteness(), countDone(state.consultation, 'consulted'), consultees.length); }
 
   function getMeasureCompleteness() {
     var total = protectionMeasures.length;
@@ -701,7 +712,7 @@
     var fill = el('div', { className: 'progress-bar-fill' });
     fill.style.cssText = 'width:' + pct + '%;background:' + fillColor + ';';
     pctBar.appendChild(fill);
-    items.push(el('p', { className: 'subtitle' }, ['Completeness: ' + pct + '%']));
+    items.push(el('p', { className: 'subtitle' }, ['Completeness: ' + measureText()]));
     items.push(pctBar);
 
     var criticalMissing = [];
@@ -854,7 +865,7 @@
     var measPct = getMeasureCompleteness();
     var measCard = el('div', { className: 'summary-card' });
     measCard.appendChild(el('h3', {}, ['Data Protection Measures']));
-    measCard.appendChild(el('p', {}, ['Completeness: ' + measPct + '%']));
+    measCard.appendChild(el('p', {}, ['Completeness: ' + measureText()]));
     var mBar = el('div', { className: 'progress-bar-bg' });
     var mFill = el('div', { className: 'progress-bar-fill' });
     mFill.style.cssText = 'width:' + measPct + '%;background:' + (measPct >= 80 ? '#2A7B7B' : measPct >= 50 ? '#D4943A' : '#c0392b') + ';';
@@ -866,7 +877,7 @@
     var rightsPct = getRightsCompleteness();
     var rightsCard = el('div', { className: 'summary-card' });
     rightsCard.appendChild(el('h3', {}, ['Data Subject Rights']));
-    rightsCard.appendChild(el('p', {}, ['Implementation: ' + rightsPct + '%']));
+    rightsCard.appendChild(el('p', {}, ['Implementation: ' + rightsText()]));
     var rBar = el('div', { className: 'progress-bar-bg' });
     var rFill = el('div', { className: 'progress-bar-fill' });
     rFill.style.cssText = 'width:' + rightsPct + '%;background:' + (rightsPct >= 80 ? '#2A7B7B' : rightsPct >= 50 ? '#D4943A' : '#c0392b') + ';';
@@ -878,7 +889,7 @@
     var consultPct = getConsultationCompleteness();
     var consultCard = el('div', { className: 'summary-card' });
     consultCard.appendChild(el('h3', {}, ['Consultation']));
-    consultCard.appendChild(el('p', {}, ['Completeness: ' + consultPct + '%']));
+    consultCard.appendChild(el('p', {}, ['Completeness: ' + consultText()]));
     var cBar = el('div', { className: 'progress-bar-bg' });
     var cFill = el('div', { className: 'progress-bar-fill' });
     cFill.style.cssText = 'width:' + consultPct + '%;background:' + (consultPct >= 80 ? '#2A7B7B' : consultPct >= 50 ? '#D4943A' : '#c0392b') + ';';
@@ -941,9 +952,9 @@
     var issues = [];
     if (counts.Critical > 0) issues.push(counts.Critical + ' critical risk(s) identified');
     if (counts.High > 2) issues.push(counts.High + ' high risks require attention');
-    if (measPct < 70) issues.push('data protection measures incomplete (' + measPct + '%)');
-    if (rightsPct < 80) issues.push('data subject rights implementation gaps (' + rightsPct + '%)');
-    if (consultPct < 60) issues.push('consultation incomplete (' + consultPct + '%)');
+    if (measPct < 70) issues.push('data protection measures incomplete (' + measPct + '%, target 70%)');
+    if (rightsPct < 80) issues.push('data subject rights implementation gaps (' + rightsPct + '%, target 80%)');
+    if (consultPct < 60) issues.push('consultation incomplete (' + consultPct + '%, target 60%)');
 
     if (issues.length === 0) {
       return 'Assessment indicates adequate controls are in place. Proceed with regular monitoring and periodic reassessment.';
@@ -1059,7 +1070,7 @@
       lines.push('| ' + dataSubjectRightsList[i] + ' | ' + impl + ' | ' + (r.method || '-') + ' | ' + (r.responseTime || '-') + ' |');
     }
     lines.push('');
-    lines.push('**Implementation completeness:** ' + getRightsCompleteness() + '%');
+    lines.push('**Implementation completeness:** ' + rightsText());
     lines.push('');
 
     // Step 6
@@ -1073,7 +1084,7 @@
       lines.push('| ' + protectionMeasures[i] + ' | ' + impl + ' | ' + (m.details || '-') + ' |');
     }
     lines.push('');
-    lines.push('**Completeness:** ' + getMeasureCompleteness() + '%');
+    lines.push('**Completeness:** ' + measureText());
     lines.push('');
 
     // Step 7
@@ -1116,9 +1127,9 @@
     lines.push('- High risks: ' + (allDsCounts.High + allAiCounts.High));
     lines.push('- Medium risks: ' + (allDsCounts.Medium + allAiCounts.Medium));
     lines.push('- Low risks: ' + (allDsCounts.Low + allAiCounts.Low));
-    lines.push('- Data protection measures: ' + getMeasureCompleteness() + '% complete');
-    lines.push('- Data subject rights: ' + getRightsCompleteness() + '% implemented');
-    lines.push('- Consultation: ' + getConsultationCompleteness() + '% complete');
+    lines.push('- Data protection measures: ' + measureText() + ' complete');
+    lines.push('- Data subject rights: ' + rightsText() + ' implemented');
+    lines.push('- Consultation: ' + consultText() + ' complete');
     lines.push('');
     lines.push('---');
     lines.push('*This assessment is research output, not legal advice. Consult qualified legal counsel for binding compliance determinations.*');

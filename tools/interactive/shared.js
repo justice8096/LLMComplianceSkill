@@ -396,6 +396,33 @@ function createTextArea(label, value, onChange, placeholder) {
   return row;
 }
 
+// --- Number presentation helpers (dyscalculia gate A-004) ---
+// Percentages are shown with a count when one is known ("13 of 20 (65%)")
+// and otherwise with a natural frequency ("65% (about 7 in 10)"), so the
+// reader never has to convert an abstract percentage in their head.
+function aboutInTen(pct) {
+  if (pct >= 100) return t('ui.pct.all', 'all');
+  if (pct <= 0) return t('ui.pct.none', 'none');
+  var n = Math.round(pct / 10);
+  if (n === 0) return t('ui.pct.underOne', 'under 1 in 10');
+  if (n === 10) return t('ui.pct.nearlyAll', 'nearly all');
+  return t('ui.pct.about', 'about') + ' ' + n + ' ' + t('ui.pct.inTen', 'in 10');
+}
+
+function pctText(pct, done, total) {
+  if (typeof done === 'number' && typeof total === 'number' && total > 0) {
+    return done + ' ' + t('ui.pct.of', 'of') + ' ' + total + ' (' + pct + '%)';
+  }
+  return pct + '% (' + aboutInTen(pct) + ')';
+}
+
+// A word for a completeness percentage, so colour is never the only cue.
+function completenessWord(pct) {
+  if (pct >= 80) return t('ui.level.good', 'Good');
+  if (pct >= 50) return t('ui.level.partial', 'Partial');
+  return t('ui.level.low', 'Low');
+}
+
 function createAlert(type, text) {
   // F-007 (WCAG 1.4.1): Color is not the sole differentiator. Prefix the
   // alert text with a non-color symbol that conveys severity, and set
@@ -417,20 +444,20 @@ var SHARED_CSS = [
   '#wizard-root { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: #0B1426; color: #F0EBE0; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 24px; }',
   '#wizard-root h1 { font-size: 1.8em; margin-bottom: 8px; color: #E8B96A; font-weight: 300; letter-spacing: 1px; }',
   '#wizard-root h2 { font-size: 1.2em; margin: 24px 0 12px; color: #9AACBA; font-weight: 400; border-bottom: 1px solid #1E2D3D; padding-bottom: 6px; }',
-  '#wizard-root h3 { font-size: 1em; margin: 16px 0 8px; color: #6B7B8D; }',
-  '.subtitle { color: #6B7B8D; font-size: 0.9em; margin-bottom: 24px; }',
+  '#wizard-root h3 { font-size: 1em; margin: 16px 0 8px; color: #8A9AAB; }',
+  '.subtitle { color: #8A9AAB; font-size: 0.9rem; margin-bottom: 24px; }',
   '.section { margin-bottom: 32px; }',
   '.toolbar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }',
-  '.btn { padding: 8px 20px; border: 1px solid #3A4A5A; border-radius: 4px; background: #1E2D3D; color: #F0EBE0; cursor: pointer; font-size: 0.85em; transition: all 0.15s; }',
+  '.btn { padding: 8px 20px; border: 1px solid #3A4A5A; border-radius: 4px; background: #1E2D3D; color: #F0EBE0; cursor: pointer; font-size: 0.9rem; transition: all 0.15s; }',
   '.btn:hover { background: #2A3D4D; border-color: #D4943A; }',
   '.btn.primary { background: #D4943A; border-color: #D4943A; color: #0B1426; font-weight: 600; }',
   '.btn.primary:hover { background: #E8B96A; }',
   '.btn.success { background: #2A7B7B; border-color: #2A7B7B; }',
   '.btn.success:hover { background: #3A9E9E; }',
   '.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border: 1px solid #1E2D3D; border-radius: 4px; margin-bottom: 6px; background: #0D1830; }',
-  '.toggle-label { flex: 1; font-size: 0.9em; padding-right: 16px; }',
+  '.toggle-label { flex: 1; font-size: 0.9rem; padding-right: 16px; }',
   '.toggle-group { display: flex; gap: 4px; }',
-  '.toggle-btn { padding: 4px 16px; border: 1px solid #3A4A5A; border-radius: 3px; background: transparent; color: #6B7B8D; cursor: pointer; font-size: 0.8em; }',
+  '.toggle-btn { padding: 4px 16px; border: 1px solid #3A4A5A; border-radius: 3px; background: transparent; color: #8A9AAB; cursor: pointer; font-size: 0.9rem; }',
   '.toggle-btn.active.yes { background: #c0392b; border-color: #c0392b; color: white; }',
   '.toggle-btn.active.no { background: #2A7B7B; border-color: #2A7B7B; color: white; }',
   // F-007 (WCAG 1.4.1): A non-color visual indicator for the active state.
@@ -438,8 +465,8 @@ var SHARED_CSS = [
   // and remains visible to users who can't perceive the background change.
   '.toggle-btn.active::before { content: "\\2713\\00a0"; font-weight: bold; }',
   '.field-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }',
-  '.field-label { min-width: 200px; font-size: 0.85em; color: #9AACBA; }',
-  '.field-input, .field-select, .field-textarea { flex: 1; padding: 6px 10px; background: #0D1830; border: 1px solid #3A4A5A; border-radius: 3px; color: #F0EBE0; font-size: 0.85em; font-family: inherit; }',
+  '.field-label { min-width: 200px; font-size: 0.95rem; color: #9AACBA; }',
+  '.field-input, .field-select, .field-textarea { flex: 1; padding: 6px 10px; background: #0D1830; border: 1px solid #3A4A5A; border-radius: 3px; color: #F0EBE0; font-size: 1rem; font-family: inherit; }',
   '.field-textarea { min-height: 60px; resize: vertical; }',
   // F-004 (WCAG 2.4.7): Visible keyboard focus indicator. We keep the
   // orange border-color highlight (improves perceived focus for all users)
@@ -447,28 +474,31 @@ var SHARED_CSS = [
   // ring for keyboard users only, while mouse-only focus stays minimal.
   '.field-input:focus, .field-select:focus, .field-textarea:focus { border-color: #D4943A; }',
   '.field-input:focus-visible, .field-select:focus-visible, .field-textarea:focus-visible, .btn:focus-visible, .toggle-btn:focus-visible, .skip-link:focus-visible { outline: 2px solid #E8B96A; outline-offset: 2px; }',
-  '.badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.7em; margin: 2px; }',
+  '.badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.875rem; margin: 2px; }',
   '.badge.enacted { background: #D4943A33; color: #E8B96A; border: 1px solid #D4943A55; }',
   '.badge.active-sector { background: #2A7B7B33; color: #4DBFBF; border: 1px solid #2A7B7B55; }',
-  '.alert { padding: 12px 16px; border-radius: 4px; margin: 12px 0; font-size: 0.9em; }',
-  '.alert.danger { background: #c0392b22; border: 1px solid #c0392b55; color: #e74c3c; }',
+  '.alert { padding: 12px 16px; border-radius: 4px; margin: 12px 0; font-size: 0.9rem; }',
+  '.alert.danger { background: #c0392b22; border: 1px solid #c0392b55; color: #F0705F; }',
   '.alert.success { background: #2A7B7B22; border: 1px solid #2A7B7B55; color: #4DBFBF; }',
   '.alert.warning { background: #D4943A22; border: 1px solid #D4943A55; color: #E8B96A; }',
   '.alert.info { background: #1E2D3D; border: 1px solid #3A4A5A; color: #9AACBA; }',
   '.result-table { width: 100%; border-collapse: collapse; margin: 12px 0; }',
-  '.result-table th, .result-table td { padding: 8px 12px; text-align: left; border: 1px solid #1E2D3D; font-size: 0.85em; }',
+  '.result-table th, .result-table td { padding: 8px 12px; text-align: left; border: 1px solid #1E2D3D; font-size: 0.9rem; }',
   '.result-table th { background: #1E2D3D; color: #9AACBA; }',
   '.result-table td { background: #0D1830; }',
   '.step { display: none; }',
   '.step.active { display: block; }',
   '.step-nav { display: flex; justify-content: space-between; margin-top: 24px; }',
-  '.progress { display: flex; gap: 8px; margin-bottom: 24px; }',
+  '.progress { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 24px; }',
+  '.progress-text { flex-basis: 100%; font-size: 0.95rem; color: #9AACBA; margin-bottom: 4px; }',
+  // A-011: keep prose lines near 70 characters for readers with dyslexia.
+  '#wizard-root p, #wizard-root .alert, #wizard-root .subtitle { max-width: 70ch; }',
   '.progress-dot { width: 10px; height: 10px; border-radius: 50%; background: #3A4A5A; }',
   '.progress-dot.active { background: #D4943A; }',
   '.progress-dot.done { background: #2A7B7B; }',
   '.checklist-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; }',
   '.checklist-item input[type="checkbox"] { accent-color: #D4943A; }',
-  '.score-high { color: #e74c3c; font-weight: 600; }',
+  '.score-high { color: #F0705F; font-weight: 600; }',
   '.score-med { color: #E8B96A; font-weight: 600; }',
   '.score-low { color: #4DBFBF; font-weight: 600; }',
   '.hidden { display: none; }',
@@ -619,6 +649,15 @@ function createWizard(opts) {
     // screen-reader users get the same status info sighted users see in color.
     _progressContainer.textContent = '';
     _progressContainer.setAttribute('role', 'navigation');
+    // A-003: visible "Step 3 of 7: Name" so sighted keyboard and touch users
+    // see their place without counting dots or hovering for a tooltip.
+    // aria-hidden because the container's aria-label already says it.
+    _progressContainer.appendChild(el('span', {
+      className: 'progress-text',
+      'aria-hidden': 'true',
+      textContent: t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ' ' +
+        t('ui.progress.of', 'of') + ' ' + opts.totalSteps + ': ' + opts.stepLabels[_currentStep]
+    }));
     _progressContainer.setAttribute(
       'aria-label',
       t('ui.progress.label', 'Wizard progress') + ' — ' +
