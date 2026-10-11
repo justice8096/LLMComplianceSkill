@@ -415,13 +415,16 @@ function extractAiCodeGeneration(repoPath, since) {
       // Defence in depth: only a hex object id may ever reach a git argv.
       if (!isHash(hash)) continue;
 
-      let isAi = false;
+      // Several patterns can name the same tool (a Claude trailer matches "claude",
+      // "anthrop" and noreply@anthropic.com), so count each tool once per commit.
+      const toolsInCommit = new Set();
       for (const { pattern, tool } of aiPatterns) {
-        if (pattern.test(body)) {
-          isAi = true;
-          toolCounts[tool] = (toolCounts[tool] || 0) + 1;
-        }
+        if (pattern.test(body)) toolsInCommit.add(tool);
       }
+      for (const tool of toolsInCommit) {
+        toolCounts[tool] = (toolCounts[tool] || 0) + 1;
+      }
+      const isAi = toolsInCommit.size > 0;
 
       if (isAi) {
         aiCommitHashes.push(hash);
