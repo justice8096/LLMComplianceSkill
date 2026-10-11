@@ -8,6 +8,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | Organization | [Company name] |
@@ -19,6 +21,8 @@
 ---
 
 ## 1. Training Program Overview
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -53,6 +57,8 @@ Check all topics covered:
 
 ## 3. Individual Training Records
 
+Add one row per person trained, with their role, training date, modules, score, whether they are certified and when they recertify.
+
 | Employee Name | Role | Training Date | Module(s) Completed | Assessment Score | Certified (Y/N) | Next Recertification |
 |--------------|------|---------------|---------------------|-----------------|-----------------|---------------------|
 | | | | | | | |
@@ -62,6 +68,8 @@ Check all topics covered:
 ---
 
 ## 4. Competency Assessment
+
+For each assessment method below, fill in description.
 
 | Assessment Method | Description |
 |------------------|-------------|
@@ -73,6 +81,8 @@ Check all topics covered:
 ---
 
 ## 5. Role-Specific Requirements
+
+Fill in the Additional Training Required column for each role category.
 
 | Role Category | Additional Training Required | Justification |
 |--------------|----------------------------|---------------|
@@ -86,6 +96,8 @@ Check all topics covered:
 
 ## 6. Program Effectiveness Review
 
+For each review item below, fill in last reviewed, findings and actions taken.
+
 | Review Item | Last Reviewed | Findings | Actions Taken |
 |-------------|--------------|----------|---------------|
 | Curriculum relevance to deployed AI systems | | | |
@@ -97,6 +109,8 @@ Check all topics covered:
 ---
 
 ## 7. Audit Trail
+
+Add one row for each change to the training program, with who made it.
 
 | Date | Action | Performed By | Notes |
 |------|--------|-------------|-------|

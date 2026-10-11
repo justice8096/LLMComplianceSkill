@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | Organization | |
@@ -23,6 +25,8 @@
 
 ### 1.1 Organizational Chart
 
+Fill in the Name(s) column for each role or body.
+
 | Role / Body | Name(s) | Responsibilities | Authority |
 |-------------|---------|-----------------|-----------|
 | Executive sponsor | | Ultimate accountability for AI governance | Budget, policy, escalation |
@@ -35,6 +39,8 @@
 | Human oversight operators | | Day-to-day monitoring and override | See template 09 |
 
 ### 1.2 Governance Meetings
+
+Fill in the Frequency and Attendees columns for each meeting.
 
 | Meeting | Frequency | Attendees | Purpose |
 |---------|-----------|-----------|---------|
@@ -49,6 +55,8 @@
 
 ### 2.1 Core Policies
 
+For each policy below, fill in status, owner and last reviewed.
+
 | Policy | Status | Owner | Last Reviewed |
 |--------|--------|-------|--------------|
 | AI Acceptable Use Policy | [ ] Draft [ ] Approved | | |
@@ -61,6 +69,8 @@
 | AI Model Lifecycle Policy | [ ] Draft [ ] Approved | | |
 
 ### 2.2 Principles
+
+Fill in the How Implemented column for each principle.
 
 | Principle | Description | How Implemented |
 |-----------|-------------|----------------|
@@ -88,6 +98,8 @@
 
 ### 4.1 New AI System Approval
 
+This table lists each gate with its activities, decision maker and artifacts required.
+
 | Gate | Activities | Decision Maker | Artifacts Required |
 |------|-----------|----------------|-------------------|
 | 1. Proposal | Use case definition, initial risk screening | AI Lead | Use case brief |
@@ -99,6 +111,8 @@
 | 7. Deployment | Production launch with monitoring | Operations | Template 09, 13 |
 
 ### 4.2 Change Management
+
+This table lists each change type with its approval required and review scope.
 
 | Change Type | Approval Required | Review Scope |
 |------------|------------------|-------------|
@@ -113,6 +127,8 @@
 
 ## 5. Third-Party AI Governance
 
+For each aspect below, fill in requirements.
+
 | Aspect | Requirements |
 |--------|-------------|
 | Vendor assessment | [AI-specific due diligence checklist] |
@@ -123,6 +139,8 @@
 ---
 
 ## 6. Reporting and Accountability
+
+Fill in the Frequency column for each report.
 
 | Report | Frequency | Audience | Content |
 |--------|-----------|----------|---------|

@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -20,6 +22,8 @@
 
 ## 1. Incident Classification
 
+This table lists each severity with its definition, examples and response time.
+
 | Severity | Definition | Examples | Response Time |
 |----------|-----------|----------|:---:|
 | **Critical** | Serious harm to individuals; regulatory reporting required | Death, serious injury, fundamental rights violation, large-scale data breach | Immediate |
@@ -30,6 +34,8 @@
 ---
 
 ## 2. Incident Response Workflow
+
+This table lists each phase with its actions, responsible and timeline.
 
 | Phase | Actions | Responsible | Timeline |
 |-------|---------|-------------|---------|
@@ -46,6 +52,8 @@
 
 ## 3. Regulatory Reporting Requirements
 
+This table lists each jurisdiction with its law, what must be reported, to whom and deadline.
+
 | Jurisdiction | Law | What Must Be Reported | To Whom | Deadline |
 |-------------|-----|----------------------|---------|---------|
 | **EU** | AI Act Art. 62 | Serious incidents: death, serious harm, fundamental rights violation, widespread harm | Market surveillance authority | Without undue delay, max 15 days |
@@ -61,6 +69,8 @@
 
 ## 4. Log Retention Requirements
 
+This table lists each jurisdiction with its minimum retention and what must be retained.
+
 | Jurisdiction | Minimum Retention | What Must Be Retained |
 |-------------|------------------|----------------------|
 | **China** | 6 months | Content moderation logs, complaint records, label modification logs |
@@ -72,6 +82,8 @@
 ## 5. Incident Report Template
 
 ### For each incident, complete:
+
+Fill in the Value column for each field.
 
 | Field | Value |
 |-------|-------|
@@ -98,6 +110,8 @@
 
 ## 6. Communication Plan
 
+Fill in the Method column for each audience.
+
 | Audience | When | Method | Content | Responsible |
 |----------|------|--------|---------|-------------|
 | Internal: Incident team | Immediately | [Slack / Page / Email] | Full technical details | Incident lead |
@@ -109,6 +123,8 @@
 ---
 
 ## 7. Testing and Drills
+
+For each drill type below, fill in frequency, last conducted, next scheduled and findings.
 
 | Drill Type | Frequency | Last Conducted | Next Scheduled | Findings |
 |-----------|-----------|---------------|---------------|----------|

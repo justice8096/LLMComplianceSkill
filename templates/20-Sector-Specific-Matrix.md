@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -20,6 +22,8 @@
 ---
 
 ## 1. Financial Services
+
+Fill in the Status column for each jurisdiction.
 
 | Jurisdiction | Regulator | Requirements | Status |
 |-------------|-----------|-------------|:---:|
@@ -48,6 +52,8 @@
 
 ## 2. Healthcare
 
+Fill in the Status column for each jurisdiction.
+
 | Jurisdiction | Regulator | Requirements | Status |
 |-------------|-----------|-------------|:---:|
 | **EU** | EMA + National bodies | Medical device regulation (MDR) intersection with AI Act for AI-as-medical-device | [ ] |
@@ -71,6 +77,8 @@
 ---
 
 ## 3. Employment / HR
+
+Fill in the Status column for each jurisdiction.
 
 | Jurisdiction | Law / Regulator | Requirements | Status |
 |-------------|----------------|-------------|:---:|
@@ -100,6 +108,8 @@
 
 ## 4. Education
 
+Fill in the Status column for each jurisdiction.
+
 | Jurisdiction | Requirements | Status |
 |-------------|-------------|:---:|
 | **EU** | AI Act Annex III — Education AI is high-risk (access, assessment, proctoring) | [ ] |
@@ -118,6 +128,8 @@
 
 ## 5. Telecommunications
 
+Fill in the Status column for each jurisdiction.
+
 | Jurisdiction | Regulator | Requirements | Status |
 |-------------|-----------|-------------|:---:|
 | **India** | TRAI | Telecom AI regulations | [ ] |
@@ -126,6 +138,8 @@
 ---
 
 ## 6. Online Safety / Content
+
+Fill in the Status column for each jurisdiction.
 
 | Jurisdiction | Law | Requirements | Status |
 |-------------|-----|-------------|:---:|
@@ -136,6 +150,8 @@
 ---
 
 ## 7. Cross-Sector Summary
+
+Add one row per your sector(s), with jurisdictions active in, key requirements and templates to complete.
 
 | Your Sector(s) | Jurisdictions Active In | Key Requirements | Templates to Complete |
 |----------------|------------------------|-----------------|---------------------|

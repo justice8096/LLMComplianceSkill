@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -22,6 +24,8 @@
 ---
 
 ## 1. System Context
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -58,6 +62,8 @@
 
 ### 3.1 Technical Risks
 
+For each risk below, fill in description, likelihood, impact, risk score, mitigation and residual risk.
+
 | Risk | Description | Likelihood | Impact | Risk Score | Mitigation | Residual Risk |
 |------|-------------|-----------|--------|:---:|------------|:---:|
 | Model accuracy failure | | [H/M/L] | [H/M/L] | | | |
@@ -71,6 +77,8 @@
 
 ### 3.2 Societal Risks
 
+For each risk below, fill in description, likelihood, impact, risk score, mitigation and residual risk.
+
 | Risk | Description | Likelihood | Impact | Risk Score | Mitigation | Residual Risk |
 |------|-------------|-----------|--------|:---:|------------|:---:|
 | Disproportionate impact on vulnerable groups | | | | | | |
@@ -81,6 +89,8 @@
 | Power concentration | | | | | | |
 
 ### 3.3 Operational Risks
+
+For each risk below, fill in description, likelihood, impact, risk score, mitigation and residual risk.
 
 | Risk | Description | Likelihood | Impact | Risk Score | Mitigation | Residual Risk |
 |------|-------------|-----------|--------|:---:|------------|:---:|
@@ -98,6 +108,8 @@
 
 ### 4.1 Consequential Decision Assessment (Colorado)
 
+Answer each question in the Answer column.
+
 | Question | Answer |
 |----------|--------|
 | Does this system make or substantially assist decisions about consumers? | [Yes / No] |
@@ -105,6 +117,8 @@
 | Is the system "high-risk" under Colorado definition? | [Yes / No — justify] |
 
 ### 4.2 Discrimination Testing
+
+For each protected characteristic below, fill in whether it was tested, whether disparate impact was found, ratio and mitigation.
 
 | Protected Characteristic | Tested? | Disparate Impact Found? | Ratio | Mitigation |
 |------------------------|:---:|:---:|-------|------------|
@@ -134,6 +148,8 @@
 
 ### 5.1 Key Risk Indicators (KRIs)
 
+For each indicator below, fill in threshold, current value and status.
+
 | Indicator | Threshold | Current Value | Status |
 |-----------|-----------|:---:|--------|
 | Model accuracy degradation | [> X% drop triggers review] | | [Green/Amber/Red] |
@@ -145,6 +161,8 @@
 ---
 
 ## 6. Risk Acceptance
+
+For each residual risk below, fill in accepted by, date and conditions.
 
 | Residual Risk | Accepted By | Date | Conditions |
 |--------------|------------|------|------------|
@@ -166,6 +184,8 @@
 ---
 
 ## 8. Version History
+
+Add a row each time this document changes.
 
 | Version | Date | Author | Trigger | Changes |
 |---------|------|--------|---------|---------|

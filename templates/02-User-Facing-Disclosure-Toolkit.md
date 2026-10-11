@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -138,6 +140,8 @@ Check all that apply to your system and jurisdictions:
 
 ## 4. Evidence Log
 
+Add one row per disclosure, with location (url or screen), screenshot ref, date verified and verified by.
+
 | Disclosure | Location (URL/Screen) | Screenshot Ref | Date Verified | Verified By |
 |-----------|----------------------|---------------|---------------|-------------|
 | | | | | |
@@ -146,6 +150,8 @@ Check all that apply to your system and jurisdictions:
 ---
 
 ## 5. Consent Records (where required)
+
+Add one row per user or candidate, with the disclosure shown, whether they consented, when and how, and how long the data is kept.
 
 | User/Candidate ID | Disclosure Shown | Consent Given (Y/N) | Timestamp | Consent Method | Data Retained Until |
 |-------------------|-----------------|---------------------|-----------|---------------|-------------------|

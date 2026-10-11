@@ -13,7 +13,7 @@ This extends `accessibility-gates.md`, which covered only the published SKILL.md
 | Dyslexia | Partial | **Pass** |
 | Dyscalculia | Concern, 19 of 27 (70%) | **Pass, 25 of 27 (93%)** |
 
-Findings A-001 to A-008 and A-011 are fixed on branch `fix/a11y-gates-tools`. A-009 (table intro sentences) and A-010 (light theme and text-size control) remain open as LOW items and do not block either gate. The findings below describe the state before the fixes. The section "Results after fixes" at the end shows the re-check.
+Findings A-001 to A-008 and A-011 were fixed in #15. A-009 (table intro sentences) is fixed on branch `docs/template-table-intros`. A-010 (light theme and text-size control) remains open as a LOW item and does not block either gate. The findings below describe the state before the fixes. The section "Results after fixes" at the end shows the re-check.
 
 ## Method
 
@@ -150,3 +150,9 @@ Two changes beyond the findings:
 Rescored dyscalculia dimensions: Visual 3, Accommodations 2, Math anxiety 3, Comorbidity 2, Data visualization 3, Number-to-word 3, Rounding 3, Percentage alternatives 3, Cognitive processing 3. Total 25 of 27.
 
 Accommodations and Comorbidity stay at 2 until A-010 (theme and text-size controls) is done.
+
+## Follow-up: A-009 table intros
+
+All 212 template tables that sat directly under a heading now have one sentence above them, and so do the 8 such tables in `README.md` and `SKILL.md`. The sentence names the exact columns to fill in ("Fill in the Status and Evidence columns for each step."), says to add one row per item for log tables, or says the table is for reference. Template tables without an intro: 212 before, 0 after. Template reading grade stayed between 5.0 and 8.7.
+
+The `README.md` Key Deadlines table was also put in date order with exact dates, matching `SKILL.md`.

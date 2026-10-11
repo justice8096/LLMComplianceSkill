@@ -172,6 +172,8 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 ## Evidence Templates
 
+Each template below collects one kind of evidence. The last column lists the main laws that ask for it.
+
 | # | Template | Primary Regulations |
 |---|----------|---------------------|
 | 01 | System Transparency Document | EU AI Act Arts. 11-14, Colorado SB 26-189, UK DUA Act |
@@ -201,6 +203,8 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 ---
 
 ## Supporting Data
+
+Read these data files for jurisdiction and deadline lookups instead of relying on memory.
 
 | File | Contents |
 |------|----------|
@@ -251,6 +255,8 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 | United Kingdom | Data (Use and Access) Act 2025 | ADM reforms 5 Feb 2026 |
 | Australia | Privacy Act ADM transparency | Commences 10 Dec 2026 |
 
+Jurisdictions are grouped by how far their AI rules have got, from enacted law to voluntary guidance.
+
 | Tier | Jurisdictions |
 |------|----------------|
 | **Enacted** | EU (27 + EEA), South Korea, Peru, Vietnam |
@@ -261,6 +267,8 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 ---
 
 ## Key Deadlines
+
+Dates are listed earliest first.
 
 | Date | Event |
 |------|-------|

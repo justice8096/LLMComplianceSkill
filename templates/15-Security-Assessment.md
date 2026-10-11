@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -22,6 +24,8 @@
 
 ## 1. Security Scope
 
+Fill in the Details column for each field.
+
 | Field | Details |
 |-------|---------|
 | System components assessed | [Model / API / Infrastructure / Data pipeline / Frontend] |
@@ -32,6 +36,8 @@
 ---
 
 ## 2. Threat Assessment
+
+Fill in the Likelihood, Impact and Controls columns for each threat category.
 
 | Threat Category | Specific Threats | Likelihood | Impact | Controls |
 |----------------|-----------------|-----------|--------|----------|
@@ -48,6 +54,8 @@
 
 ### 3.1 Model Security
 
+For each control below, fill in whether it is implemented and details.
+
 | Control | Implemented? | Details |
 |---------|:---:|---------|
 | Input validation and sanitization | [ ] | |
@@ -59,6 +67,8 @@
 | Model versioning and integrity checks | [ ] | |
 
 ### 3.2 Data Security
+
+For each control below, fill in whether it is implemented and details.
 
 | Control | Implemented? | Details |
 |---------|:---:|---------|
@@ -72,6 +82,8 @@
 
 ### 3.3 Infrastructure Security
 
+For each control below, fill in whether it is implemented and details.
+
 | Control | Implemented? | Details |
 |---------|:---:|---------|
 | Network segmentation | [ ] | |
@@ -83,6 +95,8 @@
 | Logging and monitoring | [ ] | |
 
 ### 3.4 Operational Security
+
+For each control below, fill in whether it is implemented and details.
 
 | Control | Implemented? | Details |
 |---------|:---:|---------|
@@ -99,6 +113,8 @@
 
 ### 4.1 Basic Security Requirements for GenAI Services (Nov 2025)
 
+For each requirement below, fill in status and evidence.
+
 | Requirement | Status | Evidence |
 |------------|--------|---------|
 | GenAI operational security controls documented | [ ] | |
@@ -107,6 +123,8 @@
 
 ### 4.2 Pre-training/Fine-tuning Data Security (Nov 2025)
 
+For each requirement below, fill in status and evidence.
+
 | Requirement | Status | Evidence |
 |------------|--------|---------|
 | Data sourcing security documented | [ ] | |
@@ -114,6 +132,8 @@
 | Data storage security documented | [ ] | |
 
 ### 4.3 Data Annotation Security (Nov 2025)
+
+For each requirement below, fill in status and evidence.
 
 | Requirement | Status | Evidence |
 |------------|--------|---------|
@@ -138,6 +158,8 @@
 
 ## 6. Vulnerability Assessment Results
 
+Add one row per vulnerability id, with description, severity, cvss, status, remediation and date fixed.
+
 | Vulnerability ID | Description | Severity | CVSS | Status | Remediation | Date Fixed |
 |-----------------|-------------|----------|:---:|--------|-------------|-----------|
 | | | [Critical/High/Med/Low] | | [Open/In progress/Fixed/Accepted] | | |
@@ -145,6 +167,8 @@
 ---
 
 ## 7. Penetration Test Summary
+
+Add one row per penetration test, with its scope, tester, findings by severity and report reference.
 
 | Test Date | Scope | Tester | Findings (Critical/High/Med/Low) | Report Ref |
 |-----------|-------|--------|:---:|-----------|

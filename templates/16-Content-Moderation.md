@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -20,6 +22,8 @@
 
 ## 1. Moderation Scope
 
+Fill in the Details column for each field.
+
 | Field | Details |
 |-------|---------|
 | Content types moderated | [Text / Images / Audio / Video / Code] |
@@ -29,6 +33,8 @@
 ---
 
 ## 2. Prohibited Content Categories
+
+Fill in the Detection Method column for each category.
 
 | Category | Definition | Detection Method | Action |
 |----------|-----------|-----------------|--------|
@@ -48,6 +54,8 @@
 ---
 
 ## 3. Moderation Pipeline
+
+Fill in the Method column for each stage.
 
 | Stage | Method | Description | Coverage |
 |-------|--------|-------------|---------|
@@ -93,6 +101,8 @@
 
 ### Significant Social Media Intermediary Obligations (IT Rules 2021)
 
+For each requirement below, fill in status and details.
+
 | Requirement | Status | Details |
 |------------|--------|---------|
 | Chief Compliance Officer appointed | [ ] | [Name] |
@@ -105,6 +115,8 @@
 ---
 
 ## 7. Moderation Team
+
+For each role below, fill in count, training and tools.
 
 | Role | Count | Training | Tools |
 |------|:---:|---------|-------|

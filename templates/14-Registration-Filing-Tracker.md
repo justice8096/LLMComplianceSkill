@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | Organization | |
@@ -18,6 +20,8 @@
 ---
 
 ## 1. Registration Requirements by Jurisdiction
+
+Fill in the Status column for each jurisdiction.
 
 | Jurisdiction | Registration Type | Authority | When Required | Deadline | Status |
 |-------------|------------------|-----------|---------------|----------|--------|
@@ -35,6 +39,8 @@
 
 ## 2. Filing Details Log
 
+Add one row per filing id, with jurisdiction, filing type, system name, date submitted, reference number, authority contact, status, renewal date and notes.
+
 | Filing ID | Jurisdiction | Filing Type | System Name | Date Submitted | Reference Number | Authority Contact | Status | Renewal Date | Notes |
 |-----------|-------------|------------|------------|---------------|-----------------|------------------|--------|-------------|-------|
 | | | | | | | | | | |
@@ -44,6 +50,8 @@
 ## 3. China-Specific Filing Details
 
 ### 3.1 Algorithm Filing
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -56,6 +64,8 @@
 | Filing renewal date | |
 
 ### 3.2 LLM Filing
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -73,6 +83,8 @@
 
 ### 4.1 Provider Registration
 
+Fill in the Details column for each field.
+
 | Field | Details |
 |-------|---------|
 | AI system name | |
@@ -84,6 +96,8 @@
 | Registration date | |
 
 ### 4.2 Deployer Registration (for high-risk public sector)
+
+Fill in the Details column for each field.
 
 | Field | Details |
 |-------|---------|
@@ -105,6 +119,8 @@
 ---
 
 ## 6. Renewal and Maintenance Calendar
+
+Add one row per filing, with jurisdiction, renewal frequency, next renewal, responsible and whether an alert is set.
 
 | Filing | Jurisdiction | Renewal Frequency | Next Renewal | Responsible | Alert Set? |
 |--------|-------------|-------------------|-------------|-------------|:---:|

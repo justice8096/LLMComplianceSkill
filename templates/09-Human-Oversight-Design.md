@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | AI System Name | |
@@ -20,6 +22,8 @@
 
 ## 1. Oversight Model
 
+Fill in the Details column for each field.
+
 | Field | Details |
 |-------|---------|
 | Oversight type | [ ] Human-in-the-loop (human approves every decision) |
@@ -31,6 +35,8 @@
 ---
 
 ## 2. Oversight Personnel
+
+For each role below, fill in name(s), qualifications, authority level and training completed.
 
 | Role | Name(s) | Qualifications | Authority Level | Training Completed |
 |------|---------|---------------|----------------|:---:|
@@ -58,6 +64,8 @@
 
 ### 3.1 Override Capabilities
 
+For each mechanism below, fill in whether it is implemented, how it works and access control.
+
 | Mechanism | Implemented? | How It Works | Access Control |
 |-----------|:---:|-------------|---------------|
 | Reject individual AI decision | [ ] | | [Who can trigger] |
@@ -70,6 +78,8 @@
 
 ### 3.2 Override Workflow
 
+Fill in the System Behavior and Logging columns for each step.
+
 | Step | Action | System Behavior | Logging |
 |------|--------|----------------|---------|
 | 1 | Operator identifies issue | | [ ] Logged |
@@ -81,6 +91,8 @@
 ---
 
 ## 4. Monitoring Design
+
+For each monitoring aspect below, fill in method, frequency and alert threshold.
 
 | Monitoring Aspect | Method | Frequency | Alert Threshold |
 |------------------|--------|-----------|----------------|
@@ -108,6 +120,8 @@
 
 ## 5. Intervention Triggers
 
+Fill in the Escalation column for each trigger.
+
 | Trigger | Response | Responsible | Escalation |
 |---------|----------|-------------|------------|
 | Model confidence below threshold | Mandatory human review | Operator | |
@@ -121,6 +135,8 @@
 
 ## 6. Testing Evidence
 
+For each test below, fill in date, result and tester.
+
 | Test | Date | Result | Tester |
 |------|------|--------|--------|
 | Override mechanism functions correctly | | [Pass / Fail] | |
@@ -133,6 +149,8 @@
 ---
 
 ## 7. Override and Intervention Log
+
+Add one row per date, with operator, trigger, action taken, rationale, outcome and follow-up.
 
 | Date | Operator | Trigger | Action Taken | Rationale | Outcome | Follow-Up |
 |------|----------|---------|-------------|-----------|---------|-----------|

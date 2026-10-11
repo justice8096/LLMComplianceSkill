@@ -7,6 +7,8 @@
 
 ## Metadata
 
+Fill in the Value column for each field.
+
 | Field | Value |
 |-------|-------|
 | Project Name | |
@@ -63,6 +65,8 @@ Check all jurisdictions where your AI system will operate:
 
 ### Instructions: For each checked jurisdiction above, the following table shows which templates must be completed.
 
+Each row is a template. A dot (●) means the jurisdiction in that column requires it, and a dash (—) means it does not.
+
 | Template | EU | CN | KR | UK | US-CO | US-CA | US-NYC | CA | BR | IN | JP | SG | AU | NZ | PE | NG | ZA | MX | VN |
 |----------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | 01 System Transparency | ● | ● | ● | ● | ● | — | — | — | ● | — | — | — | — | — | ● | ● | — | ● | ● |
@@ -103,6 +107,8 @@ Based on your selections, complete the following templates:
 ---
 
 ## 4. Critical Deadlines for Your Jurisdictions
+
+Add one row per date, with jurisdiction, event and impact on your project.
 
 | Date | Jurisdiction | Event | Impact on Your Project |
 |------|-------------|-------|----------------------|
