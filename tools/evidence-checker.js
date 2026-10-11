@@ -90,9 +90,17 @@ function analyzeTemplateCompleteness(md) {
   return r;
 }
 function checkMetadata(md) {
-  var issues = [], fields = ['AI System Name', 'Organization', 'Document owner', 'Session/GitHub ref', 'Date created'];
+  // Each entry lists the label variants templates actually use; one filled variant satisfies it.
+  var issues = [], fields = [
+    ['AI System Name', 'AI System / Decision Name', 'AI System / Model Name'],
+    ['Organization'], ['Document owner'], ['Session/GitHub ref'], ['Date created']
+  ];
   for (var i = 0; i < fields.length; i++) {
-    if (!getTableFieldValue(md, fields[i])) issues.push('Metadata: "' + fields[i] + '" not filled');
+    // Skip fields this template does not define (no row with any label variant).
+    var defined = fields[i].some(function(lbl) { return md.indexOf('| ' + lbl + ' |') !== -1; });
+    if (!defined) continue;
+    var filled = fields[i].some(function(lbl) { return !!getTableFieldValue(md, lbl); });
+    if (!filled) issues.push('Metadata: "' + fields[i][0] + '" not filled');
   }
   return issues;
 }
