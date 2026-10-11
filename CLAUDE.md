@@ -90,7 +90,7 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - Interactive tools use targeted DOM manipulation (toggle `display:none`) instead of `refreshStep()` for fields with in-progress text — prevents form data loss
 - Extractors output JSON to stdout, progress/errors to stderr — designed for piping
 - `normalizeModel()` maps registry fields (`countryOfOrigin` to `country`, ISO codes to full names)
-- Security: use `execFileSync` with argument arrays, never string-interpolated shell commands
+- Security: use `execFileSync` with argument arrays, never string-interpolated shell commands and never `execSync`; `git-evidence.js` `git()` and `package-evidence.js` `runTool()`/`runGit()` take argv arrays only, resolve binaries to absolute paths from PATH, and apply `-c core.fsmonitor=false -c core.hooksPath=<null device>` to every git call. Any value read back from a repository (hash, ref, path) is validated (`isHash`) or placed after `--`
 - No `document.body.textContent = ''` — wizard framework handles DOM lifecycle
 
 ## Obsidian Integration
