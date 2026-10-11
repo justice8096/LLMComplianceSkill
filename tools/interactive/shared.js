@@ -104,6 +104,152 @@ function i18nCurrentLocale() {
  * @param {Function} onChange  callback(localeCode)
  * @returns {HTMLElement}
  */
+// --- Translation of hardcoded tool text ---
+// Most tool text is built in each tool's own script as English literals.
+// Rather than rewriting every tool, the locale file carries a toolText
+// section keyed by the exact English text: toolText._common for strings
+// shared by several tools and toolText[<tool file stem>] for the rest.
+// i18nTranslateDom() swaps whole text nodes and a few attributes in place.
+// Only what is displayed changes: state, option values and the exported
+// markdown stay English, so the evidence checker keeps working.
+var I18N_ATTRS = ['placeholder', 'title', 'aria-label'];
+
+function _i18nToolKey() {
+  var m = String((window.location && window.location.pathname) || '').match(/([^\/]+)\.html$/);
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+// Reverse map of every other English string the locale file translates
+// (ui labels, tool titles, step names). Text built with t() before the
+// locale loaded, such as the toolbar and page title, is caught this way
+// after a language switch. Built once per loaded locale.
+var _i18nReverse = null;
+var _i18nReverseFor = null;
+function _i18nReverseMap() {
+  if (_i18nReverseFor === _i18nData) return _i18nReverse;
+  var map = {};
+  function walk(en, loc) {
+    if (!en || !loc || typeof en !== 'object' || typeof loc !== 'object') return;
+    Object.keys(en).forEach(function(k) {
+      if (typeof en[k] === 'string') {
+        if (typeof loc[k] === 'string' && loc[k] !== en[k] && !Object.prototype.hasOwnProperty.call(map, en[k])) map[en[k]] = loc[k];
+      } else {
+        walk(en[k], loc[k]);
+      }
+    });
+  }
+  ['ui', 'tools', 'common', 'fields', 'checkboxes', 'jurisdictions', 'templateNames'].forEach(function(sec) { walk(_i18nEn[sec], _i18nData[sec]); });
+  _i18nReverse = map;
+  _i18nReverseFor = _i18nData;
+  return map;
+}
+
+function _i18nToolMaps() {
+  if (!_i18nData || _i18nData.locale === 'en' || _i18nData === _i18nEn) return null;
+  var tt = _i18nData.toolText || {};
+  return [tt[_i18nToolKey()] || {}, tt._common || {}, _i18nReverseMap()];
+}
+
+function _i18nLookup(maps, en) {
+  if (!maps) return undefined;
+  for (var i = 0; i < maps.length; i++) {
+    if (Object.prototype.hasOwnProperty.call(maps[i], en) && typeof maps[i][en] === 'string') return maps[i][en];
+  }
+  return undefined;
+}
+
+// Some text nodes are built by joining a known string with a number or a
+// second string ("3. Right of access", "Gap: No owner", "Component 2",
+// "16 High", "Overrides (0/7 enabled)"). Translate the known parts and keep
+// the numbers. Returns undefined when nothing could be translated.
+function _i18nTranslateText(maps, src, depth) {
+  var hit = _i18nLookup(maps, src);
+  if (hit !== undefined || (depth || 0) > 2) return hit;
+  var d = (depth || 0) + 1;
+  var m;
+  // Alert and checklist symbols added in front of known text.
+  if ((m = src.match(/^([\u2139\u26a0\u2713\u2714\u2717\u2718\u2022\u25cf\u2192]\uFE0F?\s*)(.+)$/))) {
+    var z = _i18nTranslateText(maps, m[2], d);
+    return z !== undefined ? m[1] + z : undefined;
+  }
+  if ((m = src.match(/^(\d+[.)]\s+)(.+)$/))) {
+    var a = _i18nTranslateText(maps, m[2], d);
+    return a !== undefined ? m[1] + a : undefined;
+  }
+  if ((m = src.match(/^(\d[\d\/.,%]*)(\s+)(\D.*)$/))) {
+    var b = _i18nTranslateText(maps, m[3], d);
+    return b !== undefined ? m[1] + m[2] + b : undefined;
+  }
+  if ((m = src.match(/^(.*\D)(\s+)(\d[\d\/.,%]*)$/))) {
+    var c = _i18nTranslateText(maps, m[1], d);
+    return c !== undefined ? c + m[2] + m[3] : undefined;
+  }
+  if ((m = src.match(/^(.+?)(\s*\([^()]*\))$/))) {
+    var e = _i18nTranslateText(maps, m[1], d);
+    return e !== undefined ? e + m[2] : undefined;
+  }
+  if ((m = src.match(/^([^:]{2,60}?)(:\s+)(.+)$/))) {
+    var l = _i18nTranslateText(maps, m[1], d);
+    var r = _i18nTranslateText(maps, m[3], d);
+    if (l === undefined && r === undefined) return undefined;
+    return (l !== undefined ? l : m[1]) + m[2] + (r !== undefined ? r : m[3]);
+  }
+  return undefined;
+}
+
+function i18nTranslateDom(root) {
+  if (!root) return;
+  var maps = _i18nToolMaps();
+  var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  var node;
+  while ((node = walker.nextNode())) {
+    var raw = node.nodeValue;
+    var src = node.__i18nSrc;
+    if (src === undefined) {
+      src = raw.trim();
+      if (!src) continue;
+    }
+    var out = maps ? _i18nTranslateText(maps, src, 0) : undefined;
+    var target = out !== undefined ? out : src;
+    var trimmed = raw.trim();
+    if (trimmed !== target) {
+      // Keep option values stable: an option without a value attribute
+      // takes its value from its text.
+      var parent = node.parentNode;
+      if (parent && parent.tagName === 'OPTION' && !parent.hasAttribute('value')) parent.setAttribute('value', src);
+      node.__i18nSrc = src;
+      node.nodeValue = raw.replace(trimmed, target);
+    }
+  }
+  var els = root.querySelectorAll('[placeholder],[title],[aria-label]');
+  for (var j = 0; j < els.length; j++) {
+    for (var k = 0; k < I18N_ATTRS.length; k++) {
+      var a = I18N_ATTRS[k];
+      if (!els[j].hasAttribute(a)) continue;
+      var key = 'data-i18n-' + a;
+      var orig = els[j].hasAttribute(key) ? els[j].getAttribute(key) : els[j].getAttribute(a);
+      var tr = _i18nLookup(maps, orig.trim());
+      var want = tr !== undefined ? tr : orig;
+      if (els[j].getAttribute(a) !== want) {
+        els[j].setAttribute(key, orig);
+        els[j].setAttribute(a, want);
+      }
+    }
+  }
+}
+
+// Re-translate whenever a tool adds content outside a full step refresh.
+function i18nObserve(root) {
+  if (!root || root.__i18nObserved || typeof MutationObserver === 'undefined') return;
+  root.__i18nObserved = true;
+  var pending = false;
+  new MutationObserver(function() {
+    if (pending) return;
+    pending = true;
+    Promise.resolve().then(function() { pending = false; i18nTranslateDom(root); });
+  }).observe(root, { childList: true, subtree: true });
+}
+
 function createLocaleSwitcher(onChange) {
   var locales = [
     { code: 'en', name: 'English' },
@@ -641,6 +787,15 @@ function createWizard(opts) {
     root.appendChild(_announcer);
 
     _built = true;
+    i18nObserve(root);
+  }
+
+  // Step labels come from the tool as English literals; show them in the
+  // current language when toolText has them.
+  function stepLabel(i) {
+    var en = opts.stepLabels[i];
+    var tr = _i18nLookup(_i18nToolMaps(), en);
+    return tr !== undefined ? tr : en;
   }
 
   function updateProgress() {
@@ -657,7 +812,7 @@ function createWizard(opts) {
       className: 'progress-text',
       'aria-hidden': 'true',
       textContent: t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ' ' +
-        t('ui.progress.of', 'of') + ' ' + opts.totalSteps + ': ' + opts.stepLabels[_currentStep]
+        t('ui.progress.of', 'of') + ' ' + opts.totalSteps + ': ' + stepLabel(_currentStep)
     }));
     _progressContainer.setAttribute(
       'aria-label',
@@ -672,9 +827,9 @@ function createWizard(opts) {
       else if (i < _currentStep) { cls += ' done'; status = t('ui.progress.complete', 'complete'); }
       var dotAttrs = {
         className: cls,
-        title: opts.stepLabels[i],
+        title: stepLabel(i),
         role: 'img',
-        'aria-label': (i + 1) + ': ' + opts.stepLabels[i] + ' (' + status + ')'
+        'aria-label': (i + 1) + ': ' + stepLabel(i) + ' (' + status + ')'
       };
       if (i === _currentStep) dotAttrs['aria-current'] = 'step';
       _progressContainer.appendChild(el('span', dotAttrs));
@@ -707,7 +862,7 @@ function createWizard(opts) {
       _announcer.textContent =
         t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ' ' +
         t('ui.progress.of', 'of') + ' ' + opts.totalSteps + ': ' +
-        opts.stepLabels[_currentStep];
+        stepLabel(_currentStep);
     }
 
     // F-017 (WCAG 2.4.2): Document title reflects current step. Helps users
@@ -716,7 +871,7 @@ function createWizard(opts) {
     // labels. Format: "Wizard Title — Step N: Step Label".
     document.title = opts.title + ' — ' +
       t('ui.progress.step', 'Step') + ' ' + (_currentStep + 1) + ': ' +
-      opts.stepLabels[_currentStep];
+      stepLabel(_currentStep);
 
     // F-003: Move keyboard focus to the new step content so keyboard users
     // don't get stranded on the Next/Prev button after navigation. tabindex=-1
@@ -724,6 +879,10 @@ function createWizard(opts) {
     // tab order; the user can Tab from there to the first form control.
     _stepContainer.setAttribute('tabindex', '-1');
     _stepContainer.focus({ preventScroll: true });
+
+    // Translate hardcoded tool text, including the title and subtitle that
+    // buildChrome rendered once (they need redoing after a locale switch).
+    i18nTranslateDom(document.getElementById('wizard-root'));
 
     if (opts.stateKey) {
       persistStep(opts.stateKey, _currentStep);
