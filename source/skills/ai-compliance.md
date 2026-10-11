@@ -1,7 +1,7 @@
 # AI Compliance Evidence Collection Skill
 
 > **Data current as of 11 Oct 2026.** Regulation files, deadlines and jurisdiction matrix were
-> synced from ai-regulatory-knowledge-base v1.1.0. Verify any deadline after that date.
+> synced from ai-regulatory-knowledge-base v1.2.0. Verify any deadline after that date.
 
 Identify applicable AI regulations for a given project, collect compliance evidence
 across 25 jurisdictions, populate 24 evidence templates from a config file, and
@@ -13,6 +13,11 @@ and data files ship inside this skill under `references/`. The interactive HTML 
 pages that open in any browser from a local checkout, no Node needed. Only the three scripts
 (`extract-evidence.js`, `autofill.js`, `evidence-checker.js`) need Node.js, so run those from
 Claude Code or a terminal.
+
+**Paths.** In the commands below, `tools/` is the `tools/` folder at the plugin root: two folders
+above this SKILL.md in an installed plugin, or the repo root in a checkout. Run the scripts with
+that full path from the user's project, and keep the user's `compliance-config.json` and
+`output/` folder in their project, not inside the plugin folder.
 
 ---
 
@@ -64,11 +69,13 @@ When multiple jurisdictions apply, prioritize by enforcement risk and earliest d
 
 ### Step 1 — Configure
 
-Create `tools/compliance-config.json` from the provided example:
+Create `compliance-config.json` in the user's project from the example that ships with the plugin:
 
 ```bash
-cp tools/compliance-config.example.json tools/compliance-config.json
+cp <plugin root>/tools/compliance-config.example.json ./compliance-config.json
 ```
+
+Then pass `--config ./compliance-config.json` to every script below.
 
 Populate the following sections:
 
@@ -117,13 +124,14 @@ Run `tools/extract-evidence.js` to pull evidence directly from the repository:
 node tools/extract-evidence.js --repo /path/to/target-repo --config tools/compliance-config.json
 ```
 
-The extractor analyzes three sources and merges findings into the config:
+The extractor runs four extractors and merges their findings into the config (the previous config is kept as `compliance-config.json.bak`):
 
 | Extractor | Evidence Gathered |
 |-----------|-------------------|
 | `extractors/git-evidence.js` | Commit history, human vs. AI attribution, signing practices, branch protection |
 | `extractors/package-evidence.js` | npm / pip / cargo / go / maven / gradle dependency inventory and license breakdown |
 | `extractors/ci-evidence.js` | GitHub Actions / GitLab CI / Azure DevOps pipeline security posture |
+| `extractors/sast-dast-evidence.js` | Findings from an existing SAST/DAST scan report (feeds template 24) |
 
 All extractors are zero-dependency Node.js using `execFileSync` with argument arrays (no shell injection surface).
 
@@ -133,6 +141,10 @@ Populate all 24 evidence templates from config data and interactive tool results
 
 ```bash
 node tools/autofill.js --config tools/compliance-config.json --output output/
+
+# Only some templates, or another language
+node tools/autofill.js --config tools/compliance-config.json --output output/ --template 07,08
+node tools/autofill.js --config tools/compliance-config.json --output output/ --locale es
 ```
 
 Writes to `output/`:
@@ -156,9 +168,20 @@ node tools/evidence-checker.js --config tools/compliance-config.json --output ou
 
 # Verbose mode (shows all fields including passing)
 node tools/evidence-checker.js --config tools/compliance-config.json --output output/ --verbose
+
+# Strict mode (also fail on HIGH findings or any template below 100% complete)
+node tools/evidence-checker.js --config tools/compliance-config.json --output output/ --strict
 ```
 
 The checker produces `output/evidence-check-report.txt` with gap analysis organized by template.
+
+**Exit codes:** 0 when there are no critical gaps; 1 when there are critical gaps, when `--strict`
+finds a HIGH finding or an incomplete template, or when the config or output folder cannot be read.
+
+**`--json` shape** (`schemaVersion` 1): `schemaVersion`, `tool` (`"evidence-checker"`), `date`,
+`organization`, `system`, `templates` (keyed by template number, each with `name`, `exists`,
+`completeness` 0-100 and `deepCheck.findings[]` of `{severity, section, message}`),
+`crossReferences`, and `summary` (`templates`, `critical`, `high`, `medium`).
 
 ### Step 6 — Hand Off
 
@@ -199,6 +222,7 @@ Each template below collects one kind of evidence. The last column lists the mai
 | 21 | Jurisdiction Selector | Country selection → required template list |
 | 22 | Compliance Deadline Tracker | All deadlines through 2027+ |
 | 23 | Supply Chain Risk | Foundation model provenance, vendor assessments |
+| 24 | SAST/DAST Scan Evidence | EU AI Act Art. 15, NIST SSDF, OWASP |
 
 ---
 
@@ -209,8 +233,8 @@ Read these data files for jurisdiction and deadline lookups instead of relying o
 | File | Contents |
 |------|----------|
 | `references/data/jurisdiction-matrix.json` (copy of `tools/data/`) | Which templates each of the 25 jurisdictions requires |
-| `references/data/deadline-data.json` (copy of `tools/data/`) | 47 compliance deadlines with exact dates (2023-2028) |
-| `tools/data/llm-registry.json` | Index for 66-model LLM registry (chunked across 6 files) |
+| `references/data/deadline-data.json` (copy of `tools/data/`) | 50 compliance deadlines with exact dates (2023-2028) |
+| `tools/data/llm-registry.json` | Index for the 64-model LLM registry (chunked across 6 files) |
 | `tools/data/llm-registry-*.json` | Per-provider model registry chunks (Meta, Mistral, Google/Microsoft, China, API-only, other open) |
 
 ---
@@ -301,6 +325,6 @@ Dates are listed earliest first.
 
 ---
 
-**Knowledge base last updated**: 11 Oct 2026 (ai-regulatory-knowledge-base v1.1.0). Regulations change
+**Knowledge base last updated**: 11 Oct 2026 (ai-regulatory-knowledge-base v1.2.0). Regulations change
 frequently; verify the status of proposed frameworks and any deadline after that date before relying
 on them for compliance decisions. This is research output, not legal advice.

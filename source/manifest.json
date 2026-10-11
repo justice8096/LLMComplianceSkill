@@ -1,10 +1,10 @@
 {
   "metadata": {
     "name": "LLM Compliance",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "AI/LLM compliance evidence collection toolkit with 24 templates, 21 interactive assessment tools, automated evidence extraction, and multi-jurisdiction regulatory coverage",
     "author": "Justice",
-    "license": "MIT",
+    "license": "CC0-1.0",
     "repository": "https://github.com/justice8096/LLMComplianceSkill",
     "keywords": [
       "compliance",
@@ -23,7 +23,7 @@
     {
       "name": "ai-compliance",
       "displayName": "AI Compliance",
-      "description": "AI/LLM regulatory compliance knowledge covering 25 jurisdictions (data current as of 2026-10-11) including the EU AI Act as amended by the Digital Omnibus, GDPR, US state laws (CA, NY, IL, CT, WA, CO, TX), UK AI governance, Korea AI Basic Act, Vietnam Law on AI, and frameworks like NIST AI RMF and ISO 42001",
+      "description": "Use when someone asks which AI laws apply to an AI or LLM product, whether it is high-risk or prohibited, what disclosures, labels, registrations or deadlines a jurisdiction requires, or how two jurisdictions compare. Covers 25 jurisdictions with data current as of 2026-10-11, including the EU AI Act as amended by the Digital Omnibus, GDPR, US state laws (CA, NY, IL, CT, WA, CO, TX), the UK, Korea AI Basic Act, Vietnam, India, China and more, plus NIST AI RMF and ISO 42001. Research output, not legal advice.",
       "path": "skills/ai-compliance.md",
       "keywords": [
         "compliance",
@@ -38,7 +38,7 @@
     {
       "name": "evidence-collection",
       "displayName": "Evidence Collection",
-      "description": "Automated and interactive evidence collection pipeline with 24 templates, 3 extractors (git, package, CI), autofill, and validation for compliance documentation",
+      "description": "Use when someone wants to collect, fill in or check AI compliance evidence for a project. It runs the git, package, CI and SAST/DAST extractors, autofills the 24 evidence templates from compliance-config.json and validates them with the evidence checker. The scripts need Node.js, so this part runs in Claude Code or a terminal.",
       "path": "skills/evidence-collection.md",
       "keywords": [
         "evidence",
@@ -68,7 +68,7 @@
             "items": {
               "type": "string"
             },
-            "description": "Target jurisdictions: eu, uk, us, canada, china, japan, korea, india, singapore, australia, nz, mexico, africa"
+            "description": "Target jurisdiction codes from jurisdiction-matrix.json, e.g. EU, UK, US-CA, US-CO, CN, KR, IN, BR"
           },
           "risk_level": {
             "type": "string",
@@ -136,7 +136,7 @@
             "items": {
               "type": "string"
             },
-            "description": "Specific template numbers to fill (e.g., 01, 02, 15). Empty for all."
+            "description": "Template numbers to fill, comma-separated (e.g. 01,02,15). Empty for all. Passed as --template."
           },
           "output_dir": {
             "type": "string",
@@ -171,7 +171,7 @@
           },
           "strict": {
             "type": "boolean",
-            "description": "Enable strict mode — fail on any incomplete template",
+            "description": "Strict mode: also fail on HIGH findings and on any template below 100% complete. Passed as --strict.",
             "default": false
           }
         },
@@ -195,7 +195,7 @@
         "properties": {
           "jurisdiction": {
             "type": "string",
-            "description": "Jurisdiction to look up: eu, uk, us, canada, china, japan, korea, india, singapore, australia, nz, mexico, africa, or global"
+            "description": "Jurisdiction code from jurisdiction-matrix.json (e.g. EU, UK, US-CA, CN, KR), or global"
           },
           "include_deadlines": {
             "type": "boolean",

@@ -15,7 +15,18 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-11
+
+Security, accessibility and translation release. No regulatory content changed beyond the knowledge-base syncs listed under `[authority]`, so outputs generated with 1.3.0 do not need addenda for legal content; re-run the extractors if you scanned an untrusted repository with 1.3.0 (see the extractor fixes below).
+
 ### Fixed `[defect]`
+- Further extractor hardening (#13, #14): git calls also blank `gpg.program`, `gpg.ssh.program`, `gpg.x509.program` and `log.showSignature`; changelog, CODEOWNERS, CONTRIBUTING and LICENSE only count when the real path is a regular file inside the repo (symlink escape, CWE-59); signed-commit counts include only good signatures; lockfile package names cannot escape `node_modules`; pip-audit reads `requirements.txt` and parses the `dependencies[].vulns` shape; CI keyword checks ignore YAML comments; SLSA and signing are detected from real actions only.
+- `git-evidence.js` counted each AI tool once per matching pattern, so a Claude trailer counted three times (#14). `sync-kb --check` reported every file as changed on Windows checkouts because it compared line endings (#14).
+- `pia-assessment.html` labelled rights "Right to be Access", "Right to be Erasure" (#18).
+- `/validate-evidence` advertised a `strict` option and `/autofill-templates` a template filter that the scripts did not accept. `evidence-checker.js --strict` and `autofill.js --template 07,08` now exist.
+- License stated as MIT in `README.md` and `source/manifest.json`; it is CC0 1.0 everywhere, matching `LICENSE`.
+- Stale facts in SKILL.md, README and the evidence-collection skill: four extractors (not three), 50 deadlines (not 47), 64 registry models (not 66), knowledge base v1.2.0 (not v1.1.0); template 24 was missing from both template tables; README jurisdiction tiers disagreed with SKILL.md; evidence-collection template groupings were wrong.
+- The command safety rules added to `commands/*.md` lived only in generated files and were lost on rebuild; they now live in `source/commands/` (#15).
 - Security hardening of the evidence extractors after a Claude Security scan of 2026-10-11 (report in `audits/CLAUDE-SECURITY-RESULTS-2026-10-11.md`, 4 verified findings, 6 candidates rejected):
   - `git-evidence.js`: `git()` now takes an argv array and refuses command strings; commit records are NUL-separated (`%x00`) instead of a marker line, and every hash is checked against `^[0-9a-f]{7,40}$` and passed after `--`. A commit body containing the old marker line could previously forge a record whose first line was split into extra git arguments (CWE-88, HIGH; `git diff-tree --output=<path>` overwrote any file the operator could write).
   - `git-evidence.js` and `package-evidence.js`: every git call carries `-c core.fsmonitor=false -c core.hooksPath=<null device> -c diff.external= -c protocol.allow=never`, so a repository's own `.git/config` cannot make git run a program during extraction (CWE-426, MEDIUM).
@@ -32,7 +43,17 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 - SKILL.md opens with a "Data current as of 2026-10-11" banner and a "Where each part runs" note (knowledge half works in claude.ai and Cowork; the HTML tools open in any browser; only the three Node scripts need Claude Code or a terminal; Codex P2 on PR #9). Jurisdiction counts corrected to 25 in README, manifest, plugin.json and SKILL.md.
 - Authority-version pins rewritten from one 1,000-character paragraph into a 19-row table; jurisdiction-lookup command lists codes in a table grouped by region. Driven by the dyslexia and dyscalculia content checks (audits/accessibility-gates.md).
 
+### Changed `[voice]` (accessibility and translation, #15 to #20)
+- Interactive tools pass the dyslexia and dyscalculia gates (report in `audits/accessibility-wizards-templates-2026-10-11.md`): no text under 14px, 4.5:1 contrast, visible "Step N of M" text, prose capped at 70 characters, percentages shown with counts or natural frequencies, level words beside every score, whole-number averages, one date format, deadline tables in date order.
+- Every template table has a one-line intro sentence (212 tables).
+- All 21 tools are translated into es, fr, pt-BR, ja, ko and zh-CN: about 1,900 previously hardcoded strings via the new `toolText` locale section, plus the progress line, skip link, landmark labels and table intros. Exported markdown stays English.
+- Law names follow one rule in every locale (`tools/i18n/law-names.json`); zh-CN uses the regulations' official names.
+- Skill descriptions now start with when to use them; commands gain `argument-hint` and a Run line; SKILL.md says where the scripts live in an installed plugin and documents the checker's exit codes and `--json` shape (`schemaVersion` 1).
+- README installs through `/plugin marketplace add` instead of a clone into `~/.claude/plugins/`.
+
 ### Added `[structural]`
+- CI: dependency audit job and a check that the bundled regulation files match the knowledge base. `.gitattributes` keeps text files LF.
+- Tests for extractor hardening, i18n parity, table intros, tool text, law names and documentation claims (counts, license, version, template tables).
 - The regulation corpus (12 files + world map) and the two data files now ship inside the skill at `skills/ai-compliance/references/{regulations,data}/`, mirrored by `tools/sync-kb.js`; SKILL.md paths point there. claude.ai and Cowork package only `skills/<name>/`, so the repo-root copies were not reaching those surfaces (Codex P1 on PR #9). `build.ts` copies `references/` into `dist/claude-plugin/`.
 - `.claude-plugin/marketplace.json` so the repo installs as a single-plugin directory marketplace (`claude plugin marketplace add <path>`); `plugin.json` now follows the plugin schema (author object, CC0-1.0 license, homepage, keywords) and leads with what works in claude.ai.
 

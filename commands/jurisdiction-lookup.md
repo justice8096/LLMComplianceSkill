@@ -1,5 +1,6 @@
 ---
 description: Look up applicable AI regulations, deadlines, and requirements for a specific jurisdiction
+argument-hint: "<jurisdiction code, e.g. EU or US-CO>"
 ---
 # Jurisdiction Lookup
 

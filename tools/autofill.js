@@ -5,7 +5,7 @@
  * Reads compliance-config.json, fills template fields that don't need human input,
  * writes filled templates to ../output/
  *
- * Usage: node autofill.js [--config path/to/config.json] [--output path/to/output] [--locale xx]
+ * Usage: node autofill.js [--config path/to/config.json] [--output path/to/output] [--locale xx] [--template 07,08]
  */
 
 const fs = require('fs');
@@ -681,6 +681,7 @@ function main() {
   let configPath = path.join(TOOLS_DIR, 'compliance-config.json');
   let locale = 'en';
   let outputBase = OUTPUT_DIR;
+  let templateFilter = null;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--config' && args[i + 1]) {
       configPath = path.resolve(args[i + 1]);
@@ -688,6 +689,9 @@ function main() {
       outputBase = path.resolve(args[i + 1]);
     } else if (args[i] === '--locale' && args[i + 1]) {
       locale = args[i + 1];
+    } else if (args[i] === '--template' && args[i + 1]) {
+      // One or more template numbers, comma-separated: --template 07,08
+      templateFilter = new Set(args[i + 1].split(',').map(n => n.trim().padStart(2, '0')).filter(Boolean));
     }
   }
 
@@ -720,7 +724,12 @@ function main() {
   // Process each template
   const templateFiles = fs.readdirSync(templatesDir)
     .filter(tplFile => tplFile.endsWith('.md') && tplFile !== '00-Evidence-Collection-Kit-README.md')
+    .filter(tplFile => !templateFilter || templateFilter.has(tplFile.slice(0, 2)))
     .sort();
+  if (templateFilter && templateFiles.length === 0) {
+    console.error('ERROR: no template matches --template ' + [...templateFilter].join(','));
+    process.exit(1);
+  }
 
   let filled = 0;
   for (const file of templateFiles) {
