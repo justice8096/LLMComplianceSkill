@@ -162,6 +162,22 @@ Singapore is the **governance and standards leader** in Asia-Pacific. It has cho
 
 ---
 
+## Executive Instruments to Watch
+
+| Jurisdiction | Instrument class | Issuer | Where published | Current mandate ends |
+|--------------|------------------|--------|-----------------|----------------------|
+| India | Rules notified under the IT Act and DPDP Act, MeitY advisories, AIGEG decisions | Prime Minister Narendra Modi; MeitY (Minister Ashwini Vaishnaw) | Gazette of India (egazette.gov.in), meity.gov.in | Lok Sabha term to Jun 2029 |
+| Singapore | IMDA frameworks, PDPC guidelines, MAS guidelines, Online Safety Commission codes | Prime Minister Lawrence Wong; IMDA, PDPC, MAS | imda.gov.sg, pdpc.gov.sg, mas.gov.sg | Parliament elected May 2025; election due by about Nov 2030 |
+| Vietnam | Government decrees implementing the Law on AI (portal, labelling, penalties) | Prime Minister Le Minh Hung (elected Apr 7, 2026); General Secretary To Lam | vanban.chinhphu.vn | 14th Party term to 2031 |
+| Thailand | ETDA drafts, Cabinet approvals | Cabinet, ETDA | ratchakitcha.soc.go.th | Government term |
+| Malaysia | NAIO consultation papers, Cabinet decisions | National AI Office | ai.gov.my | Parliament term to 2027 |
+| Indonesia | Presidential Regulations (AI roadmap) | President Prabowo Subianto | jdih.setneg.go.id | Oct 2029 |
+| Philippines | House and Senate bills; DICT circulars | DICT | dict.gov.ph | Jun 2028 |
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## Regional Comparison
 
 | Country | AI Law Status | Approach | Key Framework |
