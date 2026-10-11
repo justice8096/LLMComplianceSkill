@@ -26,10 +26,20 @@ for (let i = 0; i < args.length; i++) {
   else if (args[i] === '--check') checkOnly = true;
 }
 
+// Destinations: repo root (historical location), docs/ (site), and the skill's own
+// references/ folder. The last one matters for claude.ai and Cowork, which package only
+// skills/<name>/ with SKILL.md, so repo-root files are not available there.
+const SKILL_REFS = path.join(ROOT, 'skills', 'ai-compliance', 'references');
 const PAIRS = [
   ['regulations', ROOT, /^AI-Regulations-.*\.md$/],
+  ['regulations', path.join(SKILL_REFS, 'regulations'), /^AI-Regulations-.*\.md$/],
   ['visualizations', ROOT, /^AI-Regulations-World-Map\.html$/],
+  ['visualizations', path.join(SKILL_REFS, 'regulations'), /^AI-Regulations-World-Map\.html$/],
   ['visualizations', path.join(ROOT, 'docs'), /^AI-Regulations-World-Map\.html$/, 'world-map.html'],
+];
+// Local data files mirrored from tools/data into the skill references (not from the KB).
+const LOCAL_PAIRS = [
+  [path.join(ROOT, 'tools', 'data'), path.join(SKILL_REFS, 'data'), /^(deadline-data|jurisdiction-matrix)\.json$/],
 ];
 
 if (!fs.existsSync(from)) {
@@ -46,6 +56,26 @@ for (const [srcSub, dstDir, pattern, rename] of PAIRS) {
     if (!pattern.test(name)) continue;
     const src = path.join(srcDir, name);
     const dst = path.join(dstDir, rename || name);
+    const srcBuf = fs.readFileSync(src);
+    const dstBuf = fs.existsSync(dst) ? fs.readFileSync(dst) : null;
+    if (dstBuf && srcBuf.equals(dstBuf)) { same++; continue; }
+    changed++;
+    if (checkOnly) {
+      console.log('[sync-kb] differs: ' + path.relative(ROOT, dst));
+    } else {
+      fs.mkdirSync(path.dirname(dst), { recursive: true });
+      fs.writeFileSync(dst, srcBuf);
+      console.log('[sync-kb] updated: ' + path.relative(ROOT, dst));
+    }
+  }
+}
+
+for (const [srcDir, dstDir, pattern] of LOCAL_PAIRS) {
+  if (!fs.existsSync(srcDir)) continue;
+  for (const name of fs.readdirSync(srcDir)) {
+    if (!pattern.test(name)) continue;
+    const src = path.join(srcDir, name);
+    const dst = path.join(dstDir, name);
     const srcBuf = fs.readFileSync(src);
     const dstBuf = fs.existsSync(dst) ? fs.readFileSync(dst) : null;
     if (dstBuf && srcBuf.equals(dstBuf)) { same++; continue; }

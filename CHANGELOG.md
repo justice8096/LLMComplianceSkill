@@ -16,10 +16,11 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 ## [Unreleased]
 
 ### Changed `[voice]`
-- SKILL.md opens with a "Data current as of 2026-10-11" banner and a "Where each part runs" note (knowledge half works in claude.ai and Cowork; the Node pipeline needs Claude Code). Jurisdiction counts corrected to 25 in README, manifest, plugin.json and SKILL.md.
+- SKILL.md opens with a "Data current as of 2026-10-11" banner and a "Where each part runs" note (knowledge half works in claude.ai and Cowork; the HTML tools open in any browser; only the three Node scripts need Claude Code or a terminal; Codex P2 on PR #9). Jurisdiction counts corrected to 25 in README, manifest, plugin.json and SKILL.md.
 - Authority-version pins rewritten from one 1,000-character paragraph into a 19-row table; jurisdiction-lookup command lists codes in a table grouped by region. Driven by the dyslexia and dyscalculia content checks (audits/accessibility-gates.md).
 
 ### Added `[structural]`
+- The regulation corpus (12 files + world map) and the two data files now ship inside the skill at `skills/ai-compliance/references/{regulations,data}/`, mirrored by `tools/sync-kb.js`; SKILL.md paths point there. claude.ai and Cowork package only `skills/<name>/`, so the repo-root copies were not reaching those surfaces (Codex P1 on PR #9). `build.ts` copies `references/` into `dist/claude-plugin/`.
 - `.claude-plugin/marketplace.json` so the repo installs as a single-plugin directory marketplace (`claude plugin marketplace add <path>`); `plugin.json` now follows the plugin schema (author object, CC0-1.0 license, homepage, keywords) and leads with what works in claude.ai.
 
 ## [1.3.0] - 2026-10-11

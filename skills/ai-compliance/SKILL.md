@@ -12,10 +12,11 @@ across 25 jurisdictions, populate 24 evidence templates from a config file, and
 produce a compliance package ready for legal review.
 
 **Where each part runs.** Jurisdiction lookup, risk classification, disclosure and deadline
-guidance work anywhere this skill loads, including claude.ai and Cowork, because they only
-read the regulation files. The evidence pipeline (interactive HTML tools, extract-evidence.js,
-autofill.js, evidence-checker.js) needs Node.js and a local checkout, so run it from Claude
-Code or a terminal.
+guidance work anywhere this skill loads, including claude.ai and Cowork: the regulation corpus
+and data files ship inside this skill under `references/`. The interactive HTML tools are static
+pages that open in any browser from a local checkout, no Node needed. Only the three scripts
+(`extract-evidence.js`, `autofill.js`, `evidence-checker.js`) need Node.js, so run those from
+Claude Code or a terminal.
 
 ---
 
@@ -35,23 +36,25 @@ Code or a terminal.
 ## Knowledge Base
 
 Read the applicable regulation files before answering jurisdiction-specific questions.
-Start with the Global Overview for cross-jurisdictional comparisons.
+Start with the Global Overview for cross-jurisdictional comparisons. The files live in
+`references/regulations/` next to this SKILL.md (mirrored to the repo root for the site and
+older tooling; `npm run sync:kb` keeps both copies identical to ai-regulatory-knowledge-base).
 
 | File | Contents |
 |------|----------|
-| `AI-Regulations-Global-Overview.md` | Cross-cutting themes, compliance timeline, comparison matrix |
-| `AI-Regulations-EU.md` | EU AI Act (2024) as amended by the Digital Omnibus (Reg. 2026/1744), GDPR, Data Act, sectoral rules |
-| `AI-Regulations-UK.md` | UK DUA Act, ICO guidance, sector regulators |
-| `AI-Regulations-UnitedStates.md` | CO SB 26-189, CA SB 53/AB 2013/SB 243/SB 942, NY RAISE Act, IL HB 3773/SB 315, CT PA 26-15, WA HB 2225, TX TRAIGA, NYC LL 144, federal preemption |
-| `AI-Regulations-Canada.md` | AI for All strategy, Bill C-36 (privacy), Bill C-34 (chatbots), Ontario hiring disclosure, Quebec Law 25 |
-| `AI-Regulations-China.md` | GenAI Measures, labeling, anthropomorphic AI measures (2026), ethics review, CAC registration |
-| `AI-Regulations-Japan-SouthKorea.md` | South Korea AI Basic Act (in force), PIPA, Japan AI Promotion Act, AI Basic Plan, APPI 2026 amendment |
-| `AI-Regulations-India-Singapore-ASEAN.md` | India IT Amendment Rules 2026, DPDP Rules, Singapore Model AI Governance (incl. Agentic), Vietnam Law on AI, ASEAN bills |
-| `AI-Regulations-Australia.md` | Australian Standards for AI (2027 bill), Privacy Act ADM transparency, eSafety codes, AI6 guidance |
-| `AI-Regulations-NewZealand.md` | Privacy Act 2020 incl. IPP 3A, Biometrics Code, Responsible AI guidance |
-| `AI-Regulations-Mexico-LatinAmerica.md` | Peru Law 31814 + regulation, Brazil ECA Digital + PL 2338, Mexico sectoral AI rules, Chile rewrite |
-| `AI-Regulations-Africa.md` | South Africa POPIA, Nigeria Digital Economy Bill, Kenya AI Bill 2026, AU framework |
-| `AI-Regulations-World-Map.html` | Interactive D3.js global regulatory status visualization |
+| `references/regulations/AI-Regulations-Global-Overview.md` | Cross-cutting themes, compliance timeline, comparison matrix |
+| `references/regulations/AI-Regulations-EU.md` | EU AI Act (2024) as amended by the Digital Omnibus (Reg. 2026/1744), GDPR, Data Act, sectoral rules |
+| `references/regulations/AI-Regulations-UK.md` | UK DUA Act, ICO guidance, sector regulators |
+| `references/regulations/AI-Regulations-UnitedStates.md` | CO SB 26-189, CA SB 53/AB 2013/SB 243/SB 942, NY RAISE Act, IL HB 3773/SB 315, CT PA 26-15, WA HB 2225, TX TRAIGA, NYC LL 144, federal preemption |
+| `references/regulations/AI-Regulations-Canada.md` | AI for All strategy, Bill C-36 (privacy), Bill C-34 (chatbots), Ontario hiring disclosure, Quebec Law 25 |
+| `references/regulations/AI-Regulations-China.md` | GenAI Measures, labeling, anthropomorphic AI measures (2026), ethics review, CAC registration |
+| `references/regulations/AI-Regulations-Japan-SouthKorea.md` | South Korea AI Basic Act (in force), PIPA, Japan AI Promotion Act, AI Basic Plan, APPI 2026 amendment |
+| `references/regulations/AI-Regulations-India-Singapore-ASEAN.md` | India IT Amendment Rules 2026, DPDP Rules, Singapore Model AI Governance (incl. Agentic), Vietnam Law on AI, ASEAN bills |
+| `references/regulations/AI-Regulations-Australia.md` | Australian Standards for AI (2027 bill), Privacy Act ADM transparency, eSafety codes, AI6 guidance |
+| `references/regulations/AI-Regulations-NewZealand.md` | Privacy Act 2020 incl. IPP 3A, Biometrics Code, Responsible AI guidance |
+| `references/regulations/AI-Regulations-Mexico-LatinAmerica.md` | Peru Law 31814 + regulation, Brazil ECA Digital + PL 2338, Mexico sectoral AI rules, Chile rewrite |
+| `references/regulations/AI-Regulations-Africa.md` | South Africa POPIA, Nigeria Digital Economy Bill, Kenya AI Bill 2026, AU framework |
+| `references/regulations/AI-Regulations-World-Map.html` | Interactive D3.js global regulatory status visualization |
 
 When multiple jurisdictions apply, prioritize by enforcement risk and earliest deadline.
 
@@ -201,8 +204,8 @@ Deliver the `output/` folder to the legal or compliance team. Contents:
 
 | File | Contents |
 |------|----------|
-| `tools/data/jurisdiction-matrix.json` | Which templates each of the 25 jurisdictions requires |
-| `tools/data/deadline-data.json` | 47 compliance deadlines with exact dates (2023-2028) |
+| `references/data/jurisdiction-matrix.json` (copy of `tools/data/`) | Which templates each of the 25 jurisdictions requires |
+| `references/data/deadline-data.json` (copy of `tools/data/`) | 47 compliance deadlines with exact dates (2023-2028) |
 | `tools/data/llm-registry.json` | Index for 66-model LLM registry (chunked across 6 files) |
 | `tools/data/llm-registry-*.json` | Per-provider model registry chunks (Meta, Mistral, Google/Microsoft, China, API-only, other open) |
 

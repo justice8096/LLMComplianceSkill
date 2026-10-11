@@ -9,7 +9,7 @@ Look up AI regulations and deadlines for a specific jurisdiction.
 
 ## Covered Jurisdictions
 
-Use the codes from `tools/data/jurisdiction-matrix.json`.
+Use the codes from `references/data/jurisdiction-matrix.json` (same file as `tools/data/jurisdiction-matrix.json`).
 
 | Region | Codes |
 |--------|-------|

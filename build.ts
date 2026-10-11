@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, cpSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -207,6 +207,10 @@ function generateClaudePlugin(manifest: Manifest): void {
   for (const skill of manifest.skills) {
     ensureDir(resolve(base, "skills/" + skill.name));
     writeFileSync(resolve(base, "skills/" + skill.name + "/SKILL.md"), loadSkillMarkdown(skill.name));
+    // Ship the skill's references/ (regulation corpus, data) so claude.ai and Cowork,
+    // which package only skills/<name>/, have the files SKILL.md tells Claude to read.
+    const refs = resolve(__dirname, "skills/" + skill.name + "/references");
+    if (existsSync(refs)) cpSync(refs, resolve(base, "skills/" + skill.name + "/references"), { recursive: true });
   }
   for (const cmd of manifest.commands) {
     writeFileSync(resolve(base, "commands/" + cmd.name + ".md"), loadCommandMarkdown(cmd.name));
