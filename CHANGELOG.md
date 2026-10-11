@@ -15,11 +15,16 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+### Changed `[authority]`
+- Synced ai-regulatory-knowledge-base v1.2.0: every regulation file gains an "Executive Instruments to Watch" section and the Global Overview a political-sunset table (22 executives, term-end dates); EO 14409 (Jun 2, 2026) added as `us.eo14409`; 2026 leadership changes recorded (UK, Vietnam, Chile, Peru, Colombia, Japan). A bimonthly scheduled sweep (1st of even months) now produces a change report.
+- Synced ai-regulatory-knowledge-base v1.1.1: the Sep 29, 2026 executive order "Inaugurating the Era of Super Intelligence" (executive-branch terminology change from AI to SI, defined by reference to 15 U.S.C. 9401(3); no statute or regulation changed; legislative language due about Nov 28, 2026; voluntary White House Accord on Super Intelligence). Two deadline entries added (`us.superIntelligenceOrder`, `us.superIntelligenceOrder.legislativeLanguage`); SKILL.md authority table and key-deadline table updated.
+
 ### Changed `[voice]`
-- SKILL.md opens with a "Data current as of 2026-10-11" banner and a "Where each part runs" note (knowledge half works in claude.ai and Cowork; the Node pipeline needs Claude Code). Jurisdiction counts corrected to 25 in README, manifest, plugin.json and SKILL.md.
+- SKILL.md opens with a "Data current as of 2026-10-11" banner and a "Where each part runs" note (knowledge half works in claude.ai and Cowork; the HTML tools open in any browser; only the three Node scripts need Claude Code or a terminal; Codex P2 on PR #9). Jurisdiction counts corrected to 25 in README, manifest, plugin.json and SKILL.md.
 - Authority-version pins rewritten from one 1,000-character paragraph into a 19-row table; jurisdiction-lookup command lists codes in a table grouped by region. Driven by the dyslexia and dyscalculia content checks (audits/accessibility-gates.md).
 
 ### Added `[structural]`
+- The regulation corpus (12 files + world map) and the two data files now ship inside the skill at `skills/ai-compliance/references/{regulations,data}/`, mirrored by `tools/sync-kb.js`; SKILL.md paths point there. claude.ai and Cowork package only `skills/<name>/`, so the repo-root copies were not reaching those surfaces (Codex P1 on PR #9). `build.ts` copies `references/` into `dist/claude-plugin/`.
 - `.claude-plugin/marketplace.json` so the repo installs as a single-plugin directory marketplace (`claude plugin marketplace add <path>`); `plugin.json` now follows the plugin schema (author object, CC0-1.0 license, homepage, keywords) and leads with what works in claude.ai.
 
 ## [1.3.0] - 2026-10-11

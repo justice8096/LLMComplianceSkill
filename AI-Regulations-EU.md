@@ -142,6 +142,19 @@ The AI Act provides limited exemptions for open-source AI:
 
 ---
 
+## Executive Instruments to Watch
+
+| Instrument class | Issuer | Where published | Current mandate ends |
+|------------------|--------|-----------------|----------------------|
+| Delegated and implementing acts under the AI Act (Annex III updates, GPAI thresholds, templates) | European Commission (President Ursula von der Leyen, College 2024-2029) | Official Journal (EUR-Lex) | Oct 31, 2029 |
+| Guidelines, Codes of Practice, AI Office decisions, requests for information | Commission / AI Office | digital-strategy.ec.europa.eu | Oct 31, 2029 |
+| Harmonised standards citations | Commission (on CEN/CENELEC delivery) | Official Journal C series | Standardisation request M/613 expires Feb 28, 2027 |
+| Member State implementing laws and authority designations | National governments | National gazettes; Commission market-surveillance page | Varies by Member State |
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## National Authorities
 
 Member States had to designate market surveillance authorities by 2 Aug 2025. As of August 2026 the following had enacted implementing laws or designations: Cyprus, Denmark (partial), Finland, Germany (KI-MIG, in force 29 Jul 2026, Bundesnetzagentur), Hungary, Ireland (Regulation of AI Act 2026, signed 21 Jul 2026), Italy (Law 132/2025, ACN), Lithuania, Malta, Poland (in force 11 Aug 2026, penalties from 28 Oct 2026) and Sweden. Spain's draft organic law was approved by the government on 26 May 2026; the Netherlands, Luxembourg, Slovenia and France were still pending.

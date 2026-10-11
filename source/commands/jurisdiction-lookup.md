@@ -9,7 +9,7 @@ Look up AI regulations and deadlines for a specific jurisdiction.
 
 ## Covered Jurisdictions
 
-Use the codes from `tools/data/jurisdiction-matrix.json`.
+Use the codes from `skills/ai-compliance/references/data/jurisdiction-matrix.json` (repo-root path, valid from a plugin checkout; `tools/data/jurisdiction-matrix.json` is the same file in the full repo).
 
 | Region | Codes |
 |--------|-------|

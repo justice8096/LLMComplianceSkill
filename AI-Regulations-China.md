@@ -103,6 +103,21 @@ China actively enforces its AI regulations:
 
 ---
 
+## Executive Instruments to Watch
+
+| Instrument class | Issuer | Where published | Current mandate ends |
+|------------------|--------|-----------------|----------------------|
+| Measures, provisions and interim measures (binding) | Cyberspace Administration of China, often co-issued with MIIT, MPS, SAMR, NDRC | cac.gov.cn | State Council and NPC term to Mar 2028 (Xi Jinping; Premier Li Qiang) |
+| Ethics review measures, AI Plus implementation opinions, standards assignments | MIIT and co-issuing ministries; TC260 | miit.gov.cn, tc260.org.cn | Mar 2028 |
+| Enforcement campaigns (Qinglang) | CAC and MPS | cac.gov.cn | Annual |
+| Five-Year Plan and State Council legislative plans | State Council, NPC Standing Committee | gov.cn, npc.gov.cn | 15th Plan 2026-2030 |
+
+In China the executive measure is the binding instrument; a comprehensive AI Law remains at research stage.
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## Standards and Governance Frameworks
 
 - **AI Safety Governance Framework 2.0 (TC260, Sept 2025):** non-binding principles and risk guidance

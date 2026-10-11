@@ -98,6 +98,19 @@ Eight voluntary principles aligned with OECD AI Principles:
 
 ---
 
+## Executive Instruments to Watch
+
+| Instrument class | Issuer | Where published | Current mandate ends |
+|------------------|--------|-----------------|----------------------|
+| Ministerial statements and National Cabinet decisions (Australian Standards for AI, Office of AI) | Prime Minister Anthony Albanese; Minister for Industry and Science Tim Ayres | pm.gov.au, industry.gov.au | Election due by May 20, 2028 |
+| Legislative instruments and codes (eSafety industry codes, OAIC Children's Online Privacy Code) | eSafety Commissioner, OAIC | legislation.gov.au (Federal Register of Legislation) | Not tied to the parliamentary term |
+| Guidance (AI6, OAIC ADM guidance, ACCC statements) | DISR, OAIC, ACCC | industry.gov.au, oaic.gov.au | Not tied to the parliamentary term |
+| State instruments (NSW WHS proclamation, SA Royal Commission) | State governments | NSW Government Gazette | Varies |
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## AI Safety Institute (AISI)
 
 Announced November 2025 with AUD 29.9 million; established in early 2026 and reported to be testing frontier models by July 2026:

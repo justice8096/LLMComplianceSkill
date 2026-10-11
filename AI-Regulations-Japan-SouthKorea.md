@@ -117,6 +117,19 @@ The AI Basic Act works alongside:
 
 ---
 
+## Executive Instruments to Watch
+
+| Jurisdiction | Instrument class | Issuer | Where published | Current mandate ends |
+|--------------|------------------|--------|-----------------|----------------------|
+| Japan | Cabinet decisions (AI Basic Plan and revisions), Cabinet Orders under the AI Promotion Act and the 2026 APPI amendment | Prime Minister Sanae Takaichi; AI Strategy Headquarters | kantei.go.jp, cao.go.jp | Lower house elected Feb 8, 2026 (term to Feb 2030); LDP presidency to Sep 2027 |
+| Japan | METI/MIC business guidelines, AISI evaluation guides, Digital Agency guidelines | Ministries and agencies | meti.go.jp, aisi.go.jp | Not tied to a term |
+| South Korea | Presidential Enforcement Decrees (AI Basic Act decree No. 36053), MSIT guidelines, grace-period notices | President Lee Jae-myung; MSIT | law.go.kr, msit.go.kr | Jun 3, 2030 |
+| South Korea | PIPC guidelines and recommendations | Personal Information Protection Commission | pipc.go.kr | Commissioners' terms |
+
+Executive instruments (orders, decrees, cabinet decisions, ministry measures, guidelines) do not expire when the issuing leader leaves office; they stay in force until revoked or superseded. The mandate-end date is the point at which revocation risk rises and is the date to re-verify every instrument listed above.
+
+---
+
 ## Comparison
 
 | Aspect | Japan | South Korea |

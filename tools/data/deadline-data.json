@@ -1,49 +1,352 @@
 [
-  { "date": "2023-08-15", "jurisdiction": "CN", "law": "GenAI Interim Measures", "lawKey": "cn.genaiInterim", "status": "in-force" },
-  { "date": "2025-02-02", "jurisdiction": "EU", "law": "AI Act - Prohibited practices + AI Literacy (Art. 4)", "lawKey": "eu.aiAct.prohibited", "status": "in-force" },
-  { "date": "2025-08-02", "jurisdiction": "EU", "law": "AI Act - GPAI obligations", "lawKey": "eu.aiAct.gpai", "status": "in-force" },
-  { "date": "2025-09-01", "jurisdiction": "CN", "law": "Content Labeling Measures", "lawKey": "cn.contentLabeling", "status": "in-force" },
-  { "date": "2025-11-01", "jurisdiction": "CN", "law": "National Security Standards (3 specs)", "lawKey": "cn.securityStandards", "status": "in-force" },
-  { "date": "2026-01-01", "jurisdiction": "CN", "law": "Amended Cybersecurity Law", "lawKey": "cn.cybersecurityAmended", "status": "in-force" },
-  { "date": "2026-01-01", "jurisdiction": "US-CA", "law": "SB 53 Frontier AI", "lawKey": "usCa.sb53", "status": "in-force" },
-  { "date": "2026-01-01", "jurisdiction": "US-CA", "law": "AB 2013 Training Data Transparency", "lawKey": "usCa.ab2013", "status": "in-force" },
-  { "date": "2026-01-01", "jurisdiction": "US-CA", "law": "SB 243 Companion Chatbots", "lawKey": "usCa.sb243", "status": "in-force" },
-  { "date": "2026-01-01", "jurisdiction": "US-TX", "law": "TRAIGA (HB 149)", "lawKey": "usTx.traiga", "status": "in-force" },
-  { "date": "2026-01-01", "jurisdiction": "US-IL", "law": "HB 3773 AI in employment (Human Rights Act)", "lawKey": "usIl.hb3773", "status": "in-force" },
-  { "date": "2026-01-01", "jurisdiction": "CA", "law": "Ontario AI hiring disclosure (Working for Workers Four Act)", "lawKey": "ca.onAiHiring", "status": "in-force" },
-  { "date": "2026-01-22", "jurisdiction": "KR", "law": "AI Basic Act + Enforcement Decree (fines deferred about one year)", "lawKey": "kr.aiBasicAct", "status": "in-force" },
-  { "date": "2026-02-01", "jurisdiction": "CN", "law": "Livestream AI Rules", "lawKey": "cn.livestreamAi", "status": "in-force" },
-  { "date": "2026-02-05", "jurisdiction": "UK", "law": "DUA Act - ADM reforms", "lawKey": "uk.duaAct.adm", "status": "in-force" },
-  { "date": "2026-02-06", "jurisdiction": "UK", "law": "DUA Act - Deepfake offence", "lawKey": "uk.duaAct.deepfake", "status": "in-force" },
-  { "date": "2026-02-20", "jurisdiction": "IN", "law": "IT Amendment Rules 2026 - synthetic content labelling, 3-hour takedown", "lawKey": "in.itRules2026", "status": "in-force" },
-  { "date": "2026-03-01", "jurisdiction": "VN", "law": "Law on Artificial Intelligence 134/2025/QH15", "lawKey": "vn.aiLaw", "status": "in-force" },
-  { "date": "2026-03-09", "jurisdiction": "AU", "law": "eSafety Phase 2 codes (AI companion chatbots, age assurance)", "lawKey": "au.esafetyPhase2", "status": "in-force" },
-  { "date": "2026-05-01", "jurisdiction": "NZ", "law": "Privacy Act IPP 3A indirect-collection notice", "lawKey": "nz.ipp3a", "status": "in-force" },
-  { "date": "2026-05-19", "jurisdiction": "US", "law": "TAKE IT DOWN Act platform compliance", "lawKey": "us.takeItDown", "status": "in-force" },
-  { "date": "2026-07-15", "jurisdiction": "CN", "law": "Anthropomorphic AI Interactive Services Measures (CAC Order 21)", "lawKey": "cn.anthropomorphicAi", "status": "in-force" },
-  { "date": "2026-07-27", "jurisdiction": "EU", "law": "Digital Omnibus on AI (Regulation (EU) 2026/1744) in force", "lawKey": "eu.omnibus", "status": "in-force" },
-  { "date": "2026-08-02", "jurisdiction": "EU", "law": "AI Act - Art. 50 transparency, penalty regime, AI Office GPAI enforcement", "lawKey": "eu.aiAct.transparency", "status": "in-force" },
-  { "date": "2026-08-02", "jurisdiction": "US-CA", "law": "AI Transparency Act (SB 942, amended by SB 1000 on 2026-09-30)", "lawKey": "usCa.sb942", "status": "in-force" },
-  { "date": "2026-09-10", "jurisdiction": "PE", "law": "Law 31814 regulation - first mandatory phase (health, education, justice, security, finance)", "lawKey": "pe.law31814.phase1", "status": "in-force" },
-  { "date": "2026-10-01", "jurisdiction": "US-CT", "law": "Public Act 26-15 (CART Act) phase 1 - AEDT framework, provenance", "lawKey": "usCt.pa2615.phase1", "status": "in-force" },
-  { "date": "2026-11-01", "jurisdiction": "EG", "law": "PDPL full enforcement", "lawKey": "eg.pdpl", "status": "upcoming" },
-  { "date": "2026-11-01", "jurisdiction": "BR", "law": "ECA Digital (Lei 15.211/2025) sanctions begin; formal enforcement 2027-01", "lawKey": "br.ecaDigital", "status": "upcoming" },
-  { "date": "2026-12-02", "jurisdiction": "EU", "law": "AI Act - Art. 50(2) machine-readable marking grace period ends; new Art. 5 prohibition fully applies", "lawKey": "eu.aiAct.marking", "status": "upcoming" },
-  { "date": "2026-12-10", "jurisdiction": "AU", "law": "Privacy Act ADM transparency obligations (APP 1.7-1.9)", "lawKey": "au.privacyActAdm", "status": "upcoming" },
-  { "date": "2027-01-01", "jurisdiction": "US-CO", "law": "SB 26-189 ADMT notice regime (replaces SB 24-205; enforcement paused by xAI v. Colorado)", "lawKey": "usCo.sb26189", "status": "upcoming" },
-  { "date": "2027-01-01", "jurisdiction": "US-NY", "law": "RAISE Act - frontier model safety frameworks, 72-hour incident reporting", "lawKey": "usNy.raise", "status": "upcoming" },
-  { "date": "2027-01-01", "jurisdiction": "US-IL", "law": "SB 315 AI Safety Measures Act - frontier developers, annual third-party audits", "lawKey": "usIl.sb315", "status": "upcoming" },
-  { "date": "2027-01-01", "jurisdiction": "US-WA", "law": "HB 2225 companion chatbots", "lawKey": "usWa.hb2225", "status": "upcoming" },
-  { "date": "2027-01-01", "jurisdiction": "US-CA", "law": "CCPA ADMT regulations - notice, opt-out, access", "lawKey": "usCa.ccpaAdmt", "status": "upcoming" },
-  { "date": "2027-01-01", "jurisdiction": "US-CA", "law": "SB 947 No Robo Bosses + SB 951 + Sep 2026 signings", "lawKey": "usCa.sb947", "status": "upcoming" },
-  { "date": "2027-01-01", "jurisdiction": "US-CT", "law": "Public Act 26-15 phase 2 - AI companion rules", "lawKey": "usCt.pa2615.phase2", "status": "upcoming" },
-  { "date": "2027-01-12", "jurisdiction": "EU", "law": "Data Act - cloud switching charge ban fully effective", "lawKey": "eu.dataAct.switching", "status": "upcoming" },
-  { "date": "2027-01-17", "jurisdiction": "JP", "law": "APPI amendment (Act No. 56 of 2026) - criminal penalties effective", "lawKey": "jp.appi2026.penalties", "status": "upcoming" },
-  { "date": "2027-01-22", "jurisdiction": "KR", "law": "AI Basic Act - administrative fine grace period expected to end", "lawKey": "kr.aiBasicAct.fines", "status": "upcoming" },
-  { "date": "2027-05-13", "jurisdiction": "IN", "law": "DPDP Rules 2025 - core obligations commence", "lawKey": "in.dpdpRules.core", "status": "upcoming" },
-  { "date": "2027-08-02", "jurisdiction": "EU", "law": "AI Act - legacy GPAI models must comply; sandboxes operational", "lawKey": "eu.aiAct.legacyGpai", "status": "upcoming" },
-  { "date": "2027-10-01", "jurisdiction": "US-CT", "law": "Public Act 26-15 phase 3 - employer AEDT notices", "lawKey": "usCt.pa2615.phase3", "status": "upcoming" },
-  { "date": "2027-12-02", "jurisdiction": "EU", "law": "AI Act - Full applicability for Annex III high-risk systems (conformity, risk management, registration, human oversight)", "lawKey": "eu.aiAct.full", "status": "upcoming" },
-  { "date": "2028-04-01", "jurisdiction": "US-CA", "law": "CCPA - first risk-assessment submissions due", "lawKey": "usCa.ccpaRiskAssessments", "status": "upcoming" },
-  { "date": "2028-08-02", "jurisdiction": "EU", "law": "AI Act - High-risk AI in regulated products (Annex I)", "lawKey": "eu.aiAct.highRiskProducts", "status": "upcoming" }
+  {
+    "date": "2023-08-15",
+    "jurisdiction": "CN",
+    "law": "GenAI Interim Measures",
+    "lawKey": "cn.genaiInterim",
+    "status": "in-force"
+  },
+  {
+    "date": "2025-02-02",
+    "jurisdiction": "EU",
+    "law": "AI Act - Prohibited practices + AI Literacy (Art. 4)",
+    "lawKey": "eu.aiAct.prohibited",
+    "status": "in-force"
+  },
+  {
+    "date": "2025-08-02",
+    "jurisdiction": "EU",
+    "law": "AI Act - GPAI obligations",
+    "lawKey": "eu.aiAct.gpai",
+    "status": "in-force"
+  },
+  {
+    "date": "2025-09-01",
+    "jurisdiction": "CN",
+    "law": "Content Labeling Measures",
+    "lawKey": "cn.contentLabeling",
+    "status": "in-force"
+  },
+  {
+    "date": "2025-11-01",
+    "jurisdiction": "CN",
+    "law": "National Security Standards (3 specs)",
+    "lawKey": "cn.securityStandards",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-01",
+    "jurisdiction": "CA",
+    "law": "Ontario AI hiring disclosure (Working for Workers Four Act)",
+    "lawKey": "ca.onAiHiring",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-01",
+    "jurisdiction": "CN",
+    "law": "Amended Cybersecurity Law",
+    "lawKey": "cn.cybersecurityAmended",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-01",
+    "jurisdiction": "US-CA",
+    "law": "SB 53 Frontier AI",
+    "lawKey": "usCa.sb53",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-01",
+    "jurisdiction": "US-CA",
+    "law": "AB 2013 Training Data Transparency",
+    "lawKey": "usCa.ab2013",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-01",
+    "jurisdiction": "US-CA",
+    "law": "SB 243 Companion Chatbots",
+    "lawKey": "usCa.sb243",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-01",
+    "jurisdiction": "US-IL",
+    "law": "HB 3773 AI in employment (Human Rights Act)",
+    "lawKey": "usIl.hb3773",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-01",
+    "jurisdiction": "US-TX",
+    "law": "TRAIGA (HB 149)",
+    "lawKey": "usTx.traiga",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-01-22",
+    "jurisdiction": "KR",
+    "law": "AI Basic Act + Enforcement Decree (fines deferred about one year)",
+    "lawKey": "kr.aiBasicAct",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-02-01",
+    "jurisdiction": "CN",
+    "law": "Livestream AI Rules",
+    "lawKey": "cn.livestreamAi",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-02-05",
+    "jurisdiction": "UK",
+    "law": "DUA Act - ADM reforms",
+    "lawKey": "uk.duaAct.adm",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-02-06",
+    "jurisdiction": "UK",
+    "law": "DUA Act - Deepfake offence",
+    "lawKey": "uk.duaAct.deepfake",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-02-20",
+    "jurisdiction": "IN",
+    "law": "IT Amendment Rules 2026 - synthetic content labelling, 3-hour takedown",
+    "lawKey": "in.itRules2026",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-03-01",
+    "jurisdiction": "VN",
+    "law": "Law on Artificial Intelligence 134/2025/QH15",
+    "lawKey": "vn.aiLaw",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-03-09",
+    "jurisdiction": "AU",
+    "law": "eSafety Phase 2 codes (AI companion chatbots, age assurance)",
+    "lawKey": "au.esafetyPhase2",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-05-01",
+    "jurisdiction": "NZ",
+    "law": "Privacy Act IPP 3A indirect-collection notice",
+    "lawKey": "nz.ipp3a",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-05-19",
+    "jurisdiction": "US",
+    "law": "TAKE IT DOWN Act platform compliance",
+    "lawKey": "us.takeItDown",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-06-02",
+    "jurisdiction": "US",
+    "law": "EO 14409 Promoting Advanced AI Innovation and Security (federal cyber directives; voluntary pre-release frontier model review)",
+    "lawKey": "us.eo14409",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-07-15",
+    "jurisdiction": "CN",
+    "law": "Anthropomorphic AI Interactive Services Measures (CAC Order 21)",
+    "lawKey": "cn.anthropomorphicAi",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-07-27",
+    "jurisdiction": "EU",
+    "law": "Digital Omnibus on AI (Regulation (EU) 2026/1744) in force",
+    "lawKey": "eu.omnibus",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-08-02",
+    "jurisdiction": "EU",
+    "law": "AI Act - Art. 50 transparency, penalty regime, AI Office GPAI enforcement",
+    "lawKey": "eu.aiAct.transparency",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-08-02",
+    "jurisdiction": "US-CA",
+    "law": "AI Transparency Act (SB 942, amended by SB 1000 on 2026-09-30)",
+    "lawKey": "usCa.sb942",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-09-10",
+    "jurisdiction": "PE",
+    "law": "Law 31814 regulation - first mandatory phase (health, education, justice, security, finance)",
+    "lawKey": "pe.law31814.phase1",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-09-29",
+    "jurisdiction": "US",
+    "law": "Executive order: Super Intelligence (SI) terminology for executive-branch documents; no change to statutes or regulations",
+    "lawKey": "us.superIntelligenceOrder",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-10-01",
+    "jurisdiction": "US-CT",
+    "law": "Public Act 26-15 (CART Act) phase 1 - AEDT framework, provenance",
+    "lawKey": "usCt.pa2615.phase1",
+    "status": "in-force"
+  },
+  {
+    "date": "2026-11-01",
+    "jurisdiction": "BR",
+    "law": "ECA Digital (Lei 15.211/2025) sanctions begin; formal enforcement 2027-01",
+    "lawKey": "br.ecaDigital",
+    "status": "upcoming"
+  },
+  {
+    "date": "2026-11-01",
+    "jurisdiction": "EG",
+    "law": "PDPL full enforcement",
+    "lawKey": "eg.pdpl",
+    "status": "upcoming"
+  },
+  {
+    "date": "2026-11-28",
+    "jurisdiction": "US",
+    "law": "Proposed legislative language on a federal Super Intelligence definition due to the President (60 days from the Sep 29 order)",
+    "lawKey": "us.superIntelligenceOrder.legislativeLanguage",
+    "status": "upcoming"
+  },
+  {
+    "date": "2026-12-02",
+    "jurisdiction": "EU",
+    "law": "AI Act - Art. 50(2) machine-readable marking grace period ends; new Art. 5 prohibition fully applies",
+    "lawKey": "eu.aiAct.marking",
+    "status": "upcoming"
+  },
+  {
+    "date": "2026-12-10",
+    "jurisdiction": "AU",
+    "law": "Privacy Act ADM transparency obligations (APP 1.7-1.9)",
+    "lawKey": "au.privacyActAdm",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-01",
+    "jurisdiction": "US-CA",
+    "law": "CCPA ADMT regulations - notice, opt-out, access",
+    "lawKey": "usCa.ccpaAdmt",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-01",
+    "jurisdiction": "US-CA",
+    "law": "SB 947 No Robo Bosses + SB 951 + Sep 2026 signings",
+    "lawKey": "usCa.sb947",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-01",
+    "jurisdiction": "US-CO",
+    "law": "SB 26-189 ADMT notice regime (replaces SB 24-205; enforcement paused by xAI v. Colorado)",
+    "lawKey": "usCo.sb26189",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-01",
+    "jurisdiction": "US-CT",
+    "law": "Public Act 26-15 phase 2 - AI companion rules",
+    "lawKey": "usCt.pa2615.phase2",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-01",
+    "jurisdiction": "US-IL",
+    "law": "SB 315 AI Safety Measures Act - frontier developers, annual third-party audits",
+    "lawKey": "usIl.sb315",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-01",
+    "jurisdiction": "US-NY",
+    "law": "RAISE Act - frontier model safety frameworks, 72-hour incident reporting",
+    "lawKey": "usNy.raise",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-01",
+    "jurisdiction": "US-WA",
+    "law": "HB 2225 companion chatbots",
+    "lawKey": "usWa.hb2225",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-12",
+    "jurisdiction": "EU",
+    "law": "Data Act - cloud switching charge ban fully effective",
+    "lawKey": "eu.dataAct.switching",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-17",
+    "jurisdiction": "JP",
+    "law": "APPI amendment (Act No. 56 of 2026) - criminal penalties effective",
+    "lawKey": "jp.appi2026.penalties",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-01-22",
+    "jurisdiction": "KR",
+    "law": "AI Basic Act - administrative fine grace period expected to end",
+    "lawKey": "kr.aiBasicAct.fines",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-05-13",
+    "jurisdiction": "IN",
+    "law": "DPDP Rules 2025 - core obligations commence",
+    "lawKey": "in.dpdpRules.core",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-08-02",
+    "jurisdiction": "EU",
+    "law": "AI Act - legacy GPAI models must comply; sandboxes operational",
+    "lawKey": "eu.aiAct.legacyGpai",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-10-01",
+    "jurisdiction": "US-CT",
+    "law": "Public Act 26-15 phase 3 - employer AEDT notices",
+    "lawKey": "usCt.pa2615.phase3",
+    "status": "upcoming"
+  },
+  {
+    "date": "2027-12-02",
+    "jurisdiction": "EU",
+    "law": "AI Act - Full applicability for Annex III high-risk systems (conformity, risk management, registration, human oversight)",
+    "lawKey": "eu.aiAct.full",
+    "status": "upcoming"
+  },
+  {
+    "date": "2028-04-01",
+    "jurisdiction": "US-CA",
+    "law": "CCPA - first risk-assessment submissions due",
+    "lawKey": "usCa.ccpaRiskAssessments",
+    "status": "upcoming"
+  },
+  {
+    "date": "2028-08-02",
+    "jurisdiction": "EU",
+    "law": "AI Act - High-risk AI in regulated products (Annex I)",
+    "lawKey": "eu.aiAct.highRiskProducts",
+    "status": "upcoming"
+  }
 ]
