@@ -47,6 +47,13 @@ if (!fs.existsSync(from)) {
   process.exit(2);
 }
 
+// Text files are compared and written with LF line endings, so a Windows
+// checkout (core.autocrlf=true gives CRLF) does not report every file as changed.
+const TEXT_RE = /\.(md|html|json)$/i;
+function normalize(name, buf) {
+  return TEXT_RE.test(name) ? Buffer.from(buf.toString('utf8').replace(/\r\n/g, '\n'), 'utf8') : buf;
+}
+
 let changed = 0;
 let same = 0;
 for (const [srcSub, dstDir, pattern, rename] of PAIRS) {
@@ -56,8 +63,8 @@ for (const [srcSub, dstDir, pattern, rename] of PAIRS) {
     if (!pattern.test(name)) continue;
     const src = path.join(srcDir, name);
     const dst = path.join(dstDir, rename || name);
-    const srcBuf = fs.readFileSync(src);
-    const dstBuf = fs.existsSync(dst) ? fs.readFileSync(dst) : null;
+    const srcBuf = normalize(name, fs.readFileSync(src));
+    const dstBuf = fs.existsSync(dst) ? normalize(name, fs.readFileSync(dst)) : null;
     if (dstBuf && srcBuf.equals(dstBuf)) { same++; continue; }
     changed++;
     if (checkOnly) {
@@ -76,8 +83,8 @@ for (const [srcDir, dstDir, pattern] of LOCAL_PAIRS) {
     if (!pattern.test(name)) continue;
     const src = path.join(srcDir, name);
     const dst = path.join(dstDir, name);
-    const srcBuf = fs.readFileSync(src);
-    const dstBuf = fs.existsSync(dst) ? fs.readFileSync(dst) : null;
+    const srcBuf = normalize(name, fs.readFileSync(src));
+    const dstBuf = fs.existsSync(dst) ? normalize(name, fs.readFileSync(dst)) : null;
     if (dstBuf && srcBuf.equals(dstBuf)) { same++; continue; }
     changed++;
     if (checkOnly) {
