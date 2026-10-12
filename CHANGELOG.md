@@ -15,7 +15,9 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
-Extractor fixes from the post-commit SAST audit of 2026-10-11 (`audits/sast-dast-scan.md`). **Addendum guidance:** evidence produced by `git-evidence.js` or `package-evidence.js` with 1.4.0 understated signed commits (always 0), had an empty `topAiModifiedFiles`, and on Windows omitted npm audit results without saying so. Re-run the extractors and file an addendum for any artifact that used those fields. Re-run also if you scanned an untrusted Python repository with 1.4.0.
+## [1.5.0] - 2026-10-12
+
+Security and supply-chain release. No regulatory content changed; the world map changed only in how it loads its scripts (SRI) and builds its tooltip. Extractor fixes from the post-commit SAST audit of 2026-10-11 (`audits/sast-dast-scan.md`). **Addendum guidance:** evidence produced by `git-evidence.js` or `package-evidence.js` with 1.4.0 understated signed commits (always 0), had an empty `topAiModifiedFiles`, and on Windows omitted npm audit results without saying so. Re-run the extractors and file an addendum for any artifact that used those fields. Re-run also if you scanned an untrusted Python repository with 1.4.0.
 
 ### Security `[defect]`
 - `package-evidence.js` ran `pip-audit -r <repo>/requirements.txt`, which installs the listed requirements; a local path or VCS entry in a scanned repository ran its `setup.py` on the operator's machine (CWE-829, HIGH-01). pip-audit now runs with `--disable-pip --no-deps`: it reads pinned versions only and installs nothing. Unpinned entries are not audited.
