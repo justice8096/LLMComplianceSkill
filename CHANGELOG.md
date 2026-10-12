@@ -15,6 +15,10 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-12
+
+Directory-readiness release. No regulatory content changed. **The plugin is renamed to `ai-law-evidence`**: reinstall it as `ai-law-evidence@llm-compliance-skill`; commands now start with `/ai-law-evidence:`. **Addendum guidance:** evidence from 1.5.0 is unaffected; the extractors produce the same output with a narrower child-process environment.
+
 ### Changed `[structural]` (breaking for existing installs)
 - The plugin is renamed from `ai-compliance` to `ai-law-evidence`: the Directory held the old name as too close to another listed plugin (NAME_CONFUSABLE). Install it again as `ai-law-evidence@llm-compliance-skill`; commands now start with `/ai-law-evidence:`. The `ai-compliance` skill keeps its name.
 

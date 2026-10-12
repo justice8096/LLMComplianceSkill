@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:a9ddc2b7-b253-548b-8533-b0cc29878a5a",
+  "serialNumber": "urn:uuid:16161ec6-4b59-5801-abd8-9082e5f0faea",
   "version": 1,
   "metadata": {
     "tools": {
@@ -15,9 +15,9 @@
     },
     "component": {
       "type": "application",
-      "bom-ref": "pkg:npm/llm-compliance-skill@1.5.0",
+      "bom-ref": "pkg:npm/llm-compliance-skill@1.6.0",
       "name": "llm-compliance-skill",
-      "version": "1.5.0",
+      "version": "1.6.0",
       "description": "AI/LLM compliance evidence collection toolkit",
       "licenses": [
         {
@@ -26,7 +26,7 @@
           }
         }
       ],
-      "purl": "pkg:npm/llm-compliance-skill@1.5.0",
+      "purl": "pkg:npm/llm-compliance-skill@1.6.0",
       "externalReferences": [
         {
           "type": "vcs",
@@ -991,7 +991,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:npm/llm-compliance-skill@1.5.0",
+      "ref": "pkg:npm/llm-compliance-skill@1.6.0",
       "dependsOn": [
         "pkg:npm/d3@7.9.0",
         "pkg:npm/topojson@3.0.2",
