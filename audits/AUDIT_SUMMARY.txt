@@ -1,16 +1,16 @@
 POST-COMMIT AUDIT SUMMARY
 ==========================
 Date:   2026-10-11
-Commit: 3650b33 (branch fix/extractor-hostile-repo-and-evidence)
-        = main @ 304715e + fix commits 9cd7272, 3650b33
+Commit: 2acfc1e (branch fix/extractor-hostile-repo-and-evidence)
+        = main @ 304715e + fix commits 9cd7272, 3650b33, 2acfc1e
 Branch: fix/extractor-hostile-repo-and-evidence
 Project: LLMComplianceSkill v1.4.0 (+ Unreleased fixes)
 Audit Type: POST-FIX re-audit. Pre-fix audit at 304715e was FAIL (HIGH-01 open)
 Auditor: Post-Commit Audit Skill (Claude Opus 5.5); fix commit 9cd7272 independently re-audited
 Baseline for deltas: 1586ec7 (2026-03-29), the last full set of the 5 reports
 
-Deterministic checks @ 3650b33:
-  npm test 166/166 pass (with pip-audit 2.10.1 on PATH; 165 + 1 skip without it)
+Deterministic checks @ 2acfc1e:
+  npm test 167/167 pass (with pip-audit 2.10.1 on PATH; 166 + 1 skip without it)
   npm audit root 0, tooling/ 0 | npm run validate OK | npm audit signatures 6/6 (at 304715e; no dependency change since)
 
 1. SAST/DAST Scan:        PASS -- 12 findings (0 critical, 0 high, 1 medium, 3 low, 8 info)
@@ -29,6 +29,7 @@ Fixed this cycle (each with a regression test that checks the attack is blocked 
   - INFO-06/07/08      AI-file list empty, signed count 0, npm audit skipped on Windows
   - LOW-03    CWE-345  repo vouching for its own signatures (introduced by the INFO-07 fix; closed in 3650b33)
   - MEDIUM-02 CWE-73   (part) trust-file and mailmap UNC paths
+  - (review)  fail-open revocation: operator revocation list in system/included config was dropped (fixed in 2acfc1e)
 
 Action Required: NO for merge. YES before the next release / Directory submission:
   - MEDIUM-02 remainder: repo include.path / includeIf can still name a UNC path (Windows NTLM leak)

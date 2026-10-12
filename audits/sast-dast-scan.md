@@ -10,7 +10,7 @@
 
 ---
 
-> ### Addendum: follow-up commit 3650b33 (self-verified, not independently re-audited)
+> ### Addendum: follow-up commits 3650b33 and 2acfc1e (self-verified by failing-first tests, not independently re-audited)
 >
 > After this re-audit, commit 3650b33 addressed the issues the 9cd7272 fix itself introduced:
 >
@@ -26,9 +26,14 @@
 >   it. **`include.path` / `includeIf` remain open**: git cannot turn off config includes
 >   with `-c`. A full fix means running git with a controlled `GIT_CONFIG_*` environment
 >   or rejecting repos whose `.git/config` contains `[include`.
-> - Suite at 3650b33: **166/166 pass** with pip-audit on PATH.
+> - **Fail-open revocation (MEDIUM, found by the automated commit review of 3650b33) → FIXED in 2acfc1e.**
+>   The pinning read only `--global` without `--includes`, so an operator's `gpg.ssh.revocationFile`
+>   kept in system config or in an included file was replaced by an empty value, and revoked keys
+>   counted as signed. It now reads `--global` then `--system`, both with `--includes`. Test
+>   `a key revoked in an operator-included config does not count as signed` went RED 1 → GREEN 0.
+> - Suite at 2acfc1e: **167/167 pass** with pip-audit on PATH.
 >
-> Counts at 3650b33: Critical 0, High 0, Medium 1, Low 3, Info 8. **Verdict: PASS.**
+> Counts at 2acfc1e: Critical 0, High 0, Medium 1, Low 3, Info 8. **Verdict: PASS.**
 
 ---
 
