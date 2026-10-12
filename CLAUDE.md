@@ -56,6 +56,7 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - `tools/extractors/ci-evidence.js` — CI/CD pipeline analysis (GitHub Actions/GitLab CI/Azure DevOps/etc.)
 - `tools/extract-evidence.js` — Runner that orchestrates all 3 extractors and merges into config
 - All extractors are zero-dependency Node.js scripts using `execFileSync` for git CLI
+- `tools/extractors/resolve-binary.js` — shared absolute-path lookup for git, npm and pip-audit (PATH only, never cwd)
 
 ### Autofill
 - `tools/autofill.js` — Auto-fills templates from `compliance-config.json`
