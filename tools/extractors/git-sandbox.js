@@ -51,25 +51,54 @@ function isNetworkPath(p, base) {
  * itself, so the network target is never opened. Fails closed on deep
  * chains.
  */
-function linksToNetwork(p, depth) {
-  depth = depth || 0;
-  if (depth > 8) return true;
-  var resolved = path.resolve(p);
-  if (isNetworkPath(resolved)) return true;
-  var root = path.parse(resolved).root;
-  var parts = resolved.slice(root.length).split(path.sep).filter(Boolean);
-  var cur = root;
-  for (var i = 0; i < parts.length; i++) {
-    cur = path.join(cur, parts[i]);
-    var st = lstatOrNull(cur);
-    if (!st) return false; // nothing further exists to follow
-    if (st.isSymbolicLink()) {
-      var target = fs.readlinkSync(cur);
-      if (isNetworkPath(target, path.dirname(cur))) return true;
-      if (linksToNetwork(path.resolve(path.dirname(cur), target), depth + 1)) return true;
+function linksToNetwork(p) {
+  if (isNetworkPath(p)) return true;
+  // Emulate realpath one component at a time. `resolved` never contains a
+  // link, so lstat(resolved + component) follows nothing except, possibly,
+  // that last component, which lstat does not follow. ".." is applied to the
+  // resolved (physical) path, as Windows does.
+  var start = path.isAbsolute(p) ? p : path.resolve(p);
+  var resolved = path.parse(start).root;
+  var pending = splitParts(start.slice(resolved.length));
+  var hops = 0;
+  while (pending.length) {
+    var part = pending.shift();
+    if (part === '.') continue;
+    if (part === '..') { resolved = path.dirname(resolved); continue; }
+    var next = path.join(resolved, part);
+    var st = lstatOrNull(next);
+    // Missing: nothing further exists, and nothing on the way was a link.
+    if (!st) return false;
+    if (!st.isSymbolicLink()) { resolved = next; continue; }
+    if (++hops > 16) return true;
+    var target = fs.readlinkSync(next);
+    if (!isPlainLocalTarget(target)) return true;
+    if (path.win32.isAbsolute(target) || path.isAbsolute(target)) {
+      resolved = path.parse(target).root;
+      pending = splitParts(target.slice(resolved.length)).concat(pending);
+    } else {
+      pending = splitParts(target).concat(pending);
     }
   }
   return false;
+}
+
+function splitParts(s) {
+  return s.split(/[\\/]+/).filter(Boolean);
+}
+
+/**
+ * A link target is followed only when it is a relative path or a
+ * drive-letter path (C:\...). Anything else is treated as possibly remote:
+ * UNC (\\host, //host), NT paths (\??\, \Device\, GLOBALROOT), and
+ * root-relative paths (\x). On other platforms any target is local.
+ */
+function isPlainLocalTarget(target) {
+  if (process.platform !== 'win32') return true;
+  if (/^[A-Za-z]:[\\/]/.test(target)) return true;
+  if (/^[\\/]/.test(target)) return false;
+  if (/^[A-Za-z]:/.test(target)) return false; // drive-relative (C:x)
+  return true;
 }
 
 function refuse(reason) {
