@@ -94,7 +94,41 @@ function toolingComponents(lockPath) {
   return Object.keys(seen).map(function(k) { return seen[k]; });
 }
 
-function runtimeComponents() {
+var WORLD_MAP_COPIES = [
+  'AI-Regulations-World-Map.html',
+  'docs/world-map.html',
+  'skills/ai-compliance/references/regulations/AI-Regulations-World-Map.html',
+];
+
+var SRI_ALG = { sha256: 'SHA-256', sha384: 'SHA-384', sha512: 'SHA-512' };
+
+/**
+ * The SRI hash every world-map copy pins for url, as a CycloneDX hash.
+ * Throws when a copy does not load url, has no integrity value next to it,
+ * or the copies disagree. That makes `npm run sbom:check` fail in CI when
+ * the pinned assets and the SBOM drift apart.
+ */
+function pinnedHash(root, url) {
+  var found = null;
+  WORLD_MAP_COPIES.forEach(function(rel) {
+    var html = fs.readFileSync(path.join(root, rel), 'utf8');
+    var at = html.indexOf(url);
+    if (at === -1) throw new Error(rel + ' does not load ' + url);
+    var near = html.slice(at, at + 400);
+    var m = near.match(/integrity\s*[=:]\s*["'](sha256|sha384|sha512)-([A-Za-z0-9+/=]+)["']/);
+    if (!m) throw new Error(rel + ' loads ' + url + ' without an integrity hash');
+    var sri = m[1] + '-' + m[2];
+    if (found && found !== sri) throw new Error('world map copies pin different integrity hashes for ' + url);
+    found = sri;
+  });
+  var dash = found.indexOf('-');
+  return {
+    alg: SRI_ALG[found.slice(0, dash)],
+    content: Buffer.from(found.slice(dash + 1), 'base64').toString('hex'),
+  };
+}
+
+function runtimeComponents(root) {
   return RUNTIME_CDN.map(function(c) {
     var ref = purl(c.name, c.version);
     return {
@@ -103,6 +137,7 @@ function runtimeComponents() {
       name: c.name,
       version: c.version,
       scope: 'required',
+      hashes: [pinnedHash(root, c.url)],
       licenses: licenses(c.license),
       purl: ref,
       externalReferences: [{ type: 'distribution', url: c.url, comment: 'Loaded from CDN by the world map at runtime' }],
@@ -123,7 +158,7 @@ function generate(opts) {
   var pkg = readJson(path.join(root, 'package.json'));
   var rootRef = purl(pkg.name, pkg.version);
   var components = toolingComponents(path.join(root, 'tooling', 'package-lock.json'))
-    .concat(runtimeComponents())
+    .concat(runtimeComponents(root))
     .sort(function(a, b) { return a['bom-ref'] < b['bom-ref'] ? -1 : a['bom-ref'] > b['bom-ref'] ? 1 : 0; });
 
   var metadata = compact({

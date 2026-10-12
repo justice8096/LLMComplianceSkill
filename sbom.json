@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:331a3876-e4d8-53c6-84c4-fca801299b86",
+  "serialNumber": "urn:uuid:0353e896-623a-51db-b688-5dd20bebc27c",
   "version": 1,
   "metadata": {
     "tools": {
@@ -775,6 +775,12 @@
       "name": "d3",
       "version": "7.9.0",
       "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "bdce7caafbc176b0d1e1eb5bc4c7654ede06050935aa3bf23914769ebb0fb053f2aecfbfbb9737fb50adeaea4e81d668225edeaba9376b550f0d2340422ff7d8"
+        }
+      ],
       "licenses": [
         {
           "license": {
@@ -851,6 +857,12 @@
       "name": "topojson",
       "version": "3.0.2",
       "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e14288fd72a6df1aef27aa594b9a1346f210188cd91685d1ef5ad105bd72d8df8f6f002c29ae6d3e5d89e96bdb12fc0ddd3c500a6f21333b25fe93bef3689196"
+        }
+      ],
       "licenses": [
         {
           "license": {
@@ -954,6 +966,12 @@
       "name": "world-atlas",
       "version": "2.0.2",
       "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-384",
+          "content": "c8e089fbc4a1066f140eab4056d02fc530c37f8817a3979dc65fd81b4166542e4e4e6a952e5eeeb6e54604311e6561df"
+        }
+      ],
       "licenses": [
         {
           "license": {

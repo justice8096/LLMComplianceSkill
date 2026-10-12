@@ -2,7 +2,7 @@
 /**
  * Regression tests for the extractor findings left open by the post-fix
  * re-audit of 2026-10-11 (audits/sast-dast-scan.md):
- *   MEDIUM-02 repo config include / UNC paths (CWE-73)
+ *   (MEDIUM-02 git config isolation: see regression-git-sandbox-2026-10-12.test.js)
  *   LOW-02    YAML comment regex ReDoS (CWE-1333)
  *   LOW-04    pip audit reported clean while auditing nothing (CWE-754)
  *   LOW-05    scanned package.json "volta" key chose the npm version (CWE-15)
@@ -61,88 +61,6 @@ function appendRepoConfig(repo, text) {
 }
 
 var CLAUDE = '\n\nCo-Authored-By: Claude <noreply@anthropic.com>';
-
-// ---------------------------------------------------------------------------
-// MEDIUM-02: the repository's own git config is checked before any git call
-// ---------------------------------------------------------------------------
-
-test('git-config-guard: a repo config with an include section is refused', { skip: !haveTool('git') }, function () {
-  var guard = require(path.join(EXTRACTORS_DIR, 'git-config-guard.js'));
-  var repo = makeRepo('xtr-include-');
-  try {
-    appendRepoConfig(repo, '[include]\n\tpath = //127.0.0.1/share/evil.gitconfig\n');
-    var res = guard.checkRepoGitConfig(repo);
-    assert.equal(res.ok, false);
-    assert.match(res.reason, /include/i);
-  } finally { rmrf(repo); }
-});
-
-test('git-config-guard: includeIf (any case) is refused', { skip: !haveTool('git') }, function () {
-  var guard = require(path.join(EXTRACTORS_DIR, 'git-config-guard.js'));
-  var repo = makeRepo('xtr-includeif-');
-  try {
-    appendRepoConfig(repo, '[IncludeIf "gitdir:/x/"]\n\tpath = local.cfg\n');
-    assert.equal(guard.checkRepoGitConfig(repo).ok, false);
-  } finally { rmrf(repo); }
-});
-
-test('git-config-guard: a UNC path in any repo config value is refused', { skip: !haveTool('git') }, function () {
-  var guard = require(path.join(EXTRACTORS_DIR, 'git-config-guard.js'));
-  var repo = makeRepo('xtr-unc-');
-  try {
-    appendRepoConfig(repo, '[core]\n\tattributesFile = "\\\\\\\\attacker\\\\share\\\\attrs"\n');
-    var res = guard.checkRepoGitConfig(repo);
-    assert.equal(res.ok, false);
-    assert.match(res.reason, /UNC|network/i);
-  } finally { rmrf(repo); }
-});
-
-test('git-config-guard: a .git file pointing at a UNC gitdir is refused without reading it', function () {
-  var guard = require(path.join(EXTRACTORS_DIR, 'git-config-guard.js'));
-  var dir = fs.mkdtempSync(path.join(os.tmpdir(), 'xtr-gitfile-'));
-  try {
-    fs.writeFileSync(path.join(dir, '.git'), 'gitdir: //attacker/share/repo.git\n');
-    var res = guard.checkRepoGitConfig(dir);
-    assert.equal(res.ok, false);
-    assert.match(res.reason, /UNC|network/i);
-  } finally { rmrf(dir); }
-});
-
-test('git-config-guard: an ordinary repo config passes', { skip: !haveTool('git') }, function () {
-  var guard = require(path.join(EXTRACTORS_DIR, 'git-config-guard.js'));
-  var repo = makeRepo('xtr-plain-');
-  try {
-    assert.deepEqual(guard.checkRepoGitConfig(repo), { ok: true, reason: null });
-  } finally { rmrf(repo); }
-});
-
-test('git-evidence: refuses a repo whose config has an include, before running git', { skip: !haveTool('git') }, function () {
-  var repo = makeRepo('xtr-refuse-');
-  try {
-    commitFile(repo, 'a.txt', 'init');
-    appendRepoConfig(repo, '[include]\n\tpath = //127.0.0.1/share/evil.gitconfig\n');
-    var r = runExtractor(GIT_EVIDENCE, repo);
-    assert.notEqual(r.status, 0, 'extractor should refuse the repository');
-    assert.match(r.stderr, /include/i);
-  } finally { rmrf(repo); }
-});
-
-test('package-evidence: skips git for a repo whose config has an include', { skip: !haveTool('git') }, function () {
-  var repo = makeRepo('xtr-pkg-refuse-');
-  try {
-    fs.writeFileSync(path.join(repo, 'package.json'), '{"name":"x","version":"1.0.0","dependencies":{}}');
-    fs.writeFileSync(path.join(repo, 'package-lock.json'), '{"name":"x","version":"1.0.0","lockfileVersion":3,"packages":{"":{"name":"x","version":"1.0.0"}}}');
-    commitFile(repo, 'a.txt', 'init');
-    git(repo, ['add', 'package-lock.json']);
-    git(repo, ['commit', '-q', '-m', 'lock']);
-    appendRepoConfig(repo, '[include]\n\tpath = //127.0.0.1/share/evil.gitconfig\n');
-    var r = runExtractor(PACKAGE_EVIDENCE, repo);
-    assert.equal(r.status, 0, r.stderr);
-    var out = JSON.parse(r.stdout);
-    assert.equal(out.sbom.lockFileCommitted, null, 'git must not run, so tracking status is unknown');
-    assert.match(r.stderr, /include/i);
-  } finally { rmrf(repo); }
-});
 
 // ---------------------------------------------------------------------------
 // LOW-04 / INFO-11: requirements are read statically; gaps are recorded
@@ -301,3 +219,65 @@ test('resolve-binary: a name that already has a PATHEXT extension resolves on Wi
     var found = resolveBinary('git.exe');
     assert.ok(found && path.isAbsolute(found) && /git\.exe$/i.test(found), String(found));
   });
+
+// ---------------------------------------------------------------------------
+// Round-2 re-audit: LOW-04 depth, LOW-06 pyproject/Pipfile, INFO-12 hashes,
+// credentials in gap entries
+// ---------------------------------------------------------------------------
+
+test('package-evidence: includes nested past the depth limit are recorded as a gap', function () {
+  var pe = require(PACKAGE_EVIDENCE);
+  var repo = fs.mkdtempSync(path.join(os.tmpdir(), 'xtr-deep-'));
+  try {
+    fs.writeFileSync(path.join(repo, 'requirements.txt'), '-r r1.txt\n');
+    for (var i = 1; i < 8; i++) fs.writeFileSync(path.join(repo, 'r' + i + '.txt'), '-r r' + (i + 1) + '.txt\n');
+    fs.writeFileSync(path.join(repo, 'r8.txt'), 'requests==2.25.0\n');
+    var res = pe.collectPinnedRequirements(repo);
+    assert.deepEqual(res.pinned, []);
+    assert.ok(res.gaps.some(function (g) { return g.reason === 'include nesting too deep'; }), JSON.stringify(res.gaps));
+  } finally { rmrf(repo); }
+});
+
+test('package-evidence: pyproject.toml pins are audited and its ranges recorded even with requirements.txt', function () {
+  var pe = require(PACKAGE_EVIDENCE);
+  var repo = fs.mkdtempSync(path.join(os.tmpdir(), 'xtr-pyproj-req-'));
+  try {
+    fs.writeFileSync(path.join(repo, 'requirements.txt'), 'requests==2.25.0\n');
+    fs.writeFileSync(path.join(repo, 'pyproject.toml'), '[project]\nname = "x"\ndependencies = ["urllib3==1.26.0", "click>=8"]\n');
+    fs.writeFileSync(path.join(repo, 'Pipfile'), '[packages]\nflask = "*"\n');
+    var res = pe.collectPinnedRequirements(repo);
+    assert.deepEqual(res.pinned.sort(), ['requests==2.25.0', 'urllib3==1.26.0']);
+    assert.ok(res.gaps.some(function (g) { return g.file === 'pyproject.toml' && g.reason === 'not pinned'; }), JSON.stringify(res.gaps));
+    assert.ok(res.gaps.some(function (g) { return g.file === 'Pipfile' && g.reason === 'Pipfile is not audited'; }), JSON.stringify(res.gaps));
+  } finally { rmrf(repo); }
+});
+
+test('package-evidence: hash-pinned requirements (pip-compile --generate-hashes) are audited', function () {
+  var pe = require(PACKAGE_EVIDENCE);
+  var repo = fs.mkdtempSync(path.join(os.tmpdir(), 'xtr-hashes-'));
+  try {
+    fs.writeFileSync(path.join(repo, 'requirements.txt'), [
+      'requests==2.25.0 \\',
+      '    --hash=sha256:aaaa \\',
+      '    --hash=sha256:bbbb',
+      'idna==2.10 --hash=sha256:cccc',
+      ''
+    ].join('\n'));
+    var res = pe.collectPinnedRequirements(repo);
+    assert.deepEqual(res.pinned.sort(), ['idna==2.10', 'requests==2.25.0']);
+    assert.deepEqual(res.gaps, []);
+  } finally { rmrf(repo); }
+});
+
+test('package-evidence: credentials in requirement URLs never reach the evidence', function () {
+  var pe = require(PACKAGE_EVIDENCE);
+  var repo = fs.mkdtempSync(path.join(os.tmpdir(), 'xtr-creds-'));
+  try {
+    fs.writeFileSync(path.join(repo, 'requirements.txt'),
+      'git+https://alice:s3cr3t-token@git.example.invalid/x.git#egg=x\npkg @ https://tok3n@files.example.invalid/pkg.whl\n');
+    var res = pe.collectPinnedRequirements(repo);
+    var text = JSON.stringify(res.gaps);
+    assert.equal(res.gaps.length, 2);
+    assert.ok(text.indexOf('s3cr3t') === -1 && text.indexOf('tok3n') === -1 && text.indexOf('alice') === -1, text);
+  } finally { rmrf(repo); }
+});
