@@ -141,6 +141,15 @@ test('SC-06: sync-kb starts git by absolute path with an argv array, no shell', 
 
 var lint = read('.github/workflows/lint.yml');
 
+// Directory UNREAD_ASSET_REFERENCED: a path glob near node --check that also
+// matched docs/poster.png held the plugin for review. The syntax check lists
+// tracked .js files only and names no folder.
+test('CI syntax check names only .js files, no folder globs', function() {
+  assert.match(lint, /git ls-files -- '\*\.js'/);
+  assert.doesNotMatch(lint, /docs\//);
+  assert.doesNotMatch(lint, /\.(png|jpe?g|gif|webp|ico|pdf|ttf|otf|woff2?)\b/i);
+});
+
 test('SC-09: CI runs npm test and the SBOM check', function() {
   assert.match(lint, /run:\s*npm test\b/);
   assert.match(lint, /run:\s*npm run sbom:check\b/);

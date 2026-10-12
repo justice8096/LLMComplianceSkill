@@ -24,7 +24,7 @@ jobs:
 
       - name: Syntax-check all JavaScript files
         run: |
-          find . -name "*.js" -not -path "./.git/*" -not -path "./docs/*" | sort | while read -r f; do
+          git ls-files -- '*.js' | while read -r f; do
             echo "Checking: $f"
             node --check "$f" || exit 1
           done
