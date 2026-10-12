@@ -39,7 +39,7 @@ const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
 const { resolveBinary } = require('./resolve-binary');
-const { prepareGitSandbox, isNetworkPath } = require('./git-sandbox');
+const { prepareGitSandbox, isNetworkPath, linksToNetwork } = require('./git-sandbox');
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -1018,9 +1018,9 @@ function parsePyprojectDependencies(text) {
  */
 function isRepoFile(repoPath, filePath) {
   try {
-    // Resolving a symlink opens its target; refuse network targets first.
-    var lst = fs.lstatSync(filePath);
-    if (lst.isSymbolicLink() && isNetworkPath(fs.readlinkSync(filePath), path.dirname(filePath))) return false;
+    // Resolving a path opens every link on it; refuse network targets at
+    // any component (including chains of links) before realpath.
+    if (linksToNetwork(filePath)) return false;
     var realRepo = fs.realpathSync(repoPath) + path.sep;
     var realFile = fs.realpathSync(filePath);
     return realFile.indexOf(realRepo) === 0 && fs.statSync(realFile).isFile();
@@ -1077,12 +1077,12 @@ function collectPinnedRequirements(repoPath) {
   function classify(file, lineNo, line) {
     var m;
     if (line.indexOf('://') !== -1 || / @ /.test(line) || /^[./\\]/.test(line) || /^[A-Za-z]:[\\/]/.test(line)) {
-      gap(file, lineNo, 'path or URL', redactUrl(line.slice(0, 100)));
+      gap(file, lineNo, 'path or URL', redactUrl(line).slice(0, 100));
     } else if ((m = line.match(PINNED_REQ_RE))) {
       addPin(m[1].replace(/\s+/g, '') + '==' + m[2]);
       return true;
     } else {
-      gap(file, lineNo, 'not pinned', redactUrl(line.slice(0, 100)));
+      gap(file, lineNo, 'not pinned', redactUrl(line).slice(0, 100));
     }
     return false;
   }
@@ -1171,9 +1171,13 @@ function collectPinnedRequirements(repoPath) {
   return { pinned: pinned, gaps: gaps };
 }
 
-/** Replace URL credentials (scheme://user:pass@host) with ***. */
+/**
+ * Replace URL credentials (scheme://user:pass@host) with ***. Matches up to
+ * the last '@' before the host, so a password containing '@' is covered.
+ * Callers redact the whole line before truncating it.
+ */
 function redactUrl(text) {
-  return text.replace(/\/\/[^/@\s]*@/g, '//***@');
+  return text.replace(/\/\/[^/\s]*@/g, '//***@');
 }
 
 function isSymlink(p) {
