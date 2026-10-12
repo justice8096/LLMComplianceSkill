@@ -201,3 +201,41 @@ test('README AI disclosure is current and points at the measurement', function()
   assert.match(sec, /Co-Authored-By/);
   assert.match(sec, /\b\d{1,3}% of commits\b/);
 });
+
+// SC-16: the SBOM's CDN components take their hashes from the world map
+// itself, so the SBOM and the pinned assets cannot drift apart.
+var MAP_COPIES = [
+  'AI-Regulations-World-Map.html',
+  'docs/world-map.html',
+  'skills/ai-compliance/references/regulations/AI-Regulations-World-Map.html'
+];
+
+test('generate-sbom: CDN components carry the hashes the world map pins', function () {
+  var gen = require(path.join(__dirname, '..', 'tools', 'generate-sbom.js'));
+  var sbom = gen.generate();
+  var d3 = sbom.components.find(function (c) { return c.name === 'd3'; });
+  var expected = Buffer.from('vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A==', 'base64').toString('hex');
+  assert.deepEqual(d3.hashes, [{ alg: 'SHA-512', content: expected }]);
+  var atlas = sbom.components.find(function (c) { return c.name === 'world-atlas'; });
+  assert.equal(atlas.hashes[0].alg, 'SHA-384');
+});
+
+test('generate-sbom: fails when a world map copy does not pin a CDN asset', function () {
+  var gen = require(path.join(__dirname, '..', 'tools', 'generate-sbom.js'));
+  var repoRoot = path.join(__dirname, '..');
+  var tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sbom-sri-'));
+  try {
+    fs.copyFileSync(path.join(repoRoot, 'package.json'), path.join(tmp, 'package.json'));
+    fs.mkdirSync(path.join(tmp, 'tooling'));
+    fs.copyFileSync(path.join(repoRoot, 'tooling', 'package-lock.json'), path.join(tmp, 'tooling', 'package-lock.json'));
+    MAP_COPIES.forEach(function (rel, i) {
+      var html = fs.readFileSync(path.join(repoRoot, rel), 'utf8');
+      if (i === 1) html = html.replace(/ integrity="sha512-[^"]+"/, '');
+      fs.mkdirSync(path.dirname(path.join(tmp, rel)), { recursive: true });
+      fs.writeFileSync(path.join(tmp, rel), html);
+    });
+    assert.throws(function () { gen.generate({ root: tmp }); }, /integrity/i);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});

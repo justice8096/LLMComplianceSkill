@@ -39,7 +39,7 @@ const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
 const { resolveBinary } = require('./resolve-binary');
-const { checkRepoGitConfig } = require('./git-config-guard');
+const { prepareGitSandbox, isNetworkPath } = require('./git-sandbox');
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -226,10 +226,12 @@ function resolveNpm() {
 }
 
 /**
- * Hardened git runner: argv array, no shell, and overrides that stop a
- * repository-local .git/config from making git execute programs.
+ * Hardened git runner: argv array, no shell, and the sandbox environment
+ * from prepareGitSandbox(), so git never reads the repository's own config.
+ * The -c overrides remain as a second layer.
  */
-function runGit(args, repoPath, timeoutMs) {
+function runGit(args, repoPath, timeoutMs, sandboxEnv) {
+  if (!sandboxEnv) throw new Error('runGit() requires the repository sandbox environment');
   var gitPath = resolveBinary('git');
   var hardening = [
     '-c', 'core.fsmonitor=false',
@@ -237,7 +239,7 @@ function runGit(args, repoPath, timeoutMs) {
     '-c', 'diff.external=',
     '-c', 'protocol.allow=never',
   ];
-  return runTool(gitPath, ['-C', repoPath].concat(hardening, args), repoPath, timeoutMs);
+  return runTool(gitPath, ['-C', repoPath].concat(hardening, args), repoPath, timeoutMs, sandboxEnv);
 }
 
 /**
@@ -296,11 +298,11 @@ function getFileAgeDays(filePath) {
   } catch (_e) { return null; }
 }
 
-function isGitTracked(filePath, repoPath) {
+function isGitTracked(filePath, repoPath, sandboxEnv) {
   var rel = path.relative(repoPath, filePath).replace(/\\/g, '/');
   // The path is one argv entry after "--", so a name containing spaces,
   // quotes or a leading dash is still a pathspec and never an option.
-  var result = runGit(['ls-files', '--error-unmatch', '--', rel], repoPath, 5000);
+  var result = runGit(['ls-files', '--error-unmatch', '--', rel], repoPath, 5000, sandboxEnv);
   return result.ok;
 }
 
@@ -1016,6 +1018,9 @@ function parsePyprojectDependencies(text) {
  */
 function isRepoFile(repoPath, filePath) {
   try {
+    // Resolving a symlink opens its target; refuse network targets first.
+    var lst = fs.lstatSync(filePath);
+    if (lst.isSymbolicLink() && isNetworkPath(fs.readlinkSync(filePath), path.dirname(filePath))) return false;
     var realRepo = fs.realpathSync(repoPath) + path.sep;
     var realFile = fs.realpathSync(filePath);
     return realFile.indexOf(realRepo) === 0 && fs.statSync(realFile).isFile();
@@ -1047,6 +1052,7 @@ function stripReqComment(line) {
  */
 function collectPinnedRequirements(repoPath) {
   var pinned = [];
+  var pinnedSeen = {};
   var gaps = [];
   var seen = {};
 
@@ -1060,50 +1066,120 @@ function collectPinnedRequirements(repoPath) {
     });
   }
 
+  function addPin(spec) {
+    if (!pinnedSeen[spec.toLowerCase()]) {
+      pinnedSeen[spec.toLowerCase()] = true;
+      pinned.push(spec);
+    }
+  }
+
+  // Classify one requirement string; returns true when it was pinned.
+  function classify(file, lineNo, line) {
+    var m;
+    if (line.indexOf('://') !== -1 || / @ /.test(line) || /^[./\\]/.test(line) || /^[A-Za-z]:[\\/]/.test(line)) {
+      gap(file, lineNo, 'path or URL', redactUrl(line.slice(0, 100)));
+    } else if ((m = line.match(PINNED_REQ_RE))) {
+      addPin(m[1].replace(/\s+/g, '') + '==' + m[2]);
+      return true;
+    } else {
+      gap(file, lineNo, 'not pinned', redactUrl(line.slice(0, 100)));
+    }
+    return false;
+  }
+
+  // pip joins a line ending in a backslash with the next one.
+  function logicalLines(text) {
+    var raw = text.split(/\r?\n/);
+    var out = [];
+    var buf = '';
+    var start = 0;
+    for (var i = 0; i < raw.length; i++) {
+      var piece = stripReqComment(raw[i]);
+      if (buf === '') start = i + 1;
+      var trimmed = piece.trimEnd();
+      if (trimmed.charAt(trimmed.length - 1) === '\\') {
+        buf += trimmed.slice(0, -1) + ' ';
+        continue;
+      }
+      out.push({ line: start, text: (buf + piece).trim() });
+      buf = '';
+    }
+    if (buf) out.push({ line: start, text: buf.trim() });
+    return out;
+  }
+
+  // Drop --hash=... options from a requirement line (pip-compile output).
+  function stripHashes(line) {
+    if (line.indexOf('--hash') === -1) return line;
+    var tokens = line.split(/\s+/);
+    var kept = [];
+    for (var i = 0; i < tokens.length; i++) {
+      if (tokens[i] === '--hash') { i++; continue; }
+      if (tokens[i].indexOf('--hash=') === 0) continue;
+      kept.push(tokens[i]);
+    }
+    return kept.join(' ');
+  }
+
   function readReqFile(file, fromFile, fromLine, depth) {
-    if (isUncPath(file) || !isRepoFile(repoPath, file)) {
+    if (isNetworkPath(file, repoPath) || !isRepoFile(repoPath, file)) {
       gap(fromFile || file, fromLine || 0, 'include outside repository', fromFile ? '-r' : path.basename(file));
       return;
     }
+    if (depth > 5) {
+      gap(fromFile || file, fromLine || 0, 'include nesting too deep', '-r');
+      return;
+    }
     var real = fs.realpathSync(file);
-    if (seen[real] || depth > 5) return;
+    if (seen[real]) return;
     seen[real] = true;
-    var lines = (readText(file) || '').split(/\r?\n/);
+    var lines = logicalLines(readText(file) || '');
     for (var i = 0; i < lines.length; i++) {
-      var line = stripReqComment(lines[i]).trim();
+      var line = stripHashes(lines[i].text);
+      var lineNo = lines[i].line;
       if (!line) continue;
       var m;
       if ((m = line.match(/^(?:-r|--requirement)(?:\s+|=)(.+)$/))) {
-        readReqFile(path.resolve(path.dirname(file), m[1].trim()), file, i + 1, depth + 1);
+        readReqFile(path.resolve(path.dirname(file), m[1].trim()), file, lineNo, depth + 1);
       } else if (/^(?:-c|--constraint)\b/.test(line)) {
         // Constraint files limit versions; they add no requirements.
       } else if (/^(?:-e|--editable)\b/.test(line)) {
-        gap(file, i + 1, 'path or URL', '-e');
+        gap(file, lineNo, 'path or URL', '-e');
       } else if (line.charAt(0) === '-') {
         // Options such as --index-url may carry credentials; record only the flag.
-        gap(file, i + 1, 'option', line.split(/[\s=]/)[0]);
-      } else if (line.indexOf('://') !== -1 || / @ /.test(line) || /^[./\\]/.test(line) || /^[A-Za-z]:[\\/]/.test(line)) {
-        gap(file, i + 1, 'path or URL', line.slice(0, 100));
-      } else if ((m = line.match(PINNED_REQ_RE))) {
-        pinned.push(m[1].replace(/\s+/g, '') + '==' + m[2]);
+        gap(file, lineNo, 'option', line.split(/[\s=]/)[0]);
       } else {
-        gap(file, i + 1, 'not pinned', line.slice(0, 100));
+        classify(file, lineNo, line);
       }
     }
   }
 
   var reqFile = path.join(repoPath, 'requirements.txt');
   if (fileExists(reqFile) || isSymlink(reqFile)) readReqFile(reqFile, null, 0, 0);
+
+  // PEP 621 dependencies are audited too, even when requirements.txt exists.
+  var pyproject = path.join(repoPath, 'pyproject.toml');
+  if (isRepoFile(repoPath, pyproject)) {
+    var pyText = readText(pyproject) || '';
+    var deps = parsePyprojectDependencies(pyText);
+    for (var d = 0; d < deps.length; d++) classify(pyproject, 0, deps[d]);
+    if (pyText.indexOf('[tool.poetry') !== -1) gap(pyproject, 0, 'Poetry dependencies are not audited', '[tool.poetry]');
+  }
+  if (fileExists(path.join(repoPath, 'Pipfile')) || isSymlink(path.join(repoPath, 'Pipfile'))) {
+    gap(path.join(repoPath, 'Pipfile'), 0, 'Pipfile is not audited', 'Pipfile');
+  }
   return { pinned: pinned, gaps: gaps };
+}
+
+/** Replace URL credentials (scheme://user:pass@host) with ***. */
+function redactUrl(text) {
+  return text.replace(/\/\/[^/@\s]*@/g, '//***@');
 }
 
 function isSymlink(p) {
   try { return fs.lstatSync(p).isSymbolicLink(); } catch (_e) { return false; }
 }
 
-function isUncPath(p) {
-  return /^(\\\\|\/\/)/.test(p);
-}
 
 /**
  * Audit the repository's pinned Python requirements with pip-audit.
@@ -1118,8 +1194,8 @@ function runPipAudit(repoPath) {
   if (!hasPip) return { counts: null, gaps: [] };
 
   var reqs = collectPinnedRequirements(repoPath);
-  if (!fileExists(path.join(repoPath, 'requirements.txt')) && !isSymlink(path.join(repoPath, 'requirements.txt'))) {
-    reqs.gaps.push({ ecosystem: 'pip', file: '', line: 0, reason: 'no requirements.txt; Pipfile and pyproject.toml are not audited', entry: '' });
+  if (reqs.pinned.length === 0 && reqs.gaps.length === 0) {
+    reqs.gaps.push({ ecosystem: 'pip', file: '', line: 0, reason: 'no Python dependencies found to audit', entry: '' });
   }
   if (reqs.pinned.length === 0) {
     log('  no pinned Python requirements to audit');
@@ -1333,13 +1409,17 @@ function extract(repoPath) {
   var sbomFiles = detectSbomFiles(repoPath);
   var lockFileCommitted = false;
   if (anyLockPresent && primaryLockFile) {
-    var gitGuard = checkRepoGitConfig(repoPath);
-    if (gitGuard.ok) {
-      lockFileCommitted = isGitTracked(path.join(repoPath, primaryLockFile), repoPath);
+    // git runs against a private git directory and never reads the
+    // repository's own config (CWE-73; see git-sandbox.js).
+    var sandbox = prepareGitSandbox(repoPath);
+    if (sandbox.ok) {
+      try {
+        lockFileCommitted = isGitTracked(path.join(repoPath, primaryLockFile), repoPath, sandbox.env);
+      } finally {
+        sandbox.cleanup();
+      }
     } else {
-      // git would read a repo-chosen file or network path (CWE-73), so it
-      // does not run; whether the lockfile is committed is unknown.
-      log('  Not running git: ' + gitGuard.reason);
+      log('  Not running git: ' + sandbox.reason);
       lockFileCommitted = null;
     }
   }

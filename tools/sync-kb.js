@@ -108,28 +108,37 @@ for (const [srcDir, dstDir, pattern] of LOCAL_PAIRS) {
 }
 
 // Provenance: which knowledge-base commit these files came from.
-// git is started by absolute path with an argv array and no shell, with the
-// same hardening the extractors use, because the checkout is outside this repo.
+// git is started by absolute path with an argv array and no shell, and runs
+// in the extractors' sandbox, so it never reads the checkout's own config.
 function kbCommit(dir) {
   // Loaded here, not at the top, so the copy step still works when this
   // script runs on its own (tests copy it into a bare temp folder).
-  let resolveBinary;
+  let resolveBinary, prepareGitSandbox;
   try {
     resolveBinary = require('./extractors/resolve-binary').resolveBinary;
+    prepareGitSandbox = require('./extractors/git-sandbox').prepareGitSandbox;
   } catch (_e) {
     return null;
   }
   const gitBin = resolveBinary('git');
   if (!gitBin) return null;
+  const sandbox = prepareGitSandbox(dir);
+  if (!sandbox.ok) {
+    console.error('[sync-kb] warning: not running git on ' + dir + ': ' + sandbox.reason);
+    return null;
+  }
   const nullDevice = process.platform === 'win32' ? 'NUL' : '/dev/null';
   const base = ['-c', 'core.fsmonitor=false', '-c', 'core.hooksPath=' + nullDevice, '-C', dir];
   try {
     const out = execFileSync(gitBin, base.concat(['log', '-1', '--format=%H %cs']), {
       encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 15000,
+      env: Object.assign({}, process.env, sandbox.env),
     }).trim();
     return /^[0-9a-f]{40}(?:[0-9a-f]{24})? \d{4}-\d{2}-\d{2}$/.test(out) ? out : null;
   } catch (_e) {
     return null;
+  } finally {
+    sandbox.cleanup();
   }
 }
 

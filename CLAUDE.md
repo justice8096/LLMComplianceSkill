@@ -57,7 +57,7 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 - `tools/extract-evidence.js` — Runner that orchestrates all 3 extractors and merges into config
 - All extractors are zero-dependency Node.js scripts using `execFileSync` for git CLI
 - `tools/extractors/resolve-binary.js` — shared absolute-path lookup for git, npm and pip-audit (PATH only, never cwd)
-- `tools/extractors/git-config-guard.js` — reads a scanned repo's `.git/config` as text and refuses `[include]`/`[includeIf]` and UNC paths; call `checkRepoGitConfig()` before the first git command on any repo
+- `tools/extractors/git-sandbox.js` — `prepareGitSandbox(repo)` returns an env (GIT_DIR, GIT_OBJECT_DIRECTORY, GIT_INDEX_FILE, GIT_WORK_TREE) under which git never reads the scanned repo's own config; every git call on a scanned repo must use it, and call `cleanup()` after. Do not go back to parsing `.git/config`: a text check was bypassed six ways
 - Evidence fields `vulnerabilities.auditsRun` and `vulnerabilities.auditGaps` say which audits ran and what they skipped; never report a clean audit without them
 
 ### Autofill

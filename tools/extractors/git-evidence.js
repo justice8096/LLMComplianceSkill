@@ -23,7 +23,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { resolveBinary } = require('./resolve-binary');
-const { checkRepoGitConfig } = require('./git-config-guard');
+const { prepareGitSandbox } = require('./git-sandbox');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -192,7 +192,14 @@ function getSigningOverrides() {
  * (CWE-88). repoPath is passed as the value of -C. execFileSync is used with
  * no shell, so there is no shell expansion either (CWE-78).
  */
+// Environment that points git at a private git directory for the scanned
+// repository (see git-sandbox.js). Set once in main() before any git call.
+let sandboxEnv = null;
+
 function git(args, repoPath) {
+  if (!sandboxEnv) {
+    throw new Error('git() called before the repository sandbox was prepared');
+  }
   if (!Array.isArray(args)) {
     throw new Error('git() requires an argv array, not a command string');
   }
@@ -207,7 +214,8 @@ function git(args, repoPath) {
     maxBuffer: 50 * 1024 * 1024,
     timeout: 60000,
     stdio: ['pipe', 'pipe', 'pipe'],
-    windowsHide: true
+    windowsHide: true,
+    env: Object.assign({}, process.env, sandboxEnv)
   }).trim();
 }
 
@@ -1068,14 +1076,16 @@ function main() {
   log(`Output: ${opts.output || 'stdout'}`);
   log('');
 
-  // Refuse before the first git call if the repository's own config would
-  // make git open another file or a network path (CWE-73).
-  const guard = checkRepoGitConfig(opts.repo);
-  if (!guard.ok) {
-    process.stderr.write(`Error: refusing to run git on "${opts.repo}": ${guard.reason}.
-`);
+  // git never reads the scanned repository's own config: it runs against a
+  // private git directory (CWE-73). Layouts that cannot be handled safely
+  // are refused before the first git call.
+  const sandbox = prepareGitSandbox(opts.repo);
+  if (!sandbox.ok) {
+    process.stderr.write(`Error: refusing to run git on "${opts.repo}": ${sandbox.reason}.\n`);
     process.exit(2);
   }
+  sandboxEnv = sandbox.env;
+  process.on('exit', sandbox.cleanup);
 
   // Verify this is a git repository
   try {
