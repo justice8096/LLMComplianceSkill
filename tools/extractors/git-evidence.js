@@ -23,6 +23,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { resolveBinary } = require('./resolve-binary');
+const { checkRepoGitConfig } = require('./git-config-guard');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -76,7 +77,8 @@ function validateRepoPath(repoPath) {
  * never be placed in a git argv, because any value derived from repository
  * content (commit messages, tag names, ref names) is attacker-controlled.
  */
-const HASH_RE = /^[0-9a-f]{7,40}$/i;
+// 40 hex for SHA-1 repositories, 64 for SHA-256 (extensions.objectFormat).
+const HASH_RE = /^[0-9a-f]{7,64}$/i;
 
 function isHash(value) {
   return typeof value === 'string' && HASH_RE.test(value);
@@ -1065,6 +1067,15 @@ function main() {
   log(`Days of history: ${opts.days}`);
   log(`Output: ${opts.output || 'stdout'}`);
   log('');
+
+  // Refuse before the first git call if the repository's own config would
+  // make git open another file or a network path (CWE-73).
+  const guard = checkRepoGitConfig(opts.repo);
+  if (!guard.ok) {
+    process.stderr.write(`Error: refusing to run git on "${opts.repo}": ${guard.reason}.
+`);
+    process.exit(2);
+  }
 
   // Verify this is a git repository
   try {
