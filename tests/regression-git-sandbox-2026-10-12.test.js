@@ -212,3 +212,32 @@ test('package-evidence: lockfile tracking works through the sandbox', { skip: !h
     assert.equal(JSON.parse(r.stdout).sbom.lockFileCommitted, true);
   } finally { rmrf(repo); }
 });
+
+// Automated review of 62c0791: links deeper in the git directory.
+test('git-sandbox: a symlinked loose object is refused', { skip: !haveGit() }, function (t) {
+  var { prepareGitSandbox } = require(SANDBOX);
+  var repo = makeRepo('sbx-looselink-');
+  try {
+    var objects = path.join(repo, '.git', 'objects');
+    var sub = fs.readdirSync(objects).filter(function (d) { return /^[0-9a-f]{2}$/.test(d); })[0];
+    try { fs.symlinkSync(path.join(os.tmpdir(), 'nowhere'), path.join(objects, sub, 'f'.repeat(38))); }
+    catch (_e) { t.skip('cannot create symlinks here'); return; }
+    var sb = prepareGitSandbox(repo);
+    assert.equal(sb.ok, false);
+    assert.match(sb.reason, /symlink/i);
+  } finally { rmrf(repo); }
+});
+
+test('git-sandbox: a gitdir reached through a link to a network share is refused',
+  { skip: process.platform !== 'win32' }, function (t) {
+    var { prepareGitSandbox } = require(SANDBOX);
+    var dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sbx-midlink-'));
+    try {
+      try { fs.symlinkSync('//127.0.0.1/nonexistent-share', path.join(dir, 'link'), 'dir'); }
+      catch (_e) { t.skip('cannot create symlinks here'); return; }
+      fs.writeFileSync(path.join(dir, '.git'), 'gitdir: link/repo.git\n');
+      var sb = prepareGitSandbox(dir);
+      assert.equal(sb.ok, false);
+      assert.match(sb.reason, /network/i);
+    } finally { rmrf(dir); }
+  });

@@ -281,3 +281,45 @@ test('package-evidence: credentials in requirement URLs never reach the evidence
     assert.ok(text.indexOf('s3cr3t') === -1 && text.indexOf('tok3n') === -1 && text.indexOf('alice') === -1, text);
   } finally { rmrf(repo); }
 });
+
+test('package-evidence: long or @-containing URL credentials are fully redacted', function () {
+  var pe = require(PACKAGE_EVIDENCE);
+  var repo = fs.mkdtempSync(path.join(os.tmpdir(), 'xtr-creds2-'));
+  try {
+    fs.writeFileSync(path.join(repo, 'requirements.txt'),
+      'git+https://user:' + 'Q'.repeat(150) + '@git.example.invalid/x.git\n' +
+      'git+https://bob:p@ssw0rd@git.example.invalid/y.git\n');
+    var text = JSON.stringify(pe.collectPinnedRequirements(repo).gaps);
+    assert.ok(text.indexOf('QQQQ') === -1, text);
+    assert.ok(text.indexOf('ssw0rd') === -1 && text.indexOf('bob') === -1, text);
+  } finally { rmrf(repo); }
+});
+
+test('package-evidence: a -r include through a link to a network share is refused before it is opened',
+  { skip: process.platform !== 'win32' }, function (t) {
+    var pe = require(PACKAGE_EVIDENCE);
+    var repo = fs.mkdtempSync(path.join(os.tmpdir(), 'xtr-midlink-'));
+    try {
+      try { fs.symlinkSync('//127.0.0.1/nonexistent-share', path.join(repo, 'link'), 'dir'); }
+      catch (_e) { t.skip('cannot create symlinks here'); return; }
+      fs.writeFileSync(path.join(repo, 'requirements.txt'), '-r link/prod.txt\nidna==2.10\n');
+      // Any fs call on a path beyond the link would make Windows open the share.
+      var beyond = path.join(repo, 'link') + path.sep;
+      var touched = [];
+      var names = ['statSync', 'lstatSync', 'realpathSync', 'readFileSync', 'existsSync', 'openSync'];
+      var saved = {};
+      names.forEach(function (n) {
+        saved[n] = fs[n];
+        fs[n] = function (p) {
+          if (typeof p === 'string' && p.indexOf(beyond) === 0) touched.push(n + ' ' + p);
+          return saved[n].apply(fs, arguments);
+        };
+      });
+      var res;
+      try { res = pe.collectPinnedRequirements(repo); }
+      finally { names.forEach(function (n) { fs[n] = saved[n]; }); }
+      assert.deepEqual(touched, [], 'followed the link to the network share');
+      assert.deepEqual(res.pinned, ['idna==2.10']);
+      assert.equal(res.gaps[0].reason, 'include outside repository');
+    } finally { rmrf(repo); }
+  });

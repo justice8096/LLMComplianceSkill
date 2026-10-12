@@ -44,6 +44,34 @@ function isNetworkPath(p, base) {
   return resolved.indexOf('\\\\') === 0;
 }
 
+/**
+ * True when reaching p would pass through a symlink or junction whose
+ * target is a network path, at any component and through chains of links.
+ * Each component is examined with lstat, which does not follow the link
+ * itself, so the network target is never opened. Fails closed on deep
+ * chains.
+ */
+function linksToNetwork(p, depth) {
+  depth = depth || 0;
+  if (depth > 8) return true;
+  var resolved = path.resolve(p);
+  if (isNetworkPath(resolved)) return true;
+  var root = path.parse(resolved).root;
+  var parts = resolved.slice(root.length).split(path.sep).filter(Boolean);
+  var cur = root;
+  for (var i = 0; i < parts.length; i++) {
+    cur = path.join(cur, parts[i]);
+    var st = lstatOrNull(cur);
+    if (!st) return false; // nothing further exists to follow
+    if (st.isSymbolicLink()) {
+      var target = fs.readlinkSync(cur);
+      if (isNetworkPath(target, path.dirname(cur))) return true;
+      if (linksToNetwork(path.resolve(path.dirname(cur), target), depth + 1)) return true;
+    }
+  }
+  return false;
+}
+
 function refuse(reason) {
   return { ok: false, reason: reason, env: null, cleanup: function () {} };
 }
@@ -91,20 +119,25 @@ function copyIfFile(src, dst, what) {
   if (st.isFile()) fs.copyFileSync(src, dst);
 }
 
-/** No symlinks among the object store's entries (packs, loose dirs). */
+/**
+ * No symlinks or junctions anywhere in the object store: loose objects,
+ * packs, indexes, commit-graph chains. git opens these files directly.
+ */
 function checkObjectStore(objectsDir) {
   requireRealDir(objectsDir, 'objects directory');
   if (lstatOrNull(path.join(objectsDir, 'info', 'alternates'))) {
     throw new Error('objects/info/alternates is not supported (it makes git open other object stores)');
   }
-  var dirs = [objectsDir, path.join(objectsDir, 'pack'), path.join(objectsDir, 'info')];
-  for (var i = 0; i < dirs.length; i++) {
-    if (!lstatOrNull(dirs[i])) continue;
-    var entries = fs.readdirSync(dirs[i]);
+  var stack = [{ dir: objectsDir, depth: 0 }];
+  while (stack.length) {
+    var top = stack.pop();
+    if (top.depth > 8) throw new Error('object store is nested too deeply');
+    var entries = fs.readdirSync(top.dir);
     for (var j = 0; j < entries.length; j++) {
-      if (fs.lstatSync(path.join(dirs[i], entries[j])).isSymbolicLink()) {
-        throw new Error('object store contains a symlink: ' + entries[j]);
-      }
+      var full = path.join(top.dir, entries[j]);
+      var st = fs.lstatSync(full);
+      if (st.isSymbolicLink()) throw new Error('object store contains a symlink: ' + path.relative(objectsDir, full));
+      if (st.isDirectory()) stack.push({ dir: full, depth: top.depth + 1 });
     }
   }
 }
@@ -143,6 +176,7 @@ function build(repoPath) {
     if (!m) return refuse('.git file has no gitdir line');
     if (isNetworkPath(m[1], repoPath)) return refuse('.git points at a network path');
     gitDir = path.resolve(repoPath, m[1]);
+    if (linksToNetwork(gitDir)) return refuse('.git points at a network path through a link');
     requireRealDir(gitDir, 'git directory');
   }
 
@@ -151,6 +185,7 @@ function build(repoPath) {
     var c = readSmallFile(path.join(gitDir, 'commondir'), 'commondir').trim();
     if (isNetworkPath(c, gitDir)) return refuse('commondir points at a network path');
     commonDir = path.resolve(gitDir, c);
+    if (linksToNetwork(commonDir)) return refuse('commondir points at a network path through a link');
     requireRealDir(commonDir, 'common git directory');
   }
 
@@ -230,4 +265,4 @@ function prepareGitSandbox(repoPath) {
   }
 }
 
-module.exports = { prepareGitSandbox: prepareGitSandbox, isNetworkPath: isNetworkPath };
+module.exports = { prepareGitSandbox: prepareGitSandbox, isNetworkPath: isNetworkPath, linksToNetwork: linksToNetwork };
