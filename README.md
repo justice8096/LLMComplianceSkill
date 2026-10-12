@@ -27,7 +27,7 @@ In Claude Code, add this repository as a plugin marketplace and install the plug
 
 ```
 /plugin marketplace add justice8096/LLMComplianceSkill
-/plugin install ai-compliance@llm-compliance-skill
+/plugin install ai-law-evidence@llm-compliance-skill
 ```
 
 To update later, run `/plugin marketplace update llm-compliance-skill`, then reinstall.

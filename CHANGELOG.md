@@ -15,6 +15,9 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+### Changed `[structural]` (breaking for existing installs)
+- The plugin is renamed from `ai-compliance` to `ai-law-evidence`: the Directory held the old name as too close to another listed plugin (NAME_CONFUSABLE). Install it again as `ai-law-evidence@llm-compliance-skill`; commands now start with `/ai-law-evidence:`. The `ai-compliance` skill keeps its name.
+
 ### Changed `[structural]`
 - The plugin root no longer has a `package.json` or `package-lock.json`. Claude Code runs `npm ci` when a plugin root holds that pair, and the Directory holds such a plugin for review (LOCKFILE_AUTO_INSTALL). The scripts moved into `tooling/package.json` beside the build tooling; run them from the repo root with `npm --prefix tooling run <script>`. Tests, the SBOM and the KB sync still run with plain `node`. CI and a test fail if a package manifest or lockfile reappears in the root.
 - Maintainer notes moved from `CLAUDE.md` to `CONTRIBUTING.md`. A plugin-root `CLAUDE.md` is not loaded for people who install the plugin, and the Directory flags it (ROOT_CLAUDE_MD).
