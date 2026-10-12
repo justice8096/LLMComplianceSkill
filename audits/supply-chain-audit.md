@@ -19,11 +19,11 @@ Not independently re-audited (the round-3 agent stopped before testing). Changes
 | SC-14 | **OPEN until upstream merge** | The same SRI/`textContent` change is committed in a local clone of `justice8096/ai-regulatory-knowledge-base` (branch `fix/world-map-sri`), not pushed. Against that clone `sync-kb --check` reports `0 changed, 29 already current`, so `kb-sync-check` passes once it lands upstream. |
 | SC-15 | **FIXED** | `sync-kb.js` runs git in `git-sandbox.js` (private GIT_DIR, repo config never read). |
 | SC-16 | **FIXED** | `generate-sbom.js` reads the URL and SRI hash for each CDN component from all three map copies and emits them as `hashes` (SHA-512 / SHA-384). Generation throws, and `sbom:check` fails, if a copy stops loading the URL, drops the integrity value, or the copies disagree. Tests cover both. |
-| SC-05, SC-07 (repo settings) | **Approved by the owner, scheduled after PR #23 merges** | Required status checks on `main`; Dependabot security updates on. |
+| SC-05, SC-07 (repo settings) | **FIXED (2026-10-12, after #23 merged)** | Branch protection on `main` now requires 4 checks (JavaScript syntax check, Dependency vulnerability audit, Regulation files match the knowledge base, Unit tests and SBOM check); signed commits, no force-push and no deletion unchanged; admins can still override. Vulnerability alerts and Dependabot security updates enabled (API: `enabled: true`). |
 | SC-06, SC-08, SC-10 | unchanged (PARTIAL) | See the c6afa61 table below. |
 
-**Counts at e368913 (self-verified)**: Critical 0, High 0, Medium 0, Low 6 (SC-05, SC-06, SC-07, SC-08, SC-10,
-SC-14; SC-14 closes when the upstream change merges, SC-05/SC-07 when the approved settings are applied), Info 2
+**Counts after the settings change (self-verified)**: Critical 0, High 0, Medium 0, Low 4 (SC-06, SC-08, SC-10,
+SC-14; SC-14 closes when ai-regulatory-knowledge-base#1 merges), Info 2
 (SC-12, SC-13, positive controls). **Verdict: PASS.**
 
 ## Post-fix re-check at c6afa61 (2026-10-12)
