@@ -15,6 +15,9 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 
 ## [Unreleased]
 
+### Changed `[structural]`
+- The plugin root no longer has a `package.json` or `package-lock.json`. Claude Code runs `npm ci` when a plugin root holds that pair, and the Directory holds such a plugin for review (LOCKFILE_AUTO_INSTALL). The scripts moved into `tooling/package.json` beside the build tooling; run them from the repo root with `npm --prefix tooling run <script>`. Tests, the SBOM and the KB sync still run with plain `node`. CI and a test fail if a package manifest, lockfile, `.npmrc` or `bunfig.toml` reappears in the root.
+
 ### Added `[structural]`
 - Plugin icon (1024x1024 PNG) for the Directory listing, in the same family as the dyslexia-support-skill and dyscalculia-support-skill icons: navy, "AI" with a checkmark.
 

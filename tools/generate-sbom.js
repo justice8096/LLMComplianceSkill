@@ -3,7 +3,7 @@
 /**
  * Generate sbom.json (CycloneDX 1.5) from the files that define what ships.
  *
- *   - package.json            the project itself (name, version, license)
+ *   - tooling/package.json    the project itself (name, version, license)
  *   - tooling/package-lock.json   build-only packages (scope "excluded")
  *   - RUNTIME_CDN below       scripts and data the world map loads in the
  *                             viewer's browser (scope "required")
@@ -155,7 +155,7 @@ function serialFor(body) {
 function generate(opts) {
   opts = opts || {};
   var root = opts.root || ROOT;
-  var pkg = readJson(path.join(root, 'package.json'));
+  var pkg = readJson(path.join(root, 'tooling', 'package.json'));
   var rootRef = purl(pkg.name, pkg.version);
   var components = toolingComponents(path.join(root, 'tooling', 'package-lock.json'))
     .concat(runtimeComponents(root))

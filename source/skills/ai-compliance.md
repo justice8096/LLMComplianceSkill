@@ -43,7 +43,7 @@ instruments survive a change of leader until revoked, so treat a mandate-end dat
 re-verification trigger, not an expiry.
 Start with the Global Overview for cross-jurisdictional comparisons. The files live in
 `references/regulations/` next to this SKILL.md (mirrored to the repo root for the site and
-older tooling; `npm run sync:kb` keeps both copies identical to ai-regulatory-knowledge-base).
+older tooling; `node tools/sync-kb.js` keeps both copies identical to ai-regulatory-knowledge-base).
 
 | File | Contents |
 |------|----------|
