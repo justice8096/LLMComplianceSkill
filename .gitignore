@@ -9,3 +9,6 @@ __pycache__/
 Thumbs.db
 .claude/
 dist/
+
+# Local pointer for Claude Code sessions in this repo; maintainer notes are in CONTRIBUTING.md.
+/CLAUDE.md

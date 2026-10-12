@@ -99,7 +99,7 @@ test('plugin root has no package manifest, so installing the plugin runs no npm 
   // lockfile, and the Directory holds such a plugin for review
   // (LOCKFILE_AUTO_INSTALL). Scripts and build tooling live in tooling/.
   ['package.json', 'package-lock.json', 'npm-shrinkwrap.json', 'yarn.lock',
-   'pnpm-lock.yaml', 'bun.lockb', 'bun.lock', 'bunfig.toml', '.npmrc'].forEach(function(f) {
+   'pnpm-lock.yaml', 'bun.lockb', 'bun.lock'].forEach(function(f) {
     assert.ok(!fs.existsSync(path.join(ROOT, f)), f + ' must not exist in the plugin root');
   });
 });

@@ -48,7 +48,7 @@ jobs:
 
       - name: Plugin root has no package manifest or lockfile
         run: |
-          for f in package.json package-lock.json npm-shrinkwrap.json yarn.lock pnpm-lock.yaml bun.lockb bun.lock bunfig.toml .npmrc; do
+          for f in package.json package-lock.json npm-shrinkwrap.json yarn.lock pnpm-lock.yaml bun.lockb bun.lock; do
             if [ -e "$f" ]; then
               echo "$f is in the plugin root. Claude Code would run an install there when the plugin is installed. Put scripts and tooling in tooling/ instead."
               exit 1

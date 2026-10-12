@@ -16,7 +16,13 @@ All four drivers affect admissibility / persuasive weight of downstream artifact
 ## [Unreleased]
 
 ### Changed `[structural]`
-- The plugin root no longer has a `package.json` or `package-lock.json`. Claude Code runs `npm ci` when a plugin root holds that pair, and the Directory holds such a plugin for review (LOCKFILE_AUTO_INSTALL). The scripts moved into `tooling/package.json` beside the build tooling; run them from the repo root with `npm --prefix tooling run <script>`. Tests, the SBOM and the KB sync still run with plain `node`. CI and a test fail if a package manifest, lockfile, `.npmrc` or `bunfig.toml` reappears in the root.
+- The plugin root no longer has a `package.json` or `package-lock.json`. Claude Code runs `npm ci` when a plugin root holds that pair, and the Directory holds such a plugin for review (LOCKFILE_AUTO_INSTALL). The scripts moved into `tooling/package.json` beside the build tooling; run them from the repo root with `npm --prefix tooling run <script>`. Tests, the SBOM and the KB sync still run with plain `node`. CI and a test fail if a package manifest or lockfile reappears in the root.
+- Maintainer notes moved from `CLAUDE.md` to `CONTRIBUTING.md`. A plugin-root `CLAUDE.md` is not loaded for people who install the plugin, and the Directory flags it (ROOT_CLAUDE_MD).
+- The poster PDF is no longer in the repository (the Directory cannot inspect it, BINARIES_NOT_INSPECTED); it is attached to the GitHub Release. `generate_poster.py` writes to `dist/`.
+
+### Security `[defect]`
+- The extractors and the KB sync gave npm, git and pip-audit the operator's whole environment, so a token in it (`NPM_TOKEN`, an npm auth setting, `GITHUB_TOKEN`) could travel with the npm audit request (MCP_FORWARDS_CREDENTIAL_ENV). Child processes now get an allowlist from `tools/extractors/child-env.js`: search path, system, temp and home folders, locale, proxy and the operator's git config location.
+- The CI syntax check lists tracked `.js` files with `git ls-files` instead of a folder glob that also matched an image (UNREAD_ASSET_REFERENCED).
 
 ### Added `[structural]`
 - Plugin icon (1024x1024 PNG) for the Directory listing, in the same family as the dyslexia-support-skill and dyscalculia-support-skill icons: navy, "AI" with a checkmark.
