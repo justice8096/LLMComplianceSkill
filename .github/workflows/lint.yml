@@ -24,7 +24,7 @@ jobs:
 
       - name: Syntax-check all JavaScript files
         run: |
-          find . -name "*.js" -not -path "./.git/*" -not -path "./docs/*" | sort | while read -r f; do
+          git ls-files -- '*.js' | while read -r f; do
             echo "Checking: $f"
             node --check "$f" || exit 1
           done
@@ -46,12 +46,16 @@ jobs:
       - name: Audit for moderate-or-worse advisories
         run: npm audit --prefix tooling --audit-level=moderate
 
-      - name: Root package.json must stay dependency-free
+      - name: Plugin root has no package manifest or lockfile
         run: |
-          node -e "const p=require('./package.json'); if (p.dependencies||p.devDependencies) { console.error('Add build dependencies to tooling/package.json, not the root: installing the plugin downloads root dependencies.'); process.exit(1); }"
-
+          for f in package.json package-lock.json npm-shrinkwrap.json yarn.lock pnpm-lock.yaml bun.lockb bun.lock; do
+            if [ -e "$f" ]; then
+              echo "$f is in the plugin root. Claude Code would run an install there when the plugin is installed. Put scripts and tooling in tooling/ instead."
+              exit 1
+            fi
+          done
       - name: Build still runs from the tooling folder
-        run: npm run validate
+        run: npm --prefix tooling run validate
 
   kb-sync-check:
     name: Regulation files match the knowledge base
@@ -89,10 +93,10 @@ jobs:
 
       # Tests use Node built-ins and git only, so nothing is installed.
       - name: Run the test suite
-        run: npm test
+        run: npm --prefix tooling test
 
-      - name: sbom.json matches package.json and the tooling lockfile
-        run: npm run sbom:check
+      - name: sbom.json matches tooling/package.json and its lockfile
+        run: npm --prefix tooling run sbom:check
 
   release-provenance:
     name: Build provenance attestation
@@ -114,10 +118,10 @@ jobs:
           node-version: '22.18.0'
 
       - name: Install build tooling from lockfile without running install scripts
-        run: npm run setup
+        run: npm ci --prefix tooling --ignore-scripts
 
       - name: Build every distribution format
-        run: npm run build
+        run: npm --prefix tooling run build
 
       - name: Attest the built files and the SBOM
         uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f  # v3.2.0

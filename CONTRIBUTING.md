@@ -1,4 +1,6 @@
-# LLMComplianceSkill
+# Contributing to LLMComplianceSkill
+
+Maintainer notes for working on this repository. They are not loaded by the installed plugin; what users of the plugin see lives in `skills/*/SKILL.md` and `commands/*.md`.
 
 ## Purpose
 This is a Claude Code skill that helps gather AI and LLM compliance information for relevant jurisdictions while creating a software project. When building an application that uses AI, reference these files to identify applicable regulations, required disclosures, risk classifications, and compliance deadlines for the countries the project will operate in.
@@ -97,8 +99,10 @@ This is a Claude Code skill that helps gather AI and LLM compliance information 
 
 ## Building
 
-- The build (`build.ts`) needs tsx and TypeScript. They live in `tooling/package.json`, not the root, because Claude Code installs root dependencies whenever someone installs the plugin. Run `npm run setup` once, then `npm run build`, `npm run validate` or `npm run type-check`.
-- Never add `dependencies` or `devDependencies` to the root `package.json`; CI and `tests/doc-claims.test.js` fail if you do. The runtime scripts under `tools/` use Node built-ins only.
+- All npm scripts and the build tooling (tsx, TypeScript) live in `tooling/package.json`. The repo root has no `package.json` or lockfile: Claude Code runs an install when the plugin root holds that pair, and the Directory holds such a plugin for review. Never add either to the root.
+- From the repo root: `npm ci --prefix tooling --ignore-scripts` once, then `npm --prefix tooling run build`, `npm --prefix tooling run validate`, `npm --prefix tooling run type-check` or `npm --prefix tooling test`.
+- Tests, the SBOM and the KB sync need no install: `node --test tests/**/*.test.js`, `node tools/generate-sbom.js --check`, `node tools/sync-kb.js`.
+- CI and `tests/doc-claims.test.js` fail if a `package.json` or a lockfile appears in the root. The runtime scripts under `tools/` use Node built-ins only.
 
 ## Obsidian Integration
 - Knowledge base exports go to `D:/SecondBrainData/SoftwarePractices/`

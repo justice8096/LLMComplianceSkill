@@ -10,7 +10,7 @@
 1. Identify which jurisdictions your project operates in
 2. Find the matching sections below
 3. Gather the listed evidence during the appropriate project phase (design, coding, testing)
-4. Package evidence with metadata per CLAUDE.md conventions (session number, date, author, applicable laws)
+4. Package evidence with metadata per the CONTRIBUTING.md conventions (session number, date, author, applicable laws)
 
 ---
 

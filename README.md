@@ -17,7 +17,7 @@ When you build an AI-powered application, you need evidence that it complies wit
 - **21 interactive HTML tools** for compliance areas requiring human judgment
 - **An autofill script** that populates templates from a single config file
 - **4 automated evidence extractors** for git, package, CI/CD and SAST/DAST report analysis
-- **Regulation research** covering 25 jurisdictions with specific provisions and 50 dated deadlines, synced from [ai-regulatory-knowledge-base](https://github.com/justice8096/ai-regulatory-knowledge-base) via `npm run sync:kb`
+- **Regulation research** covering 25 jurisdictions with specific provisions and 50 dated deadlines, synced from [ai-regulatory-knowledge-base](https://github.com/justice8096/ai-regulatory-knowledge-base) via `node tools/sync-kb.js`
 
 The output is designed to be **handed to your legal or compliance team** to help prove compliance.
 

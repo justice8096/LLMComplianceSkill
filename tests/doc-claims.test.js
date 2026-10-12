@@ -94,13 +94,19 @@ test('skill and command frontmatter values are valid plain YAML scalars', functi
   });
 });
 
-test('root package.json matches the plugin and has no dependencies', function() {
-  var pkg = json('package.json');
+test('plugin root has no package manifest, so installing the plugin runs no npm install', function() {
+  // Claude Code runs an install when the plugin root holds package.json and a
+  // lockfile, and the Directory holds such a plugin for review
+  // (LOCKFILE_AUTO_INSTALL). Scripts and build tooling live in tooling/.
+  ['package.json', 'package-lock.json', 'npm-shrinkwrap.json', 'yarn.lock',
+   'pnpm-lock.yaml', 'bun.lockb', 'bun.lock'].forEach(function(f) {
+    assert.ok(!fs.existsSync(path.join(ROOT, f)), f + ' must not exist in the plugin root');
+  });
+});
+
+test('tooling/package.json matches the plugin version and license', function() {
+  var pkg = json('tooling/package.json');
   var plugin = json('.claude-plugin/plugin.json');
   assert.equal(pkg.version, plugin.version);
   assert.equal(pkg.license, plugin.license);
-  // Claude Code installs root dependencies when the plugin is installed;
-  // build tooling lives in tooling/package.json instead.
-  assert.equal(pkg.dependencies, undefined);
-  assert.equal(pkg.devDependencies, undefined);
 });

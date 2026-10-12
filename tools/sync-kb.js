@@ -113,10 +113,11 @@ for (const [srcDir, dstDir, pattern] of LOCAL_PAIRS) {
 function kbCommit(dir) {
   // Loaded here, not at the top, so the copy step still works when this
   // script runs on its own (tests copy it into a bare temp folder).
-  let resolveBinary, prepareGitSandbox;
+  let resolveBinary, prepareGitSandbox, childEnv;
   try {
     resolveBinary = require('./extractors/resolve-binary').resolveBinary;
     prepareGitSandbox = require('./extractors/git-sandbox').prepareGitSandbox;
+    childEnv = require('./extractors/child-env').childEnv;
   } catch (_e) {
     return null;
   }
@@ -132,7 +133,7 @@ function kbCommit(dir) {
   try {
     const out = execFileSync(gitBin, base.concat(['log', '-1', '--format=%H %cs']), {
       encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 15000,
-      env: Object.assign({}, process.env, sandbox.env),
+      env: childEnv(sandbox.env),
     }).trim();
     return /^[0-9a-f]{40}(?:[0-9a-f]{24})? \d{4}-\d{2}-\d{2}$/.test(out) ? out : null;
   } catch (_e) {

@@ -1,7 +1,34 @@
 {
-  "name": "llm-compliance-skill-tooling",
+  "name": "llm-compliance-skill",
+  "version": "1.5.0",
+  "description": "AI/LLM compliance evidence collection toolkit",
+  "author": "Justice",
+  "license": "CC0-1.0",
   "private": true,
-  "description": "Build tooling only (tsx, TypeScript). Kept out of the root package.json so installing the plugin does not download it. Install with: npm run setup",
+  "scripts": {
+    "build": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts",
+    "build:claude": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --format claude-plugin",
+    "build:openai": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --format openai",
+    "build:n8n": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --format n8n",
+    "build:mcp": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --format mcp",
+    "build:prompts": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --format prompts",
+    "build:cli": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --format cli",
+    "build:root-canonical": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --format root-canonical",
+    "build:watch": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs --watch build.ts",
+    "clean": "cd .. && node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "validate": "cd .. && node tooling/node_modules/tsx/dist/cli.mjs build.ts --validate-only",
+    "type-check": "cd .. && node tooling/node_modules/typescript/bin/tsc --noEmit",
+    "sync:kb": "cd .. && node tools/sync-kb.js",
+    "sync:kb:check": "cd .. && node tools/sync-kb.js --check",
+    "sbom": "cd .. && node tools/generate-sbom.js",
+    "sbom:check": "cd .. && node tools/generate-sbom.js --check",
+    "test": "cd .. && node --test tests/**/*.test.js",
+    "test:watch": "cd .. && node --test --watch tests/**/*.test.js",
+    "test:verbose": "cd .. && node --test --reporter=spec tests/**/*.test.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "typescript": "^5.3.3",

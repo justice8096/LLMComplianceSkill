@@ -38,6 +38,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
+const { childEnv } = require('./child-env');
 const { resolveBinary } = require('./resolve-binary');
 const { prepareGitSandbox, isNetworkPath, linksToNetwork } = require('./git-sandbox');
 
@@ -186,7 +187,7 @@ function runTool(file, args, cwd, timeoutMs, extraEnv) {
   if (!file || !path.isAbsolute(file)) {
     return { ok: false, stdout: '', stderr: 'tool not found', code: null };
   }
-  var env = Object.assign({}, process.env, extraEnv || {});
+  var env = childEnv(extraEnv);
   try {
     var result = execFileSync(file, args, {
       cwd: cwd,
