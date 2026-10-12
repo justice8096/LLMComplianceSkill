@@ -24,6 +24,7 @@ const os = require('os');
 const path = require('path');
 const { resolveBinary } = require('./resolve-binary');
 const { prepareGitSandbox } = require('./git-sandbox');
+const { childEnv } = require('./child-env');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -215,7 +216,7 @@ function git(args, repoPath) {
     timeout: 60000,
     stdio: ['pipe', 'pipe', 'pipe'],
     windowsHide: true,
-    env: Object.assign({}, process.env, sandboxEnv)
+    env: childEnv(sandboxEnv)
   }).trim();
 }
 

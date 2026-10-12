@@ -564,5 +564,10 @@ def draw_poster(output_path):
 
 
 if __name__ == '__main__':
-    out = r"D:\LLMComplianceSkill\AI-Compliance-Evidence-Matrix-Poster.pdf"
+    import os
+    # Writes into dist/ (gitignored). The PDF is not kept in the repo: the
+    # Directory cannot inspect it. It is attached to the GitHub Release instead.
+    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dist')
+    os.makedirs(out_dir, exist_ok=True)
+    out = os.path.join(out_dir, 'AI-Compliance-Evidence-Matrix-Poster.pdf')
     draw_poster(out)
