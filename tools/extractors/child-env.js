@@ -7,8 +7,7 @@
  * Only the variables a tool needs to start are copied: search path, system
  * and temp folders, home folder, locale, proxy, and the operator's own git config location
  * (git-evidence reads the operator's trusted signing keys from it). Nothing else in the
- * operator's environment, such as an npm or registry token, reaches a
- * child process. Callers add their own fixed settings on top, for example
+ * operator's environment reaches a child process. Callers add their own fixed settings on top, for example
  * the git sandbox variables or the public npm registry.
  */
 

@@ -24,7 +24,7 @@
  * change, so a scanned repository cannot plant an npm.cmd of its own
  * (CWE-427). npm audit runs in a private temporary directory holding only
  * copies of package.json and the lockfile, so the scanned repository's
- * .npmrc cannot redirect, proxy or disable TLS on the audit request
+ * npm config file cannot redirect, proxy or disable TLS on the audit request
  * (CWE-918). git runs with repository-local hooks, fsmonitor and external
  * diff drivers disabled (CWE-426). Point --repo only at repositories you
  * trust; the extractors read their contents but should never execute them.
@@ -246,7 +246,7 @@ function runGit(args, repoPath, timeoutMs, sandboxEnv) {
 /**
  * Create a private temporary directory holding copies of only the named
  * files from the repository, so a package manager run there sees no
- * repository-supplied configuration (.npmrc, .yarnrc, scripts).
+ * repository-supplied configuration (npm and yarn config files, scripts).
  */
 function makeIsolatedDir(repoPath, fileNames) {
   var dir = fs.mkdtempSync(path.join(os.tmpdir(), 'package-evidence-'));
@@ -891,14 +891,14 @@ function runNpmAudit(repoPath) {
   }
   log('Running npm audit...');
   // Audit from a private directory that holds only the manifest and
-  // lockfile. The scanned repository's .npmrc never loads, and the
+  // lockfile. The scanned repository's npm config file never loads, and the
   // operator's own user/global npm config is replaced by empty files so
   // the request goes to the public registry with TLS verification on.
   var isolated = makeIsolatedDir(repoPath, ['package.json', 'package-lock.json', 'npm-shrinkwrap.json']);
   // npm refuses to load one file as both user and global config, so two
   // distinct empty files are needed.
-  var emptyUserConfig = path.join(isolated, '.empty-user-npmrc');
-  var emptyGlobalConfig = path.join(isolated, '.empty-global-npmrc');
+  var emptyUserConfig = path.join(isolated, '.empty-user-config');
+  var emptyGlobalConfig = path.join(isolated, '.empty-global-config');
   fs.writeFileSync(emptyUserConfig, '');
   fs.writeFileSync(emptyGlobalConfig, '');
   var result;
