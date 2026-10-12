@@ -1,146 +1,170 @@
 # Contribution Analysis Report
 ## LLMComplianceSkill — AI Compliance Evidence Collection Kit
 
-**Report Date**: 2026-03-29
-**Project Duration**: 2026-Q1 (Initial build through post-merge audit cycle)
-**Contributors**: Justice (Human), Claude Sonnet 4.6 (AI Assistant)
-**Audit Type**: Cumulative — covers full project history through commit 1586ec7
+**Report Date**: 2026-10-11
+**Project Duration**: 2026-03-29 (prior audit, 1586ec7) → 2026-10-11 (main @ 304715e)
+**Contributors**: Justice (Human); Claude, 5 model versions (AI Assistant): Sonnet 4.6, Opus 4.7, Fable 5.1, Haiku 5.5, Opus 5.5
+**Deliverable**: v1.1.0 → v1.4.0 — multi-format build, regulatory refresh to Oct 2026, Directory submission prep, extractor hardening, a11y gates, 6-locale i18n of all 21 tools, dependency-free plugin root
+**Audit Type**: Delta since 1586ec7, with cumulative estimate
+**Auditor**: Post-Commit Audit Skill (Claude Opus 5.5)
+
+---
+
+## Method and Its Limits
+
+The figures below come from commit metadata, not from keystroke-level observation:
+
+- `git log 1586ec7..304715e`: 20 commits, +28,177 / −3,373 lines, 16 merged via PR (#5–#22).
+- Every one of the 20 commits carries a `Co-Authored-By: Claude …` trailer.
+- The project's own extractor (`node tools/extractors/git-evidence.js`, 365-day window) reports
+  31 of 35 commits AI-attributed (**89%**), one AI tool detected (Claude).
+
+A trailer shows that Claude took part in a commit. It does not show how much of the diff a
+human rewrote before committing. The human share below is therefore an estimate from the work
+pattern (who chose scope, who ran reviews, who merged), not a measurement. Treat it as ±10 points.
 
 ---
 
 ## Executive Summary
 
-The project has completed its second major milestone: a full evidence collection pipeline
-(extractors, i18n, 25 templates, 21 tools) followed by a test suite and locale translation
-pass. The human-AI collaboration model remains consistent: Justice owns direction and
-architecture; Claude implements and generates reports.
+**Overall Collaboration Model**: Human-directed, AI-implemented, review-gated. Justice picks the
+work (regulatory refresh, Directory submission, a11y gates, i18n), commissions independent reviews
+(soundcheck, Codex P1/P2 on PRs, plugin scan, skill review, Claude Security), and merges via PR.
+Claude writes nearly all of the code, prose and translations.
 
-**Overall Collaboration Model**: Human-directed, AI-accelerated development.
+This cycle is more AI-heavy than the last. Much of it is bulk work (translating 21 tools into
+6 languages, refreshing 12 regulation files), where AI implementation dominates by nature.
 
-**Contribution Balance (cumulative)**:
-- Architecture & Design: 90/10 (Justice/Claude)
-- Code Generation: 20/80 (Justice/Claude)
-- Security Auditing: 30/70 (Justice/Claude)
-- Translation & i18n: 5/95 (Justice/Claude)
-- Test Authorship: 25/75 (Justice/Claude)
+**Contribution Balance (this cycle, 1586ec7 → 304715e)**:
+- **Architecture & Design**: 80/20 (Justice/Claude)
+- **Code Generation**: 5/95 (Justice/Claude)
+- **Security Auditing**: 30/70 (Justice/Claude)
+- **Remediation Implementation**: 10/90 (Justice/Claude)
+- **Testing & Validation**: 20/80 (Justice/Claude)
+- **Documentation**: 10/90 (Justice/Claude)
+- **Domain Knowledge**: 45/55 (Justice/Claude)
+- **Overall (this cycle)**: ~25% Human / ~75% AI
 
-**Overall**: ~38% Human / ~62% AI
-**Grade: A-** (human oversight maintained throughout; all output reviewed before commit)
-
----
-
-## Commit History Summary
-
-| Commit | Author | Type | Description |
-|--------|--------|------|-------------|
-| 4dcdb1c | Justice + Claude | feat | Publishing treatment — SKILL.md, CI, SECURITY.md, plugin.json |
-| a110923 | Claude | audit | Post-commit audit v1.0.0 — CONDITIONAL PASS |
-| ff26c8d | Claude | fix | CWE-78 execFileSync, timeout, schema validation, SHA-pin CI |
-| eefadbd | Claude | audit | Re-audit after security fixes — PASS |
-| a15f82f | Justice | chore | Bump version to 1.0.1 |
-| af8535f | Justice + Claude | feat | Evidence collection pipeline (#4 merge) |
-| 1586ec7 | Justice + Claude | feat | Test suite + i18n translations |
-
-**Total commits**: 7 (main branch, post-squash)
-**Signed commits**: All (SSH signing in use)
-**PR-based merges**: 4
+**Cumulative (project lifetime)**: ~30% Human / ~70% AI (prior: 38/62)
 
 ---
 
-## Detailed Contribution by Area
+## Commit History Summary (since 1586ec7)
 
-### Core Node.js Tooling (tools/extractors/, tools/autofill.js, tools/extract-evidence.js)
+| Commit | Model (trailer) | Type | Description |
+|--------|-----------------|------|-------------|
+| 9204e46 | Sonnet 4.6 | audit | Post-commit audit 1586ec7, PASS 92/100 |
+| ff900a7 | Sonnet 4.6 | fix | Resolve 5 audit INFO/LOW items |
+| 381bcff | Opus 4.7 | chore | Add LICENSE (CC0 1.0) |
+| 6dc3b77 | Opus 4.7 | fix(a11y) | WCAG CRITICAL + HIGH F-001–F-009 in shared.js (#5) |
+| d41d355 | Opus 4.7 | fix(a11y) | WCAG MEDIUM + LOW F-010–F-018 (#6) |
+| f8ae415 | Opus 4.7 | release | v1.1.0 + v1.2.0 multi-format build + versioning framework (#7) |
+| a5660cc | Fable 5.1 | release | v1.3.0 regulatory refresh to Oct 2026 + autofill fixes (#8) |
+| 3cae41f | Fable 5.1 | chore | Directory submission prep (#9) |
+| d2288a2 | Fable 5.1 | fix | Ship regulation corpus inside the skill (Codex P1/P2) (#10) |
+| 7f68fb2 | Fable 5.1 | fix(security) | Harden extractors against hostile repositories (#11) |
+| 776116d | Haiku 5.5 | fix | Autofill crash on template 23; checker false positives (#12) |
+| 3b9ca56 | Opus 5.5 | fix(security) | Soundcheck review follow-ups (#13) |
+| ed9e6d9 | Opus 5.5 | fix | Count AI tools once per commit; sync-kb line endings (#14) |
+| 124e65f | Opus 5.5 | fix(a11y) | Dyslexia + dyscalculia gates for interactive tools (#15) |
+| a053570 | Opus 5.5 | docs | One-line intro above every template table (#16) |
+| f055712 | Opus 5.5 | i18n | New UI strings + table intros, 6 locales (#17) |
+| 3f49d4e | Opus 5.5 | i18n | Translate hardcoded text in all 21 tools (#18) |
+| a4bfa93 | Opus 5.5 | i18n | One rule for law names; official Chinese names (#20) |
+| 8c61e59 | Opus 5.5 | release | v1.4.0 Directory readiness fixes (#21) |
+| 304715e | Opus 5.5 | chore | Move build tooling out of root package.json (#22) |
 
-**Architecture design**: Justice — defined extraction categories (code review, change
-management, AI attribution, security practices, incident response, governance, access control).
-
-**Implementation**: Claude — wrote all 4 extractors (~3,560 lines), autofill.js (~756 lines),
-and runner (~146 lines) per Justice's specifications.
-
-**Security hardening**: Claude (directed by Justice's audit findings) — switched to
-`execFileSync` with argument arrays, added timeout, added schema validation.
-
-**Human contribution**: ~20% (architecture, requirements, review)
-**AI contribution**: ~80% (implementation, security fixes)
-
-### i18n System (tools/i18n/, tools/interactive/shared.js)
-
-**Architecture design**: Justice — defined 7-locale requirement, `i18nLoad-then-boot` pattern,
-greedy dot-path resolver specification.
-
-**Implementation**: Claude — wrote index.js, generate-templates.js, all 7 locale stubs,
-browser-side i18n in shared.js, and refactored all 21 HTML tools.
-
-**Translation (tools section, zh-CN/ko/ja/pt-BR)**: Claude (this session) — translated
-502 keys per language with legal/compliance terminology aligned to each jurisdiction's
-native legal tradition.
-
-**Human contribution**: ~10% (architecture, requirements, spot-checking)
-**AI contribution**: ~90% (all code, all translations)
-
-### Test Suite (tests/)
-
-**Specification**: Justice — identified 4 test categories, defined coverage requirements,
-reviewed and approved 109 tests.
-
-**Implementation**: Claude — wrote all 4 spec files with test cases per Justice's categories;
-fixed test assertions after discovering actual output shapes (git-evidence nested structure,
-deadline-data unsorted).
-
-**Human contribution**: ~25% (requirements, review, two fixture corrections)
-**AI contribution**: ~75% (all test code)
-
-### Knowledge Base & Templates (templates/, skills/, AI-Regulations-*.md files)
-
-**Architecture & content**: Justice — defined 25 template categories, compliance framework
-mappings, jurisdiction coverage.
-
-**Implementation**: Claude — filled template bodies, wrote compliance framework cross-references.
-
-**Human contribution**: ~40% (structure, jurisdiction selection, content review)
-**AI contribution**: ~60% (implementation, cross-referencing)
-
-### Audit Reports (audits/)
-
-**Specification & direction**: Justice — triggers audits, reviews findings, accepts/rejects risk.
-
-**Report generation**: Claude — writes all audit documents per established format.
-
-**Human contribution**: ~30% (direction, risk acceptance, review)
-**AI contribution**: ~70% (all report text)
+**Signing**: all 20 commits are signed. Local commits verify with Justice's SSH key (`G`).
+GitHub squash merges are signed by GitHub's web-flow key `B5690EEEBB952194`; they show `E`
+(key not in the local keyring), not unsigned.
 
 ---
 
-## AI Transparency Disclosure
+## Attribution Matrix
 
-In compliance with the project's own AI governance requirements and EU AI Act Art. 52:
+### 1. Architecture & Design — 80/20
+Justice set the cycle's goals: Directory submission, shipping the corpus inside the skill, the
+a11y gate policy, the 6-locale target, and keeping the plugin root dependency-free. Claude
+proposed the implementation structure, for example `tools/sync-kb.js` and moving tooling to
+`tooling/package.json` with a CI guard.
 
-- **AI Tool**: Claude Sonnet 4.6 (Anthropic)
-- **Access Method**: Claude Code CLI plugin
-- **Session Model**: Human-directed; each session begins with explicit task specification
-- **Output Review**: All Claude-generated code and content is reviewed by Justice before
-  committing. No autonomous commits.
-- **Commit Attribution**: All commits include `Co-Authored-By: Claude Sonnet 4.6
-  <noreply@anthropic.com>` in the commit message body.
-- **Version Consistency**: Claude Sonnet 4.6 used across all 2026-Q1 sessions.
-- **Limitation**: Claude does not have access to previous session state; context is
-  re-provided at session start via MEMORY.md and CLAUDE.md.
+### 2. Code Generation — 5/95
+All 20 commits are AI co-authored. The new code: sync-kb.js, extractor hardening, autofill fixes,
+build.ts and the multi-format pipeline, a11y fixes in shared.js, i18n plumbing. Justice's direct
+code edits could not be found in the diffs; his role was review and merge.
+
+### 3. Security Auditing — 30/70
+Justice chose to commission several independent reviews: soundcheck (#13), Codex P1/P2 on PRs
+#8–#10, plugin security scan, Claude Security results, skill review, and this audit. That is a
+real human control: findings came from more than one tool and model, not one self-review.
+AI ran the scans and wrote the findings.
+
+### 4. Remediation Implementation — 10/90
+Claude implemented every fix (#10–#14, #21). Justice decided which findings to fix and merged
+them via PR.
+
+### 5. Testing & Validation — 20/80
+The test suite grew from 109 to 157 tests (all passing at 304715e), including regression tests for
+fixed defects (template-23 autofill, trailer double-count, CRLF sync) and the doc-claims guard
+for the dependency-free root. Tests are AI-written; Justice confirms results at merge.
+
+### 6. Documentation — 10/90
+Regulation files, templates, README, CHANGELOG, CLAUDE.md and translations are AI-drafted.
+Justice's own documentation input is the a11y policy (plain-language and dyslexia/dyscalculia
+gates) that every doc is checked against.
+
+### 7. Domain Knowledge — 45/55
+Justice's domain knowledge is in which jurisdictions and laws matter and in the review
+standards. The regulatory research for the Oct 2026 refresh (12 regulation files, 47 deadline
+entries) was AI-researched against cited authorities with pinned dates.
 
 ---
 
-## EU AI Act Art. 4 — AI Literacy Assessment
+## Quality Assessment
 
-The use of Claude Sonnet 4.6 in this project represents a "deployer" scenario under
-EU AI Act Art. 28: Justice (the deployer) uses a third-party GPAI model (Claude) to
-build software tools. Key Art. 4 considerations:
-
-| Requirement | Status |
-|-------------|--------|
-| Understands AI system capabilities | PASS — Justice reviews and tests all output |
-| Understands AI limitations | PASS — Hallucinations reviewed; tests catch errors |
-| Maintains human oversight | PASS — No autonomous commits; all work directed |
-| Documents AI use | PASS — Co-authored commit attribution + contribution analysis |
+| Criterion | Grade | Notes |
+|-----------|-------|-------|
+| Code Correctness | A- | 157/157 tests pass; regression tests for each fixed defect; see sast-dast-scan.md for open findings |
+| Test Coverage | A- | +48 tests this cycle; doc-claims tests guard README claims; no coverage % measured |
+| Documentation | B+ | Strong and accessible, but README's AI disclosure is stale (names only Sonnet 4.6, "~62%") |
+| Production Readiness | A- | Released as v1.4.0 and accepted for Directory submission prep; 0 npm vulnerabilities |
+| **Overall** | **A-** | |
 
 ---
 
-_Report generated by post-commit-audit skill — 2026-03-29_
+## Findings for the Human-AI Workflow
+
+1. **Stale AI disclosure (README.md:187).** The README says the project "was built with Claude
+   Sonnet 4.6" and that "approximately 62%" was AI-generated. Since then, 5 model versions have
+   contributed and the git-evidence extractor measures 89% AI-attributed commits. For a
+   compliance toolkit, its own disclosure should be current. Fix: name all model versions (or
+   say "Claude models; the trailer in each commit names the version") and update the share.
+2. **Model churn.** Five model versions in one cycle is fine and is disclosed per commit. But it
+   means "the AI" is not one system. Assessments of AI quality should be per-model if needed.
+3. **Strength: independent review.** Using several reviewers (soundcheck, Codex, Claude Security,
+   plugin scan) is the strongest human control in this project. Keep it.
+
+**Trend**: AI share of implementation rose (62% → ~70% cumulative). Human control moved from
+writing code to choosing work, commissioning reviews, and gating merges via PR. All three of
+those are visible in the git record.
+
+---
+
+## Remediation Cycle (same day, branch fix/extractor-hostile-repo-and-evidence)
+
+1. **What was found.** At 304715e: HIGH-01 (pip-audit installs scanned repos), MEDIUM-01 (bare
+   `git`), and three silent evidence regressions (INFO-06/07/08).
+2. **Who directed the fixes.** Justice chose option "b": fix on a branch, then re-audit before
+   anything is committed to main.
+3. **Who implemented them.** Claude (Opus 5.5), test first: 7 failing tests, then fixes in 9cd7272.
+   The hostile-`setup.py` test reproduced the HIGH against real pip-audit 2.10.1 before the fix.
+4. **Verification.** A separate agent was told to break the fixes. All five held, and it found that
+   the signing repair had opened LOW-03 (a repo vouching for its own signatures) plus new MEDIUM-02
+   vectors. Claude fixed those in 3650b33 (2 more failing-first tests). Final suite: 166/166.
+5. **Split for this cycle.** Direction and the scope decision: Justice. Implementation, tests and
+   reports: Claude. Adversarial verification: a second Claude agent. About 10/90 (Justice/Claude),
+   in line with the code-generation dimension above.
+
+**Lesson:** the independent re-audit caught a defect introduced by the fix itself, which a self-review
+would probably have missed. Having a second agent try to break the fix, rather than grade it, is
+worth keeping as standard practice.
