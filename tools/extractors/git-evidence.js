@@ -143,19 +143,28 @@ const SIGNING_TRUST_FILES = [
 
 let signingOverrides = null;
 
+/**
+ * The operator's own value for a config key: global scope first (it takes
+ * precedence), then system. --global and --system never read a repository's
+ * config. --includes follows the operator's include files, so a revocation
+ * list kept in one is not dropped (that would let revoked keys count).
+ */
 function operatorGitConfig(key) {
-  try {
-    // --global reads only the operator's own config file, never a repo's.
-    return execFileSync(gitBinary(), ['config', '--global', '--get', key], {
-      cwd: os.tmpdir(),
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-      timeout: 10000,
-      windowsHide: true
-    }).trim() || null;
-  } catch {
-    return null;
+  for (const scope of ['--global', '--system']) {
+    try {
+      const value = execFileSync(gitBinary(), ['config', scope, '--includes', '--get', key], {
+        cwd: os.tmpdir(),
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+        timeout: 10000,
+        windowsHide: true
+      }).trim();
+      if (value) return value;
+    } catch {
+      // Key not set in this scope.
+    }
   }
+  return null;
 }
 
 function getSigningOverrides() {

@@ -224,6 +224,31 @@ test('git-evidence: a scanned repo cannot vouch for its own signatures',
     }
   });
 
+// Pinning must not drop the operator's own revocation list: a value set in
+// a file included from the global config still applies (fail closed).
+test('git-evidence: a key revoked in an operator-included config does not count as signed',
+  { skip: !(haveTool('git') && haveSshKeygen()) }, function () {
+    var fx = makeSignedRepo('sast-revoked-');
+    try {
+      var pub = fs.readFileSync(path.join(fx.keyDir, 'id.pub'), 'utf8');
+      var revoked = path.join(fx.keyDir, 'revoked_keys');
+      fs.writeFileSync(revoked, pub);
+      var included = path.join(fx.keyDir, 'included.gitconfig');
+      fs.writeFileSync(included, '[gpg "ssh"]\n\trevocationFile = ' + revoked.replace(/\\/g, '/') + '\n');
+      var env = operatorEnv(fx.keyDir, [
+        '[gpg "ssh"]', '\tallowedSignersFile = ' + fx.allowed.replace(/\\/g, '/'),
+        '[include]', '\tpath = ' + included.replace(/\\/g, '/')
+      ]);
+      var r = runExtractor(GIT_EVIDENCE, fx.repo, { env: env });
+      assert.equal(r.status, 0, 'extractor exited non-zero: ' + r.stderr);
+      assert.equal(JSON.parse(r.stdout).securityPractices.signedCommits, 0,
+        'a key in the operator revocation list was counted as signed');
+    } finally {
+      rmrf(fx.repo);
+      rmrf(fx.keyDir);
+    }
+  });
+
 // MEDIUM-02: repo config could point mailmap.file at any path (a UNC path on
 // Windows leaks the operator's NTLM hash). The in-tree .mailmap still applies.
 test('git-evidence: a repo-configured mailmap.file is not read',
