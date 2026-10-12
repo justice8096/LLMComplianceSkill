@@ -45,42 +45,47 @@ function isNetworkPath(p, base) {
 }
 
 /**
- * True when reaching p would pass through a symlink or junction whose
- * target is a network path, at any component and through chains of links.
- * Each component is examined with lstat, which does not follow the link
- * itself, so the network target is never opened. Fails closed on deep
- * chains.
+ * True when opening p on Windows would reach a network path: p itself, or
+ * a symlink or junction at any component, through chains of links.
+ *
+ * It follows Windows path rules, not POSIX ones: Win32 collapses "." and
+ * ".." textually before any lookup, and a relative link target is resolved
+ * textually against the link's parent directory. Each component is examined
+ * with lstat on a prefix that contains no links, so lstat follows nothing and
+ * the network target is never opened. A component that does not exist ends
+ * the walk safely (nothing after it can exist); any other lstat error, a
+ * link target that is not relative or drive-letter, or a long chain of links
+ * fails closed. Always false on other platforms.
  */
 function linksToNetwork(p) {
-  if (isNetworkPath(p)) return true;
-  // Emulate realpath one component at a time. `resolved` never contains a
-  // link, so lstat(resolved + component) follows nothing except, possibly,
-  // that last component, which lstat does not follow. ".." is applied to the
-  // resolved (physical) path, as Windows does.
-  var start = path.isAbsolute(p) ? p : path.resolve(p);
-  var resolved = path.parse(start).root;
-  var pending = splitParts(start.slice(resolved.length));
-  var hops = 0;
-  while (pending.length) {
-    var part = pending.shift();
-    if (part === '.') continue;
-    if (part === '..') { resolved = path.dirname(resolved); continue; }
-    var next = path.join(resolved, part);
-    var st = lstatOrNull(next);
-    // Missing: nothing further exists, and nothing on the way was a link.
-    if (!st) return false;
-    if (!st.isSymbolicLink()) { resolved = next; continue; }
-    if (++hops > 16) return true;
-    var target = fs.readlinkSync(next);
-    if (!isPlainLocalTarget(target)) return true;
-    if (path.win32.isAbsolute(target) || path.isAbsolute(target)) {
-      resolved = path.parse(target).root;
-      pending = splitParts(target.slice(resolved.length)).concat(pending);
-    } else {
-      pending = splitParts(target).concat(pending);
+  if (process.platform !== 'win32') return false;
+  var current = path.win32.resolve(String(p));
+  for (var hops = 0; hops <= 16; hops++) {
+    if (isNetworkPath(current)) return true;
+    var root = path.win32.parse(current).root;
+    var parts = splitParts(current.slice(root.length));
+    var prefix = root;
+    var redirected = false;
+    for (var i = 0; i < parts.length; i++) {
+      var next = path.win32.join(prefix, parts[i]);
+      var st;
+      try {
+        st = fs.lstatSync(next);
+      } catch (e) {
+        if (e.code === 'ENOENT' || e.code === 'ENOTDIR') return false;
+        return true;
+      }
+      if (!st.isSymbolicLink()) { prefix = next; continue; }
+      var target = fs.readlinkSync(next);
+      if (!isPlainLocalTarget(target)) return true;
+      // Splice the target in place of the link and normalise textually.
+      current = path.win32.resolve(prefix, target, parts.slice(i + 1).join('\\') || '.');
+      redirected = true;
+      break;
     }
+    if (!redirected) return false;
   }
-  return false;
+  return true;
 }
 
 function splitParts(s) {

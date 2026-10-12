@@ -43,10 +43,10 @@
 > | INFO-10 Volta `npm-cli.js` layout | **OPEN** (INFO) |
 > | INFO-02 PII in evidence JSON | **OPEN** (by design; handling note) |
 >
-> | Review of e368913: `..` after a link resolved lexically, not physically | **FIXED** (fb24e28) | `linksToNetwork` emulates realpath per component; test |
+> | Review of e368913 / fb24e28: `..` handling did not match Windows (a missing component before `..` failed open) | **FIXED** (follow-up commit on PR #24) | Windows collapses `..` textually and resolves relative link targets against the link's parent; `linksToNetwork` now does the same, and lstat errors other than ENOENT/ENOTDIR fail closed; test `a missing component followed by ".." cannot hide a network link` |
 > | Review of e368913: NT-style link targets (`\\?\UNC`, `GLOBALROOT`, `\??\`, root-relative) not seen as remote | **FIXED** (fb24e28) | Only relative or drive-letter targets are followed; test creates links with `mklink` |
 >
-> Suite at fb24e28: **236/236 pass** with pip-audit on PATH.
+> Suite after the follow-up commit: **237/237 pass** with pip-audit on PATH.
 >
 > **Counts at fb24e28 (self-verified): Critical 0, High 0, Medium 0, Low 0, Info 3. Verdict: PASS.**
 

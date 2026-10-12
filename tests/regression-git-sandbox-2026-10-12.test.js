@@ -243,22 +243,32 @@ test('git-sandbox: a gitdir reached through a link to a network share is refused
   });
 
 // Automated review of e368913: resolve links the way Windows does.
-test('linksToNetwork: ".." after a link is resolved physically, not lexically',
+// Windows collapses ".." textually before opening a path, and resolves a
+// relative link target textually against the link's parent directory.
+test('linksToNetwork: a missing component followed by ".." cannot hide a network link',
   { skip: process.platform !== 'win32' }, function (t) {
     var { linksToNetwork } = require(SANDBOX);
-    var base = fs.mkdtempSync(path.join(os.tmpdir(), 'ltn-dotdot-'));
+    var base = fs.mkdtempSync(path.join(os.tmpdir(), 'ltn-missing-'));
     try {
-      var real = path.join(base, 'real');
-      fs.mkdirSync(path.join(real, 'deep'), { recursive: true });
+      try { fs.symlinkSync('//127.0.0.1/nonexistent-share', path.join(base, 'net'), 'dir'); }
+      catch (_e) { t.skip('cannot create symlinks here'); return; }
+      // Windows opens base\net\x here: "missing\.." collapses before any lookup.
+      var p = base + '\\missing\\..\\net\\x';
+      assert.equal(linksToNetwork(p), true);
+    } finally { rmrf(base); }
+  });
+
+test('linksToNetwork: a relative link target with ".." resolves against the link parent',
+  { skip: process.platform !== 'win32' }, function (t) {
+    var { linksToNetwork } = require(SANDBOX);
+    var base = fs.mkdtempSync(path.join(os.tmpdir(), 'ltn-reldotdot-'));
+    try {
       fs.mkdirSync(path.join(base, 'A'));
       try {
-        // A/link1 -> real/deep ; real/link2 -> network share
-        fs.symlinkSync(path.join(real, 'deep'), path.join(base, 'A', 'link1'), 'dir');
-        fs.symlinkSync('//127.0.0.1/nonexistent-share', path.join(real, 'link2'), 'dir');
+        fs.symlinkSync('//127.0.0.1/nonexistent-share', path.join(base, 'net'), 'dir');
+        fs.symlinkSync('..\\net', path.join(base, 'A', 'l'), 'dir');
       } catch (_e) { t.skip('cannot create symlinks here'); return; }
-      // Lexically A/link1/../link2 is A/link2 (missing); physically it is real/link2.
-      var p = path.join(base, 'A', 'link1') + path.sep + '..' + path.sep + 'link2' + path.sep + 'x';
-      assert.equal(linksToNetwork(p), true);
+      assert.equal(linksToNetwork(path.join(base, 'A', 'l', 'x')), true);
     } finally { rmrf(base); }
   });
 

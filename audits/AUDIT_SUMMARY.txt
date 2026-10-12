@@ -10,7 +10,7 @@ Verification: rounds 1-2 independently re-audited (agent told to break the fixes
               (git-sandbox redesign, commit-review fixes) self-verified by failing-first tests only
 
 Deterministic checks @ fb24e28:
-  npm test 236/236 pass (with pip-audit 2.10.1 on PATH) | npm run sbom:check OK
+  npm test 237/237 pass (with pip-audit 2.10.1 on PATH) | npm run sbom:check OK
   npm audit root 0, tooling/ 0 | no dependency changes in any fix round
 
 1. SAST/DAST Scan:        PASS -- 0 critical, 0 high, 0 medium, 0 low, 3 info (INFO-02 by design, INFO-10, INFO-15)
