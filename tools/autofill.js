@@ -695,6 +695,14 @@ function main() {
     }
   }
 
+  // --locale becomes a path segment (output/<locale>/), so accept only the
+  // locale codes that actually ship in tools/i18n/locales/ (CWE-22).
+  const knownLocales = i18n.listLocales();
+  if (!/^[a-z]{2}(-[A-Z]{2})?$/.test(locale) || !knownLocales.includes(locale)) {
+    console.error(`ERROR: unknown --locale "${locale}". Available locales: ${knownLocales.join(', ')}`);
+    process.exit(1);
+  }
+
   // Load i18n locale (affects f() and cb() helpers used in fillTableField/fillCheckbox calls)
   i18n.load(locale);
   if (locale !== 'en') {
