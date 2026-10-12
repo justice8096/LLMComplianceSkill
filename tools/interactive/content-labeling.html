@@ -160,8 +160,11 @@
     stateKey: 'contentLabeling',
     getState: function() { return state; },
     setState: function(s) {
-      if (s.contentTypes) { for (var k in s.contentTypes) { state.contentTypes[k] = s.contentTypes[k]; } }
-      if (s.explicitLabels) { for (var k in s.explicitLabels) { state.explicitLabels[k] = s.explicitLabels[k]; } }
+      // Keys come from sessionStorage, so refuse anything that would reach a prototype (CWE-1321).
+      function safeKey(k) { return k !== '__proto__' && k !== 'constructor' && k !== 'prototype'; }
+      function ownKeys(o) { return (o && typeof o === 'object') ? Object.keys(o).filter(safeKey) : []; }
+      ownKeys(s.contentTypes).forEach(function(k) { state.contentTypes[k] = s.contentTypes[k]; });
+      ownKeys(s.explicitLabels).forEach(function(k) { state.explicitLabels[k] = s.explicitLabels[k]; });
       if (s.chinaMetadata) {
         if (s.chinaMetadata.providerName !== undefined) state.chinaMetadata.providerName = s.chinaMetadata.providerName;
         if (s.chinaMetadata.contentAttributes !== undefined) state.chinaMetadata.contentAttributes = s.chinaMetadata.contentAttributes;
@@ -177,7 +180,10 @@
         if (s.euMetadata.standard !== undefined) state.euMetadata.standard = s.euMetadata.standard;
         if (s.euMetadata.interoperability !== undefined) state.euMetadata.interoperability = s.euMetadata.interoperability;
       }
-      if (s.checklist) { for (var phase in s.checklist) { if (!state.checklist[phase]) state.checklist[phase] = {}; for (var k in s.checklist[phase]) { state.checklist[phase][k] = s.checklist[phase][k]; } } }
+      ownKeys(s.checklist).forEach(function(phase) {
+        if (!Object.prototype.hasOwnProperty.call(state.checklist, phase)) state.checklist[phase] = {};
+        ownKeys(s.checklist[phase]).forEach(function(k) { state.checklist[phase][k] = s.checklist[phase][k]; });
+      });
       if (s.evidenceLog) state.evidenceLog = s.evidenceLog;
       initState();
     }

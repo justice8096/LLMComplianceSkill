@@ -42,8 +42,8 @@
 </div>
 <p class="note">Hover over countries for details. Includes coverage inherited via union membership (EU/EEA, AU) and territories.<br>Data as of October 2026. See individual regulation files in this folder for detailed coverage per jurisdiction.</p>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const R = {};
 function add(cat, id, name, detail, via) {
@@ -207,7 +207,21 @@ const projection = d3.geoNaturalEarth1().scale(160).translate([w/2, h/2 + 16]);
 const pathGen = d3.geoPath().projection(projection);
 const tooltip = document.getElementById('tooltip');
 
-d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(world => {
+function fillTooltip(tip, r) {
+  function row(cls, text) {
+    const div = document.createElement('div');
+    div.className = cls;
+    div.textContent = text;
+    return div;
+  }
+  const rows = [row('tt-name', r.name), row('tt-status', catLabels[r.cat])];
+  if (r.detail) rows.push(row('tt-detail', r.detail));
+  if (r.via) rows.push(row('tt-via', 'Coverage via: ' + r.via));
+  tip.replaceChildren.apply(tip, rows);
+}
+
+// Pinned to an exact release; the integrity option is passed through to fetch().
+d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json', {integrity: 'sha384-yOCJ+8ShBm8UDqtAVtAvxTDDf4gXo5edxl/YG0FmVC5OTmqVLl7utuVGBDEeZWHf'}).then(world => {
   const countries = topojson.feature(world, world.objects.countries);
   svg.selectAll('.country').data(countries.features).enter().append('path')
     .attr('class', d => {
@@ -218,11 +232,7 @@ d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(w
     .on('mousemove', function(event, d) {
       const r = R[d.id];
       if (!r) { tooltip.style.opacity = 0; return; }
-      let html = '<div class="tt-name">' + r.name + '</div>';
-      html += '<div class="tt-status">' + catLabels[r.cat] + '</div>';
-      if (r.detail) html += '<div class="tt-detail">' + r.detail + '</div>';
-      if (r.via) html += '<div class="tt-via">Coverage via: ' + r.via + '</div>';
-      tooltip.innerHTML = html;
+      fillTooltip(tooltip, r);
       tooltip.style.opacity = 1;
       const rect = container.getBoundingClientRect();
       let x = event.clientX - rect.left + 14;
