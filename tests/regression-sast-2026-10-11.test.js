@@ -167,29 +167,81 @@ test('git-evidence: topAiModifiedFiles lists files touched by AI-attributed comm
 // INFO-07
 // ---------------------------------------------------------------------------
 
-test('git-evidence: a commit with a valid SSH signature counts as signed',
+// One SSH-signed commit. Returns the repo, the key directory and an
+// allowed_signers file that vouches for the key.
+function makeSignedRepo(prefix) {
+  var repo = makeRepo(prefix);
+  var keyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sast-key-'));
+  var key = path.join(keyDir, 'id');
+  execFileSync('ssh-keygen', ['-t', 'ed25519', '-N', '', '-q', '-C', 'test@example.com', '-f', key]);
+  var pub = fs.readFileSync(key + '.pub', 'utf8').trim();
+  var allowed = path.join(keyDir, 'allowed_signers');
+  fs.writeFileSync(allowed, 'test@example.com ' + pub + '\n');
+  git(repo, ['config', 'gpg.format', 'ssh']);
+  git(repo, ['config', 'user.signingkey', key + '.pub']);
+  fs.writeFileSync(path.join(repo, 's.txt'), 's\n');
+  git(repo, ['add', 's.txt']);
+  git(repo, ['commit', '-q', '-S', '-m', 'signed']);
+  return { repo: repo, keyDir: keyDir, allowed: allowed };
+}
+
+// Operator environment whose global git config is a temp file.
+function operatorEnv(keyDir, lines) {
+  var globalConfig = path.join(keyDir, 'operator.gitconfig');
+  fs.writeFileSync(globalConfig, lines.join('\n') + '\n');
+  return Object.assign({}, process.env, { GIT_CONFIG_GLOBAL: globalConfig });
+}
+
+test('git-evidence: a commit signed by a key the operator trusts counts as signed',
   { skip: !(haveTool('git') && haveSshKeygen()) }, function () {
-    var repo = makeRepo('sast-signed-');
-    var keyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sast-key-'));
+    var fx = makeSignedRepo('sast-signed-');
     try {
-      var key = path.join(keyDir, 'id');
-      execFileSync('ssh-keygen', ['-t', 'ed25519', '-N', '', '-q', '-C', 'test@example.com', '-f', key]);
-      var pub = fs.readFileSync(key + '.pub', 'utf8').trim();
-      var allowed = path.join(keyDir, 'allowed_signers');
-      fs.writeFileSync(allowed, 'test@example.com ' + pub + '\n');
-      git(repo, ['config', 'gpg.format', 'ssh']);
-      git(repo, ['config', 'user.signingkey', key + '.pub']);
-      git(repo, ['config', 'gpg.ssh.allowedSignersFile', allowed]);
-      fs.writeFileSync(path.join(repo, 's.txt'), 's\n');
-      git(repo, ['add', 's.txt']);
-      git(repo, ['commit', '-q', '-S', '-m', 'signed']);
-      assert.equal(git(repo, ['log', '-1', '--format=%G?']).trim(), 'G', 'fixture: plain git must verify the signature');
-      var r = runExtractor(GIT_EVIDENCE, repo);
+      var env = operatorEnv(fx.keyDir, ['[gpg "ssh"]', '\tallowedSignersFile = ' + fx.allowed.replace(/\\/g, '/')]);
+      var r = runExtractor(GIT_EVIDENCE, fx.repo, { env: env });
       assert.equal(r.status, 0, 'extractor exited non-zero: ' + r.stderr);
       assert.equal(JSON.parse(r.stdout).securityPractices.signedCommits, 1);
     } finally {
+      rmrf(fx.repo);
+      rmrf(fx.keyDir);
+    }
+  });
+
+test('git-evidence: a scanned repo cannot vouch for its own signatures',
+  { skip: !(haveTool('git') && haveSshKeygen()) }, function () {
+    var fx = makeSignedRepo('sast-selfsigned-');
+    try {
+      // The repo names its own allowed_signers file; the operator trusts nothing.
+      git(fx.repo, ['config', 'gpg.ssh.allowedSignersFile', fx.allowed]);
+      assert.equal(git(fx.repo, ['log', '-1', '--format=%G?']).trim(), 'G', 'fixture: plain git trusts the repo file');
+      var env = operatorEnv(fx.keyDir, ['[user]', '	name = Operator']);
+      var r = runExtractor(GIT_EVIDENCE, fx.repo, { env: env });
+      assert.equal(r.status, 0, 'extractor exited non-zero: ' + r.stderr);
+      assert.equal(JSON.parse(r.stdout).securityPractices.signedCommits, 0,
+        'signatures vouched for only by the scanned repo were counted as verified');
+    } finally {
+      rmrf(fx.repo);
+      rmrf(fx.keyDir);
+    }
+  });
+
+// MEDIUM-02: repo config could point mailmap.file at any path (a UNC path on
+// Windows leaks the operator's NTLM hash). The in-tree .mailmap still applies.
+test('git-evidence: a repo-configured mailmap.file is not read',
+  { skip: !haveTool('git') }, function () {
+    var repo = makeRepo('sast-mailmap-');
+    var outside = fs.mkdtempSync(path.join(os.tmpdir(), 'sast-mailmap-file-'));
+    try {
+      commitFile(repo, 'a.txt', 'init');
+      var mapFile = path.join(outside, 'mailmap');
+      fs.writeFileSync(mapFile, 'Hijacked Name <test@example.com>\n');
+      git(repo, ['config', 'mailmap.file', mapFile]);
+      var r = runExtractor(GIT_EVIDENCE, repo);
+      assert.equal(r.status, 0, 'extractor exited non-zero: ' + r.stderr);
+      var names = JSON.parse(r.stdout).governance.contributorList.map(function (c) { return c.name; });
+      assert.deepEqual(names, ['Test'], 'mailmap.file named in the scanned repo config was read');
+    } finally {
       rmrf(repo);
-      rmrf(keyDir);
+      rmrf(outside);
     }
   });
 

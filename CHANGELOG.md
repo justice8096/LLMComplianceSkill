@@ -22,7 +22,8 @@ Extractor fixes from the post-commit SAST audit of 2026-10-11 (`audits/sast-dast
 - `git-evidence.js` started a bare `git`, so on Windows a `git.exe` in the working directory could run (CWE-427, MEDIUM-01). Both extractors now share `tools/extractors/resolve-binary.js`, which resolves tools to absolute paths from PATH only.
 
 ### Fixed `[defect]`
-- Signed-commit counts were always 0, because blanking `gpg.program` and its siblings broke signature verification (INFO-07). These programs are now pinned to the operator's global git config or the default program on PATH, so a scanned repository still cannot choose them.
+- Signed-commit counts were always 0, because blanking `gpg.program` and its siblings broke signature verification (INFO-07). These programs are now pinned to the operator's global git config or the default program on PATH, so a scanned repository still cannot choose them. `gpg.ssh.allowedSignersFile` and `gpg.ssh.revocationFile` are pinned to the operator's global config too. Without that, a scanned repository could vouch for its own signatures (CWE-345) or point either file at a UNC path (CWE-73). As a result, a signature counts as good only for a key the operator trusts.
+- A scanned repository's `mailmap.file` / `mailmap.blob` config is ignored, because it could name a UNC path. The in-tree `.mailmap` still applies. Repo-level `include.path` cannot be turned off from the command line, so that UNC risk remains (see audits/sast-dast-scan.md MEDIUM-02).
 - `topAiModifiedFiles` was always empty, because the commit hash came after `--` and git read it as a path (INFO-06). Root commits are now included too.
 - On Windows, npm audit was silently skipped: the lookup chose the extensionless `npm` shell script, which cannot be started (INFO-08). Evidence now lists `vulnerabilities.auditsRun`, so an empty list shows that no audit ran, instead of reading as zero vulnerabilities.
 

@@ -96,7 +96,12 @@ const GIT_HARDENING = [
   '-c', 'core.hooksPath=' + os.devNull,
   '-c', 'diff.external=',
   '-c', 'protocol.allow=never',
-  '-c', 'log.showSignature=false'
+  '-c', 'log.showSignature=false',
+  // Repo config could point these at any path; a UNC path on Windows sends
+  // the operator's NTLM hash to that host (CWE-73). The in-tree .mailmap
+  // still applies.
+  '-c', 'mailmap.file=',
+  '-c', 'mailmap.blob='
 ];
 
 let gitFile = null;
@@ -119,11 +124,21 @@ function gitBinary() {
  * is pinned to the value in the operator's own global git config, or to the
  * default program resolved from PATH. Blanking them instead made every
  * signature verify as bad.
+ *
+ * The SSH trust files are pinned the same way, with no default: a repo that
+ * names its own allowed-signers file would otherwise vouch for its own
+ * signatures (CWE-345), and either file could be a UNC path (CWE-73).
+ * Signatures therefore count as good only for keys the operator trusts.
  */
 const SIGNING_PROGRAMS = [
   ['gpg.program', 'gpg'],
   ['gpg.ssh.program', 'ssh-keygen'],
   ['gpg.x509.program', 'gpgsm']
+];
+
+const SIGNING_TRUST_FILES = [
+  'gpg.ssh.allowedSignersFile',
+  'gpg.ssh.revocationFile'
 ];
 
 let signingOverrides = null;
@@ -149,6 +164,9 @@ function getSigningOverrides() {
     for (const [key, fallback] of SIGNING_PROGRAMS) {
       const program = operatorGitConfig(key) || resolveBinary(fallback) || '';
       signingOverrides.push('-c', key + '=' + program);
+    }
+    for (const key of SIGNING_TRUST_FILES) {
+      signingOverrides.push('-c', key + '=' + (operatorGitConfig(key) || ''));
     }
   }
   return signingOverrides;
