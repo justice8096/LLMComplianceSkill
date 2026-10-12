@@ -39,6 +39,7 @@ const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
 const { resolveBinary } = require('./resolve-binary');
+const { checkRepoGitConfig } = require('./git-config-guard');
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -248,9 +249,39 @@ function makeIsolatedDir(repoPath, fileNames) {
   var dir = fs.mkdtempSync(path.join(os.tmpdir(), 'package-evidence-'));
   for (var i = 0; i < fileNames.length; i++) {
     var src = path.join(repoPath, fileNames[i]);
-    if (fileExists(src)) fs.copyFileSync(src, path.join(dir, fileNames[i]));
+    if (!fileExists(src)) continue;
+    if (fileNames[i] === 'package.json') {
+      // Copy only the dependency fields, so keys such as "volta" or
+      // "packageManager" cannot choose which npm or Node runs (CWE-15).
+      var manifest = readJSON(src);
+      if (manifest) {
+        fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(sanitizeManifest(manifest), null, 2));
+      }
+      continue;
+    }
+    fs.copyFileSync(src, path.join(dir, fileNames[i]));
   }
   return dir;
+}
+
+var MANIFEST_KEEP = [
+  'name', 'version', 'private', 'workspaces', 'overrides',
+  'dependencies', 'devDependencies', 'optionalDependencies',
+  'peerDependencies', 'peerDependenciesMeta', 'bundleDependencies', 'bundledDependencies'
+];
+
+/**
+ * The fields of a package.json that npm audit needs. Everything else is
+ * dropped: toolchain selectors (volta, packageManager, engines, devEngines),
+ * scripts and config.
+ */
+function sanitizeManifest(manifest) {
+  var out = {};
+  for (var i = 0; i < MANIFEST_KEEP.length; i++) {
+    var key = MANIFEST_KEEP[i];
+    if (Object.prototype.hasOwnProperty.call(manifest, key)) out[key] = manifest[key];
+  }
+  return out;
 }
 
 function removeDir(dir) {
@@ -527,16 +558,13 @@ function parsePip(repoPath) {
     var pyText = readText(pyprojectPath);
     if (pyText) {
       // PEP 621: [project] dependencies
-      var depsMatch = pyText.match(/\[project\][\s\S]*?dependencies\s*=\s*\[([\s\S]*?)\]/);
-      if (depsMatch) {
-        var depLines = depsMatch[1].split('\n');
-        for (var di = 0; di < depLines.length; di++) {
-          var dm = depLines[di].match(/"([A-Za-z0-9_.-]+)\s*([>=<~!]*[^"]*)?"/);
-          if (dm) {
-            var dName = dm[1];
-            if (!packages.find(function (p) { return p.name.toLowerCase() === dName.toLowerCase(); })) {
-              packages.push({ name: dName, version: (dm[2] || '').trim(), license: 'UNKNOWN', direct: true, ecosystem: 'pip' });
-            }
+      var pepDeps = parsePyprojectDependencies(pyText);
+      for (var di = 0; di < pepDeps.length; di++) {
+        var dm = pepDeps[di].match(/^([A-Za-z0-9_.-]+)(?:\[[^\]]*\])?\s*(.*)$/);
+        if (dm) {
+          var dName = dm[1];
+          if (!packages.find(function (p) { return p.name.toLowerCase() === dName.toLowerCase(); })) {
+            packages.push({ name: dName, version: (dm[2] || '').trim(), license: 'UNKNOWN', direct: true, ecosystem: 'pip' });
           }
         }
       }
@@ -940,45 +968,207 @@ function pipAuditArgs(reqFile) {
   return ['--format', 'json', '--disable-pip', '--no-deps', '-r', reqFile];
 }
 
+/**
+ * The strings in the [project] table's `dependencies = [...]` array of a
+ * pyproject.toml. A single linear pass; the old lazy regex rescanned to the
+ * end of the file from every "[project]" header (CWE-1333). Quotes are
+ * tracked so a "]" inside a requirement (extras) does not end the array.
+ */
+function parsePyprojectDependencies(text) {
+  var lines = text.split(/\r?\n/);
+  var inProject = false;
+  for (var i = 0; i < lines.length; i++) {
+    var t = lines[i].trim();
+    if (t.charAt(0) === '[' && t.charAt(t.length - 1) === ']' && t.indexOf('=') === -1) {
+      inProject = t === '[project]';
+      continue;
+    }
+    if (!inProject || !/^dependencies\s*=\s*\[/.test(t)) continue;
+    // Scan from the opening bracket to its matching close.
+    var rest = lines.slice(i).join('\n');
+    var pos = rest.indexOf('[') + 1;
+    var deps = [];
+    var quote = null;
+    var cur = '';
+    for (; pos < rest.length; pos++) {
+      var c = rest.charAt(pos);
+      if (quote) {
+        if (c === quote) { deps.push(cur.trim()); cur = ''; quote = null; }
+        else cur += c;
+      } else if (c === '"' || c === "'") {
+        quote = c;
+      } else if (c === ']') {
+        break;
+      } else if (c === '#') {
+        var nl = rest.indexOf('\n', pos);
+        if (nl === -1) break;
+        pos = nl;
+      }
+    }
+    return deps.filter(Boolean);
+  }
+  return [];
+}
+
+/**
+ * True when filePath resolves (after symlinks) to a regular file inside
+ * repoPath (CWE-59).
+ */
+function isRepoFile(repoPath, filePath) {
+  try {
+    var realRepo = fs.realpathSync(repoPath) + path.sep;
+    var realFile = fs.realpathSync(filePath);
+    return realFile.indexOf(realRepo) === 0 && fs.statSync(realFile).isFile();
+  } catch (_e) {
+    return false;
+  }
+}
+
+// name[extras]==version or ===version, optional environment marker.
+// No wildcard: "1.*" is a range, not a pin.
+var PINNED_REQ_RE = /^([A-Za-z0-9][A-Za-z0-9._-]*(?:\[[A-Za-z0-9,._ -]+\])?)\s*===?\s*([A-Za-z0-9][A-Za-z0-9.!+_-]*)\s*(?:;.*)?$/;
+
+/** Remove a pip comment: '#' at line start or after whitespace. Linear. */
+function stripReqComment(line) {
+  var i = line.indexOf('#');
+  while (i !== -1) {
+    if (i === 0 || /\s/.test(line.charAt(i - 1))) return line.slice(0, i);
+    i = line.indexOf('#', i + 1);
+  }
+  return line;
+}
+
+/**
+ * Read requirements.txt (and the -r files it includes, inside the repo
+ * only) without running anything. Returns the pinned "name==version"
+ * requirements that can be audited, and a gap for every line that cannot:
+ * unpinned ranges, paths and URLs, pip options, and includes that leave the
+ * repository. Nothing from these files is ever given to pip.
+ */
+function collectPinnedRequirements(repoPath) {
+  var pinned = [];
+  var gaps = [];
+  var seen = {};
+
+  function gap(file, lineNo, reason, entry) {
+    gaps.push({
+      ecosystem: 'pip',
+      file: path.relative(repoPath, file).replace(/\\/g, '/'),
+      line: lineNo,
+      reason: reason,
+      entry: entry
+    });
+  }
+
+  function readReqFile(file, fromFile, fromLine, depth) {
+    if (isUncPath(file) || !isRepoFile(repoPath, file)) {
+      gap(fromFile || file, fromLine || 0, 'include outside repository', fromFile ? '-r' : path.basename(file));
+      return;
+    }
+    var real = fs.realpathSync(file);
+    if (seen[real] || depth > 5) return;
+    seen[real] = true;
+    var lines = (readText(file) || '').split(/\r?\n/);
+    for (var i = 0; i < lines.length; i++) {
+      var line = stripReqComment(lines[i]).trim();
+      if (!line) continue;
+      var m;
+      if ((m = line.match(/^(?:-r|--requirement)(?:\s+|=)(.+)$/))) {
+        readReqFile(path.resolve(path.dirname(file), m[1].trim()), file, i + 1, depth + 1);
+      } else if (/^(?:-c|--constraint)\b/.test(line)) {
+        // Constraint files limit versions; they add no requirements.
+      } else if (/^(?:-e|--editable)\b/.test(line)) {
+        gap(file, i + 1, 'path or URL', '-e');
+      } else if (line.charAt(0) === '-') {
+        // Options such as --index-url may carry credentials; record only the flag.
+        gap(file, i + 1, 'option', line.split(/[\s=]/)[0]);
+      } else if (line.indexOf('://') !== -1 || / @ /.test(line) || /^[./\\]/.test(line) || /^[A-Za-z]:[\\/]/.test(line)) {
+        gap(file, i + 1, 'path or URL', line.slice(0, 100));
+      } else if ((m = line.match(PINNED_REQ_RE))) {
+        pinned.push(m[1].replace(/\s+/g, '') + '==' + m[2]);
+      } else {
+        gap(file, i + 1, 'not pinned', line.slice(0, 100));
+      }
+    }
+  }
+
+  var reqFile = path.join(repoPath, 'requirements.txt');
+  if (fileExists(reqFile) || isSymlink(reqFile)) readReqFile(reqFile, null, 0, 0);
+  return { pinned: pinned, gaps: gaps };
+}
+
+function isSymlink(p) {
+  try { return fs.lstatSync(p).isSymbolicLink(); } catch (_e) { return false; }
+}
+
+function isUncPath(p) {
+  return /^(\\\\|\/\/)/.test(p);
+}
+
+/**
+ * Audit the repository's pinned Python requirements with pip-audit.
+ * Returns { counts, gaps }. counts is null when no audit ran. gaps lists
+ * every requirement that was not audited, so a partial audit is never
+ * reported as a clean one.
+ */
 function runPipAudit(repoPath) {
   var hasPip = fileExists(path.join(repoPath, 'requirements.txt')) ||
                fileExists(path.join(repoPath, 'Pipfile')) ||
                fileExists(path.join(repoPath, 'pyproject.toml'));
-  if (!hasPip) return null;
+  if (!hasPip) return { counts: null, gaps: [] };
+
+  var reqs = collectPinnedRequirements(repoPath);
+  if (!fileExists(path.join(repoPath, 'requirements.txt')) && !isSymlink(path.join(repoPath, 'requirements.txt'))) {
+    reqs.gaps.push({ ecosystem: 'pip', file: '', line: 0, reason: 'no requirements.txt; Pipfile and pyproject.toml are not audited', entry: '' });
+  }
+  if (reqs.pinned.length === 0) {
+    log('  no pinned Python requirements to audit');
+    return { counts: null, gaps: reqs.gaps };
+  }
 
   var pipAudit = resolveBinary('pip-audit');
   if (!pipAudit) {
     log('  pip-audit not found on PATH - skipping');
-    return null;
+    reqs.gaps.push({ ecosystem: 'pip', file: '', line: 0, reason: 'pip-audit not installed', entry: '' });
+    return { counts: null, gaps: reqs.gaps };
   }
-  log('Running pip-audit...');
-  var reqFile = path.join(repoPath, 'requirements.txt');
-  if (!fileExists(reqFile)) {
-    // Without -r, pip-audit scans the operator's active environment, not
-    // the repo, so there is nothing to report for this repository.
-    log('  no requirements.txt - skipping pip-audit');
-    return null;
+  log('Running pip-audit on ' + reqs.pinned.length + ' pinned requirement(s)...');
+  // pip-audit only ever sees name==version lines written by this script,
+  // in a private directory: no paths, URLs, options or includes.
+  var isolated = fs.mkdtempSync(path.join(os.tmpdir(), 'package-evidence-pip-'));
+  var result;
+  try {
+    var cleanReq = path.join(isolated, 'requirements.txt');
+    fs.writeFileSync(cleanReq, reqs.pinned.join('\n') + '\n');
+    result = runTool(pipAudit, pipAuditArgs(cleanReq), isolated, 60000);
+  } finally {
+    removeDir(isolated);
   }
-  var result = runTool(pipAudit, pipAuditArgs(reqFile), repoPath, 60000);
   if (!result.ok && !result.stdout) {
-    log('  pip-audit not available or failed - skipping');
-    return null;
+    log('  pip-audit failed - skipping');
+    reqs.gaps.push({ ecosystem: 'pip', file: '', line: 0, reason: 'pip-audit failed', entry: String(result.stderr || '').split('\n')[0].slice(0, 200) });
+    return { counts: null, gaps: reqs.gaps };
   }
   try {
-    var audit = JSON.parse(result.stdout || result.stderr);
+    var audit = JSON.parse(result.stdout);
     var counts = { critical: 0, high: 0, moderate: 0, low: 0, info: 0 };
     // pip-audit JSON is an object with a "dependencies" array; each entry lists its vulns.
     var deps = Array.isArray(audit) ? audit : (audit && Array.isArray(audit.dependencies) ? audit.dependencies : []);
     for (var i = 0; i < deps.length; i++) {
-      if (deps[i] && Array.isArray(deps[i].vulns)) {
+      if (!deps[i]) continue;
+      if (deps[i].skip_reason) {
+        reqs.gaps.push({ ecosystem: 'pip', file: '', line: 0, reason: 'skipped by pip-audit', entry: String(deps[i].name || '') + ': ' + String(deps[i].skip_reason).slice(0, 100) });
+      }
+      if (Array.isArray(deps[i].vulns)) {
         // pip-audit doesn't always provide severity; count as moderate
         counts.moderate += deps[i].vulns.length;
       }
     }
-    return counts;
+    return { counts: counts, gaps: reqs.gaps };
   } catch (_e) {
     log('  Could not parse pip-audit output');
-    return null;
+    reqs.gaps.push({ ecosystem: 'pip', file: '', line: 0, reason: 'pip-audit output unreadable', entry: '' });
+    return { counts: null, gaps: reqs.gaps };
   }
 }
 
@@ -1143,19 +1333,29 @@ function extract(repoPath) {
   var sbomFiles = detectSbomFiles(repoPath);
   var lockFileCommitted = false;
   if (anyLockPresent && primaryLockFile) {
-    var lockPath = path.join(repoPath, primaryLockFile);
-    lockFileCommitted = isGitTracked(lockPath, repoPath);
+    var gitGuard = checkRepoGitConfig(repoPath);
+    if (gitGuard.ok) {
+      lockFileCommitted = isGitTracked(path.join(repoPath, primaryLockFile), repoPath);
+    } else {
+      // git would read a repo-chosen file or network path (CWE-73), so it
+      // does not run; whether the lockfile is committed is unknown.
+      log('  Not running git: ' + gitGuard.reason);
+      lockFileCommitted = null;
+    }
   }
 
   // --- 3. Vulnerabilities ---
   var auditResults = { critical: 0, high: 0, moderate: 0, low: 0, info: 0 };
   var npmAudit = ecosystems.indexOf('npm') !== -1 ? runNpmAudit(repoPath) : null;
-  var pipAudit = ecosystems.indexOf('pip') !== -1 ? runPipAudit(repoPath) : null;
+  var pipResult = ecosystems.indexOf('pip') !== -1 ? runPipAudit(repoPath) : { counts: null, gaps: [] };
+  var pipAudit = pipResult.counts;
   // Which audits produced results. An empty list means auditResults is not
-  // evidence of zero vulnerabilities, only that no audit ran.
+  // evidence of zero vulnerabilities, only that no audit ran. "pip-partial"
+  // means some requirements were audited and auditGaps lists the rest.
   var auditsRun = [];
   if (npmAudit) auditsRun.push('npm');
-  if (pipAudit) auditsRun.push('pip');
+  if (pipAudit) auditsRun.push(pipResult.gaps.length > 0 ? 'pip-partial' : 'pip');
+  var auditGaps = pipResult.gaps;
 
   if (npmAudit) {
     auditResults.critical += (npmAudit.critical || 0);
@@ -1299,6 +1499,7 @@ function extract(repoPath) {
     vulnerabilities: {
       auditResults: auditResults,
       auditsRun: auditsRun,
+      auditGaps: auditGaps,
       hasDependabot: securityInfra.hasDependabot,
       hasRenovate: securityInfra.hasRenovate,
       hasSecurityWorkflows: securityInfra.hasSecurityWorkflows,
@@ -1378,4 +1579,9 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { pipAuditArgs: pipAuditArgs };
+module.exports = {
+  pipAuditArgs: pipAuditArgs,
+  collectPinnedRequirements: collectPinnedRequirements,
+  sanitizeManifest: sanitizeManifest,
+  parsePyprojectDependencies: parsePyprojectDependencies
+};
