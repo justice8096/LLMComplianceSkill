@@ -1,16 +1,16 @@
 POST-COMMIT AUDIT SUMMARY
 ==========================
 Date:   2026-10-12
-Commit: e368913 (branch fix/extractor-hostile-repo-and-evidence, PR #23)
-        = main @ 304715e + 3 fix rounds (9cd7272 .. e368913)
+Commit: fb24e28 (branch fix/extractor-hostile-repo-and-evidence, PR #23)
+        = main @ 304715e + 3 fix rounds (9cd7272 .. fb24e28)
 Project: LLMComplianceSkill v1.4.0 (+ Unreleased fixes)
 Audit Type: POST-FIX re-audit after three fix rounds. Pre-fix audit at 304715e was FAIL (HIGH-01)
 Auditor: Post-Commit Audit Skill (Claude Opus 5.5)
 Verification: rounds 1-2 independently re-audited (agent told to break the fixes); round 3
               (git-sandbox redesign, commit-review fixes) self-verified by failing-first tests only
 
-Deterministic checks @ e368913:
-  npm test 233/233 pass (with pip-audit 2.10.1 on PATH) | npm run sbom:check OK
+Deterministic checks @ fb24e28:
+  npm test 236/236 pass (with pip-audit 2.10.1 on PATH) | npm run sbom:check OK
   npm audit root 0, tooling/ 0 | no dependency changes in any fix round
 
 1. SAST/DAST Scan:        PASS -- 0 critical, 0 high, 0 medium, 0 low, 3 info (INFO-02 by design, INFO-10, INFO-15)
