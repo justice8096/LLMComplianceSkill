@@ -10,6 +10,84 @@
 **Delta Range**: `git diff 1586ec7..HEAD` (156 files, +27,098 / −2,294)
 **Method**: supply-chain-security skill (`supply-chain-auditor`): dependency analysis, CI/CD pipeline, SBOM, SLSA, container/runtime. Every finding below was checked against the file on disk at the cited line.
 
+## Round-3 update at e368913 (2026-10-12) — self-verified
+
+Not independently re-audited (the round-3 agent stopped before testing). Changes since c6afa61:
+
+| ID | Status at e368913 | Evidence |
+|----|-------------------|----------|
+| SC-14 | **OPEN until upstream merge** | The same SRI/`textContent` change is committed in a local clone of `justice8096/ai-regulatory-knowledge-base` (branch `fix/world-map-sri`), not pushed. Against that clone `sync-kb --check` reports `0 changed, 29 already current`, so `kb-sync-check` passes once it lands upstream. |
+| SC-15 | **FIXED** | `sync-kb.js` runs git in `git-sandbox.js` (private GIT_DIR, repo config never read). |
+| SC-16 | **FIXED** | `generate-sbom.js` reads the URL and SRI hash for each CDN component from all three map copies and emits them as `hashes` (SHA-512 / SHA-384). Generation throws, and `sbom:check` fails, if a copy stops loading the URL, drops the integrity value, or the copies disagree. Tests cover both. |
+| SC-05, SC-07 (repo settings) | **FIXED (2026-10-12, after #23 merged)** | Branch protection on `main` now requires 4 checks (JavaScript syntax check, Dependency vulnerability audit, Regulation files match the knowledge base, Unit tests and SBOM check); signed commits, no force-push and no deletion unchanged; admins can still override. Vulnerability alerts and Dependabot security updates enabled (API: `enabled: true`). |
+| SC-06, SC-08, SC-10 | unchanged (PARTIAL) | See the c6afa61 table below. |
+
+**Counts after the settings change (self-verified)**: Critical 0, High 0, Medium 0, Low 4 (SC-06, SC-08, SC-10,
+SC-14; SC-14 closes when ai-regulatory-knowledge-base#1 merges), Info 2
+(SC-12, SC-13, positive controls). **Verdict: PASS.**
+
+## Post-fix re-check at c6afa61 (2026-10-12)
+
+**Auditor**: Post-Commit Audit Skill (Claude Opus 5.5), independent re-audit.
+**Range**: b439721, 9073c9a and c6afa61 over 13ff5a3, on branch `fix/extractor-hostile-repo-and-evidence`.
+
+**Method**:
+- Read the three diffs.
+- Resolved each action SHA with `git ls-remote` against its tag.
+- Ran `generate-sbom.js` twice and compared the output byte for byte.
+- Compared the SBOM against `tooling/package-lock.json`.
+- Recomputed the SRI values from cdnjs and jsDelivr into a fresh empty scratch dir. The files were never executed.
+- Fetched the upstream knowledge-base world map and ran `sync-kb.js --check` against it.
+- Queried branch protection and Dependabot settings through the GitHub API (read-only).
+- `npm test`: 219 tests, 217 pass and 2 skip without pip-audit; 219/219 pass with pip-audit on PATH.
+
+| ID | Prior | Status at c6afa61 | Evidence |
+|---|---|---|---|
+| SC-01 | MEDIUM | **FIXED** | `tools/generate-sbom.js` writes CycloneDX 1.5 with version 1.4.0, license CC0-1.0 and 35 components: 32 tooling packages (`scope: excluded`, sha512 hashes) plus 3 CDN libraries (`scope: required`). This equals the 32 unique name@version entries in `tooling/package-lock.json`. Two runs gave byte-identical output (md5 `f4a55570…`, the same as the committed `sbom.json`). `npm run sbom:check` passes, and CI runs it (`lint.yml` unit-tests job). Residue: SC-16. |
+| SC-02 | MEDIUM | **FIXED in this repo; residue in SC-14** | The recomputed hashes match the HTML: d3 7.9.0 `sha512-vc58qvvB…`, topojson 3.0.2 `sha512-4UKI/XKm…` and world-atlas@2.0.2 `sha384-yOCJ+8Sh…`. All three copies are identical and use `crossorigin="anonymous"`. jsDelivr sends ACAO `*`, so the fetch-integrity check is enforceable. |
+| SC-03 | LOW | **FIXED** | `tooling/.npmrc` `save-exact=true`. The existing caret ranges in `tooling/package.json` remain but stay locked by `npm ci` and the hash-locked lockfile, which is the accepted mitigation. |
+| SC-04 | LOW | **FIXED** | `npm audit --prefix tooling --audit-level=moderate`. |
+| SC-05 | LOW | **OPEN** | GitHub API, 2026-10-12: `required_status_checks: null`, `required_pull_request_reviews: null`, `enforce_admins: false`. The new test, SBOM and audit jobs are still advisory. |
+| SC-06 | LOW | **PARTIAL** | `sync-kb.js` now records `<sha> <date>` in `skills/ai-compliance/references/KB-SOURCE`, but no `KB-SOURCE` file exists in the tree yet (no sync has run since). CI still checks out the KB default branch with no `ref:`. `--check` only prints a note on a SHA mismatch and does not fail. |
+| SC-07 | LOW | **PARTIAL** | `.github/dependabot.yml` is valid v2 (npm `/tooling` weekly with `versioning-strategy: increase`; github-actions `/` weekly). The repo setting `automated-security-fixes` is still `enabled: false`. |
+| SC-08 | LOW | **PARTIAL (configured, not exercised)** | The `release-provenance` job is gated by `if: startsWith(github.ref, 'refs/tags/v')` and needs lint-js, dependency-audit and unit-tests. Only this job gets `id-token: write` and `attestations: write`; the workflow default is `contents: read`. It uses `persist-credentials: false` and `npm run setup` (`npm ci --ignore-scripts`). The action pin `96278af6caaf10aea03fd8d33a09a777ca52d62f` is the peeled commit of `actions/attest-build-provenance` tag **v3.2.0** (verified with `git ls-remote`). No `v*` tag has been pushed since (latest is v1.4.0, which predates this commit), so **no attestation exists yet**. |
+| SC-09 | LOW | **FIXED** | The unit-tests job runs `npm test` and `npm run sbom:check`. |
+| SC-10 | LOW | **PARTIAL** | Llama 3.1 and 3.2 `trainingDataCutoff` changed from 2024-12 to 2023-12. `lastUpdated` is still 2026-03-15, and there is still no per-model `sourceUrl` or `retrievedAt`. |
+| SC-11 | INFO | **FIXED** | `package.json` `engines.node: ">=20.0.0"`. |
+| SC-12 | INFO | unchanged (positive control) | Install scripts are neutralized by `--ignore-scripts`, including in the new release job. |
+| SC-13 | INFO | unchanged (positive control) | Lockfile is unchanged by these commits. |
+
+Other checks:
+- `actions/checkout@34e11487…` = v4.3.1 and `actions/setup-node@49933ea5…` = v4.4.0 (both verified).
+- `sync-kb.js` runs git by absolute path, with an argv array, no shell and a strict output regex.
+
+### New findings at c6afa61
+
+| ID | Severity | File:Line | Finding | Recommendation |
+|----|----------|-----------|---------|----------------|
+| SC-14 | LOW | `tools/sync-kb.js:46-48`; upstream `ai-regulatory-knowledge-base/visualizations/AI-Regulations-World-Map.html` | The SRI fix exists only in the three downstream copies. The upstream map, fetched 2026-10-12, has 0 `integrity` attributes and still uses `innerHTML`. `sync-kb.js --check` against it reports all three copies as `differs`, so: (a) the `kb-sync-check` CI job fails on this branch, and because of SC-05 that does not block a merge; (b) the next routine `sync-kb` run silently reverts SC-02 and SAST INFO-03. | Land the same change upstream before merging. Add a test asserting `integrity=` in every synced map. |
+| SC-15 | INFO | `tools/sync-kb.js:125-131` | `kbCommit` runs `git log` with only `core.fsmonitor`/`core.hooksPath` overrides. There is no `log.showSignature=false`, no signing-program pin, and no `checkRepoGitConfig`. The KB checkout has the same owner (and is a fresh clone in CI), so this is latent. | Reuse the extractor's `GIT_HARDENING` and guard. |
+| SC-16 | INFO | `tools/generate-sbom.js:35-42`, `:96-110` | The CDN components carry no `hashes`, although the SRI digests are known. `RUNTIME_CDN` is maintained by hand, and neither `sbom:check` nor any test cross-checks it against the `<script>`/`fetch` URLs in the HTML (the SC-01 test only asserts that the components exist). A CDN version bump in the HTML would leave a stale SBOM while `sbom:check` passes. | Parse the URLs and `integrity` values from the map HTML, emit them as `hashes`, and fail `--check` on any mismatch. |
+
+### SLSA build level at c6afa61
+
+- **Achieved: still L0.** Provenance generation is now configured. When it runs on a `v*` tag, it would produce
+  Sigstore-signed, GitHub-hosted provenance, which meets Build L2 for its subjects. **It has not been exercised**:
+  no tag has been pushed since c6afa61, and no attestation exists to verify. This audit cannot confirm that the
+  job succeeds; for example, `npm run build` must produce `dist/**` on the runner.
+- **Projected after the first successful tag run: L2 for `dist/**` and `sbom.json`.** The marketplace installs the
+  plugin from the git source tree (`source: "./"`), not from `dist/`, so the attestation does not cover what
+  Claude Code users actually install. To make the claim honest for that channel, attest a source archive of the
+  tagged commit (for example, `git archive` output) as well.
+- **Build L3 remains out of reach**: no required reviews (SC-05), and `enforce_admins: false`.
+
+**Counts at c6afa61**: Critical 0, High 0, Medium 0, Low 6 (SC-05, SC-06, SC-07, SC-08, SC-10, SC-14), Info 4
+(SC-12, SC-13, SC-15, SC-16). The prior count was Critical 0, High 0, Medium 2, Low 8 (SC-03 through SC-10),
+Info 3. **Verdict: PASS** (zero CRITICAL/HIGH). Fix SC-14 before merging, because otherwise the SRI fix is reverted
+by the project's own sync tool.
+
+---
+
 > **Post-fix re-check at 9cd7272 (2026-10-11).** The fix commit changes 7 files and no manifests, lockfiles, workflows or SBOM. No dependencies were added, so every finding below stands unchanged. The commit does reduce one supply-chain risk outside this report's scope: `package-evidence.js` no longer lets pip-audit install a scanned repository's requirements (SAST HIGH-01, CWE-829; see sast-dast-scan.md). Verdict unchanged: **PASS**.
 
 ---

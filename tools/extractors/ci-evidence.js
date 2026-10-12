@@ -74,7 +74,14 @@ function readText(p) {
 function stripYamlComments(text) {
   return text.split('\n').map(function(line) {
     if (/^\s*#/.test(line)) return '';
-    return line.replace(/\s+#.*$/, '');
+    // Linear scan. The regex /\s+#.*$/ backtracked quadratically on long
+    // whitespace runs (CWE-1333).
+    var i = line.indexOf('#');
+    while (i !== -1) {
+      if (i > 0 && /\s/.test(line.charAt(i - 1))) return line.slice(0, i).trimEnd();
+      i = line.indexOf('#', i + 1);
+    }
+    return line;
   }).join('\n');
 }
 
@@ -711,4 +718,8 @@ function main() {
   log('Done.');
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { stripYamlComments: stripYamlComments };

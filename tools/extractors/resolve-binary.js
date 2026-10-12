@@ -23,6 +23,10 @@ function resolveBinary(name) {
   var exts = [''];
   if (process.platform === 'win32') {
     exts = (process.env.PATHEXT || '.COM;.EXE;.BAT;.CMD').split(';').filter(Boolean);
+    // A name that already carries one of these extensions ("git.exe") is
+    // looked up as given.
+    var given = path.extname(name).toLowerCase();
+    if (given && exts.some(function (e) { return e.toLowerCase() === given; })) exts = [''];
   }
   for (var i = 0; i < dirs.length; i++) {
     // Relative PATH entries (including "." and "") would reintroduce

@@ -10,6 +10,8 @@
     "build": "node tooling/node_modules/tsx/dist/cli.mjs build.ts",
     "sync:kb": "node tools/sync-kb.js",
     "sync:kb:check": "node tools/sync-kb.js --check",
+    "sbom": "node tools/generate-sbom.js",
+    "sbom:check": "node tools/generate-sbom.js --check",
     "build:claude": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format claude-plugin",
     "build:openai": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format openai",
     "build:n8n": "node tooling/node_modules/tsx/dist/cli.mjs build.ts --format n8n",
@@ -26,6 +28,6 @@
     "test:verbose": "node --test --reporter=spec tests/**/*.test.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   }
 }

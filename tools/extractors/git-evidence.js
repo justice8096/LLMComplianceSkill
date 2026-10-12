@@ -23,6 +23,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { resolveBinary } = require('./resolve-binary');
+const { prepareGitSandbox } = require('./git-sandbox');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -76,7 +77,8 @@ function validateRepoPath(repoPath) {
  * never be placed in a git argv, because any value derived from repository
  * content (commit messages, tag names, ref names) is attacker-controlled.
  */
-const HASH_RE = /^[0-9a-f]{7,40}$/i;
+// 40 hex for SHA-1 repositories, 64 for SHA-256 (extensions.objectFormat).
+const HASH_RE = /^[0-9a-f]{7,64}$/i;
 
 function isHash(value) {
   return typeof value === 'string' && HASH_RE.test(value);
@@ -190,7 +192,14 @@ function getSigningOverrides() {
  * (CWE-88). repoPath is passed as the value of -C. execFileSync is used with
  * no shell, so there is no shell expansion either (CWE-78).
  */
+// Environment that points git at a private git directory for the scanned
+// repository (see git-sandbox.js). Set once in main() before any git call.
+let sandboxEnv = null;
+
 function git(args, repoPath) {
+  if (!sandboxEnv) {
+    throw new Error('git() called before the repository sandbox was prepared');
+  }
   if (!Array.isArray(args)) {
     throw new Error('git() requires an argv array, not a command string');
   }
@@ -205,7 +214,8 @@ function git(args, repoPath) {
     maxBuffer: 50 * 1024 * 1024,
     timeout: 60000,
     stdio: ['pipe', 'pipe', 'pipe'],
-    windowsHide: true
+    windowsHide: true,
+    env: Object.assign({}, process.env, sandboxEnv)
   }).trim();
 }
 
@@ -1065,6 +1075,17 @@ function main() {
   log(`Days of history: ${opts.days}`);
   log(`Output: ${opts.output || 'stdout'}`);
   log('');
+
+  // git never reads the scanned repository's own config: it runs against a
+  // private git directory (CWE-73). Layouts that cannot be handled safely
+  // are refused before the first git call.
+  const sandbox = prepareGitSandbox(opts.repo);
+  if (!sandbox.ok) {
+    process.stderr.write(`Error: refusing to run git on "${opts.repo}": ${sandbox.reason}.\n`);
+    process.exit(2);
+  }
+  sandboxEnv = sandbox.env;
+  process.on('exit', sandbox.cleanup);
 
   // Verify this is a git repository
   try {
