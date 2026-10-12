@@ -27,11 +27,11 @@ var SYNC = path.join(ROOT, 'tools', 'sync-kb.js');
 
 // ---- SC-01: generated SBOM ----------------------------------------------
 
-test('SC-01: generate-sbom.js produces CycloneDX 1.5 from package.json', function() {
+test('SC-01: generate-sbom.js produces CycloneDX 1.5 from tooling/package.json', function() {
   var r = runNode([GEN, '--stdout']);
   assert.equal(r.status, 0, r.stderr);
   var bom = JSON.parse(r.stdout);
-  var pkg = json('package.json');
+  var pkg = json('tooling/package.json');
   assert.equal(bom.bomFormat, 'CycloneDX');
   assert.equal(bom.specVersion, '1.5');
   assert.equal(bom.metadata.component.name, pkg.name);
@@ -86,10 +86,10 @@ test('SC-01: committed sbom.json is current, and --check fails on a stale file',
   assert.equal(ok.status, 0, ok.stdout + ok.stderr);
   var dir = tmpDir('sbom-');
   var stale = path.join(dir, 'sbom.json');
-  fs.writeFileSync(stale, read('sbom.json').replace('"' + json('package.json').version + '"', '"0.0.0"'));
+  fs.writeFileSync(stale, read('sbom.json').replace('"' + json('tooling/package.json').version + '"', '"0.0.0"'));
   var bad = runNode([GEN, '--check', '--out', stale]);
   assert.equal(bad.status, 1);
-  assert.equal(json('sbom.json').metadata.component.version, json('package.json').version);
+  assert.equal(json('sbom.json').metadata.component.version, json('tooling/package.json').version);
 });
 
 // ---- SC-06: KB provenance -----------------------------------------------
@@ -142,8 +142,8 @@ test('SC-06: sync-kb starts git by absolute path with an argv array, no shell', 
 var lint = read('.github/workflows/lint.yml');
 
 test('SC-09: CI runs npm test and the SBOM check', function() {
-  assert.match(lint, /run:\s*npm test\b/);
-  assert.match(lint, /run:\s*npm run sbom:check\b/);
+  assert.match(lint, /run:\s*npm --prefix tooling test\b/);
+  assert.match(lint, /run:\s*npm --prefix tooling run sbom:check\b/);
 });
 
 test('SC-04: npm audit gate is moderate', function() {
@@ -179,10 +179,10 @@ test('SC-03: tooling saves exact versions', function() {
 });
 
 test('SC-11: Node floor is 20 and no doc still claims Node 18', function() {
-  assert.equal(json('package.json').engines.node, '>=20.0.0');
+  assert.equal(json('tooling/package.json').engines.node, '>=20.0.0');
   assert.doesNotMatch(read('README.md'), /Node(\.js)?\s*18\b/i);
-  assert.ok(json('package.json').scripts.sbom);
-  assert.ok(json('package.json').scripts['sbom:check']);
+  assert.ok(json('tooling/package.json').scripts.sbom);
+  assert.ok(json('tooling/package.json').scripts['sbom:check']);
 });
 
 // ---- SC-10 (partial) and README disclosure ------------------------------
@@ -225,8 +225,8 @@ test('generate-sbom: fails when a world map copy does not pin a CDN asset', func
   var repoRoot = path.join(__dirname, '..');
   var tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sbom-sri-'));
   try {
-    fs.copyFileSync(path.join(repoRoot, 'package.json'), path.join(tmp, 'package.json'));
     fs.mkdirSync(path.join(tmp, 'tooling'));
+    fs.copyFileSync(path.join(repoRoot, 'tooling', 'package.json'), path.join(tmp, 'tooling', 'package.json'));
     fs.copyFileSync(path.join(repoRoot, 'tooling', 'package-lock.json'), path.join(tmp, 'tooling', 'package-lock.json'));
     MAP_COPIES.forEach(function (rel, i) {
       var html = fs.readFileSync(path.join(repoRoot, rel), 'utf8');
