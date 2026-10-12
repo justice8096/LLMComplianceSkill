@@ -43,9 +43,12 @@
 > | INFO-10 Volta `npm-cli.js` layout | **OPEN** (INFO) |
 > | INFO-02 PII in evidence JSON | **OPEN** (by design; handling note) |
 >
-> Suite at e368913: **233/233 pass** with pip-audit on PATH.
+> | Review of e368913: `..` after a link resolved lexically, not physically | **FIXED** (fb24e28) | `linksToNetwork` emulates realpath per component; test |
+> | Review of e368913: NT-style link targets (`\\?\UNC`, `GLOBALROOT`, `\??\`, root-relative) not seen as remote | **FIXED** (fb24e28) | Only relative or drive-letter targets are followed; test creates links with `mklink` |
 >
-> **Counts at e368913 (self-verified): Critical 0, High 0, Medium 0, Low 0, Info 3. Verdict: PASS.**
+> Suite at fb24e28: **236/236 pass** with pip-audit on PATH.
+>
+> **Counts at fb24e28 (self-verified): Critical 0, High 0, Medium 0, Low 0, Info 3. Verdict: PASS.**
 
 ---
 
