@@ -184,7 +184,11 @@ Add this as a skill to your Claude Code sessions when building AI-powered applic
 
 ## AI Attribution
 
-This project was built with [Claude Sonnet 4.6](https://www.anthropic.com/claude) (Anthropic) as an implementation assistant. Approximately 62% of the source code and templates were AI-generated under human direction and review. Commits include a `Co-Authored-By` trailer naming the Claude model used. AI-generated source files are marked with `@ai-generated` in their file headers.
+This project was built with [Claude](https://www.anthropic.com/claude) models from Anthropic. A human directed and reviewed the work. So far the models are Sonnet 4.6, Opus 4.7, Fable 5.1, Haiku 5.5 and Opus 5.5.
+
+Each commit has a `Co-Authored-By` trailer. The trailer names the model that helped. AI-generated source files say `@ai-generated` in their first lines.
+
+As of 12 Oct 2026, 90% of commits in the last 365 days are AI-attributed (36 of 40). To get the current figure, run `node tools/extractors/git-evidence.js --repo .` and read `aiAttributionPercentage`.
 
 See [`audits/contribution-analysis.md`](audits/contribution-analysis.md) for the full collaboration breakdown per component.
 
