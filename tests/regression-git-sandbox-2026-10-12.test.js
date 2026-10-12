@@ -241,3 +241,61 @@ test('git-sandbox: a gitdir reached through a link to a network share is refused
       assert.match(sb.reason, /network/i);
     } finally { rmrf(dir); }
   });
+
+// Automated review of e368913: resolve links the way Windows does.
+test('linksToNetwork: ".." after a link is resolved physically, not lexically',
+  { skip: process.platform !== 'win32' }, function (t) {
+    var { linksToNetwork } = require(SANDBOX);
+    var base = fs.mkdtempSync(path.join(os.tmpdir(), 'ltn-dotdot-'));
+    try {
+      var real = path.join(base, 'real');
+      fs.mkdirSync(path.join(real, 'deep'), { recursive: true });
+      fs.mkdirSync(path.join(base, 'A'));
+      try {
+        // A/link1 -> real/deep ; real/link2 -> network share
+        fs.symlinkSync(path.join(real, 'deep'), path.join(base, 'A', 'link1'), 'dir');
+        fs.symlinkSync('//127.0.0.1/nonexistent-share', path.join(real, 'link2'), 'dir');
+      } catch (_e) { t.skip('cannot create symlinks here'); return; }
+      // Lexically A/link1/../link2 is A/link2 (missing); physically it is real/link2.
+      var p = path.join(base, 'A', 'link1') + path.sep + '..' + path.sep + 'link2' + path.sep + 'x';
+      assert.equal(linksToNetwork(p), true);
+    } finally { rmrf(base); }
+  });
+
+test('linksToNetwork: link targets that are not plain relative or drive paths are unsafe',
+  { skip: process.platform !== 'win32' }, function (t) {
+    var { linksToNetwork } = require(SANDBOX);
+    // Created with mklink, as an archive or another tool would: Node's own
+    // symlinkSync rewrites root-relative targets onto the current drive.
+    var targets = [
+      '\\\\127.0.0.1\\share',
+      '\\\\?\\UNC\\127.0.0.1\\share',
+      '\\\\?\\GLOBALROOT\\Device\\Mup\\127.0.0.1\\share',
+      '\\rooted\\on\\current\\drive'
+    ];
+    var made = 0;
+    targets.forEach(function (target) {
+      var base = fs.mkdtempSync(path.join(os.tmpdir(), 'ltn-target-'));
+      try {
+        var r = spawnSync('cmd.exe', ['/d', '/c', 'mklink', '/D', path.join(base, 'l'), target], { encoding: 'utf8' });
+        if (r.status !== 0) { t.diagnostic('mklink failed for ' + target + ': ' + (r.stdout + r.stderr).trim()); return; }
+        made++;
+        assert.equal(linksToNetwork(path.join(base, 'l', 'x')), true, 'accepted ' + target);
+      } finally { rmrf(base); }
+    });
+    if (made === 0) t.skip('mklink /D needs symlink privilege');
+  });
+
+test('linksToNetwork: ordinary local links are fine', { skip: process.platform !== 'win32' }, function (t) {
+  var { linksToNetwork } = require(SANDBOX);
+  var base = fs.mkdtempSync(path.join(os.tmpdir(), 'ltn-local-'));
+  try {
+    fs.mkdirSync(path.join(base, 'real'));
+    try {
+      fs.symlinkSync(path.join(base, 'real'), path.join(base, 'abs'), 'dir');
+      fs.symlinkSync('real', path.join(base, 'rel'), 'dir');
+    } catch (_e) { t.skip('cannot create symlinks here'); return; }
+    assert.equal(linksToNetwork(path.join(base, 'abs', 'x')), false);
+    assert.equal(linksToNetwork(path.join(base, 'rel', 'x')), false);
+  } finally { rmrf(base); }
+});
